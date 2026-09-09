@@ -49,11 +49,12 @@ def write_pb_glb(d, path):
         tri = np.array(subs[si], dtype=np.int64).reshape(-1, 3)
         if not len(tri):
             continue
-        a, b, c = pos[tri[:, 0]], pos[tri[:, 1]], pos[tri[:, 2]]
+        # mirroring X flips handedness: swap two corners to keep faces front-facing in glTF
+        a, b, c = pos[tri[:, 0]], pos[tri[:, 2]], pos[tri[:, 1]]
         n = np.cross(b - a, c - a); ln = np.linalg.norm(n, axis=1, keepdims=True); ln[ln == 0] = 1; n = n / ln
         vpos = np.concatenate([a, b, c], axis=1).reshape(-1, 3).astype(np.float32)
         vnor = np.repeat(n, 3, axis=0).astype(np.float32)
-        vuv = np.concatenate([uv[tri[:, 0]], uv[tri[:, 1]], uv[tri[:, 2]]], axis=1).reshape(-1, 2).astype(np.float32)
+        vuv = np.concatenate([uv[tri[:, 0]], uv[tri[:, 2]], uv[tri[:, 1]]], axis=1).reshape(-1, 2).astype(np.float32)
         vidx = np.arange(len(vpos), dtype=np.uint32)
         vp = add_view(vpos, 34962); vn = add_view(vnor, 34962); vt = add_view(vuv, 34962); vi = add_view(vidx, 34963)
         accs.append(Accessor(bufferView=vp, componentType=5126, count=len(vpos), type='VEC3', min=vpos.min(0).tolist(), max=vpos.max(0).tolist())); ap = len(accs) - 1

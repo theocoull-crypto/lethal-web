@@ -42,3 +42,15 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-f
 #menu-status { margin-top: 14px; color: #ff7a60; font-size: 13px; white-space: pre-line; }
 .menu-foot { margin-top: 30px; color: #6c6752; font-size: 12px; }
 #results-text { font-size: 18px; color: #e8e2c8; line-height: 1.5; }
+
+#grain { position: fixed; inset: 0; pointer-events: none; z-index: 5; opacity: .07; mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  animation: grain .25s steps(2) infinite; }
+@keyframes grain { 0% { background-position: 0 0 } 50% { background-position: 37px 91px } 100% { background-position: -53px 22px } }
+body.nofilter #grain { display: none; }
+#terminal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.55); z-index: 8; }
+.term-screen { width: min(860px, 92vw); height: min(560px, 80vh); background: #061a0c; border: 3px solid #1e3d22; box-shadow: 0 0 40px rgba(60,255,120,.15), inset 0 0 60px rgba(0,0,0,.6); padding: 18px 22px; display: flex; flex-direction: column; color: #7dff9a; font-size: 17px; text-shadow: 0 0 6px rgba(125,255,154,.45); }
+#term-out { flex: 1; margin: 0; overflow-y: auto; white-space: pre-wrap; font: inherit; }
+.term-line { display: flex; gap: 8px; align-items: center; border-top: 1px solid #1e3d22; padding-top: 8px; }
+#term-input { flex: 1; background: transparent; border: none; outline: none; color: inherit; font: inherit; text-shadow: inherit; caret-color: #7dff9a; }
+.term-hint { font-size: 12px; color: #3f8a52; margin-top: 4px; }

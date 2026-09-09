@@ -1,10 +1,14 @@
-// World assembly: ship, moon exterior, sky/sun/fog, time of day, ship landing/leaving, doors, lever, lights.
+// World assembly: ship (driven by the game's own animation clips), moon exterior, sky/sun/fog, time of day.
 import * as THREE from 'three';
 import { Collider, collisionEntries } from './collision.js';
 import { pickClip } from './audio.js';
+import { Animator } from './anim.js';
 
 const DAY_SECONDS = 780;          // ~13 real minutes from 8 AM to midnight (game: 1080 time units / 1.4)
 const START_HOUR = 8, END_HOUR = 24;
+// Unity "Environment" root of the ship scene (mirrored X); the ship's animation clips are relative to it
+const ENVIRONMENT_POS = new THREE.Vector3(17.4, 7.6, -16.5);
+const SHIP_LANDED_LOCAL = new THREE.Vector3(-18.71032, -7.326942, 8.971304);
 
 export class World {
   constructor(game) {
@@ -14,22 +18,20 @@ export class World {
     this.moonRoot = new THREE.Group(); this.moonRoot.name = 'MoonRoot';
     this.scene.add(this.shipRoot, this.moonRoot);
     this.colliders = [];
-    this.shipCollider = null; this.moonCollider = null;
-    this.landedY = 0; this.shipHeight = 0;
+    this.shipCollider = null; this.moonCollider = null; this.doorColliders = [];
     this.shipState = 'orbit';   // orbit | landing | landed | leaving
     this.shipT = 0;
-    this.doorsOpen = false; this.doorT = 0;
+    this.doorsOpen = false; this.doorPower = 1;
     this.lightsOn = true;
-    this.time = 0;             // seconds since landing
-    this.dayFrac = 0;
-    this.hour = START_HOUR;
+    this.time = 0; this.dayFrac = 0; this.hour = START_HOUR;
     this.sun = null; this.hemi = null; this.ambient = null;
     this.interactables = [];
     this.loops = {};
     this.moonLights = [];
     this.entrance = null; this.fireExit = null;
-    this.shipLandingPos = new THREE.Vector3(-1.27, 0.28, -7.5);
-    this.entranceDoorAnim = 0;
+    this.ladders = [];
+    this.anims = {};
+    this.shipLandingPos = new THREE.Vector3();
   }
 
   async load(progress) {
@@ -38,19 +40,26 @@ export class World {
     progress && progress('Assembling the ship...');
     const shipInst = await lib.instantiate(shipMan, { lights: true });
     this.ship = shipInst;
-    // the HangarShip root carries its landed world transform; we drive shipRoot instead
-    const shipObj = shipInst.root.children[0];
-    this.shipLandingPos.copy(shipObj.position);
-    this.shipYaw = shipObj.quaternion.clone();
-    shipObj.position.set(0, 0, 0); shipObj.quaternion.identity();
-    this.shipRoot.add(shipInst.root);
-    this.shipRoot.position.copy(this.shipLandingPos); this.shipRoot.quaternion.copy(this.shipYaw);
+    const shipObj = shipInst.root.children[0];      // HangarShip
     this.shipObj = shipObj;
+    // ship root = Unity Environment; HangarShip local transform is what the clips animate
+    shipObj.position.copy(SHIP_LANDED_LOCAL); shipObj.quaternion.identity();
+    this.shipRoot.position.copy(ENVIRONMENT_POS);
+    this.shipRoot.add(shipInst.root);
+    this.shipRoot.updateMatrixWorld(true);
+    this.shipLandingPos.copy(shipObj.getWorldPosition(new THREE.Vector3()));
     this._setupShipParts();
-    // collision for the ship: mesh colliders + boxes, in ship-local space
-    const entries = await collisionEntries(lib, shipInst, { relativeTo: this.shipRoot });
-    this.shipCollider = new Collider('ship').build(entries, this.shipRoot);
+    // static ship collision (ship-local), minus the animated door panels which get their own moving colliders
+    const doorNames = new Set(['HangarDoorLeft', 'HangarDoorRight', 'HangarDoorLeft (1)', 'HangarDoorRight (1)']);
+    const entries = await collisionEntries(lib, shipInst, { relativeTo: shipObj, exclude: n => doorNames.has(n.name) });
+    this.shipCollider = new Collider('ship').build(entries, shipObj);
     this.colliders.push(this.shipCollider);
+    for (const dn of ['HangarDoorLeft (1)', 'HangarDoorRight (1)']) {
+      const o = shipInst.byName.get(dn)?.[0]; if (!o) continue;
+      const e = await collisionEntries(lib, shipInst, { relativeTo: o, only: n => n.name === dn });
+      const c = new Collider('door').build(e, o); this.doorColliders.push(c); this.colliders.push(c);
+    }
+    await this._setupShipAnimators();
 
     progress && progress('Loading 41-Experimentation...');
     const moonMan = await lib.manifest('scenes/experimentation.json');
@@ -59,79 +68,132 @@ export class World {
     this.moonRoot.add(moonInst.root);
     this.moonRoot.visible = false;
     const mEntries = await collisionEntries(lib, moonInst, {});
-    // static batched world meshes have MeshColliders on their nodes referencing the source meshes, good. Add terrain + entrance visuals.
     this.moonCollider = new Collider('moon').build(mEntries, null);
     this.colliders.push(this.moonCollider);
     this._setupMoonParts();
     this._setupSky();
-    this.setShipState('orbit');
+    this.setShipState('orbit', true);
     return this;
   }
 
   // ---------- ship ----------
   _setupShipParts() {
     const by = n => this.ship.byName.get(n)?.[0] || null;
-    this.doorL = by('HangarDoorLeft'); this.doorR = by('HangarDoorRight');
-    this.doorLRest = this.doorL ? this.doorL.position.clone() : null; this.doorRRest = this.doorR ? this.doorR.position.clone() : null;
+    this.by = by;
+    // the HangarShip-level door copies are only used by the landing cutscene; the AnimatedShipDoor pair is the real door
+    for (const n of ['HangarDoorLeft', 'HangarDoorRight']) { const o = by(n); if (o) o.visible = false; }
+    this.doorL = by('HangarDoorLeft (1)'); this.doorR = by('HangarDoorRight (1)');
     this.lever = by('StartGameLever'); this.leverModel = by('HangarDoorLever');
-    this.shipLightsRoot = by('ShipElectricLights');
-    this.lightSwitch = by('LightSwitchContainer');
+    this.lightSwitch = by('LightSwitch') || by('LightSwitchContainer');
     this.terminal = by('Terminal');
-    this.shipInside = by('ShipInside');
     this.clipboard = by('ClipboardManual');
-    // catwalk / interior entry points
-    this.shipInterior = by('ShipInside.001') || this.shipInside;
-    // audio nodes
+    this.btnOpen = by('StartButton'); this.btnClose = by('StopButton');
+    this.animDoorNode = by('AnimatedShipDoor'); this.buttonPanel = by('HangarDoorButtonPanel');
+    this.lightsNode = by('ShipElectricLights');
     const clipOf = n => { const o = by(n); if (!o) return null; const c = o.userData.node.comps.find(x => x.t === 'Audio'); return c ? c.clip : null; };
     this.clips = {
       thruster: clipOf('ThrusterAmbientAudio'), turbulence: clipOf('ShipLandingTurbulence'), lamp: clipOf('LampSqueakAudio'),
       doorsJingle: clipOf('ShipDoorsCloseJingle'), hangarDoor: clipOf('HangarDoorAudioSource'), shipAmb: clipOf('HangarShip'),
     };
-    const mb = (n, cls) => { const o = by(n); if (!o) return null; return o.userData.node.comps.find(x => x.t === 'MB' && x.cls === cls) || null; };
-    const shipDoorEv = mb('AnimatedShipDoor', 'PlayAudioAnimationEvent');
+    const mb = (o, cls) => o ? (o.userData.node.comps.find(x => x.t === 'MB' && x.cls === cls) || null) : null;
+    const shipDoorEv = mb(this.animDoorNode, 'PlayAudioAnimationEvent');
     if (shipDoorEv && shipDoorEv.d) { this.clips.doorOpen = shipDoorEv.d.audioClip?.$ || null; this.clips.doorShut = shipDoorEv.d.audioClip2?.$ || null; }
-    const leverEv = mb('HangarDoorLever', 'PlayAudioAnimationEvent');
+    const leverEv = mb(this.leverModel, 'PlayAudioAnimationEvent');
     if (leverEv && leverEv.d) { this.clips.leverStart = leverEv.d.audioClip2?.$ || leverEv.d.audioClip?.$; this.clips.leverEnd = leverEv.d.audioClip?.$; }
-    const sw = mb('LightSwitch', 'AnimatedObjectTrigger');
+    const sw = mb(this.lightSwitch, 'AnimatedObjectTrigger');
     if (sw && sw.d) { this.clips.switchOn = sw.d.boolTrueAudios?.[0]?.$ || sw.d.boolFalseAudios?.[0]?.$; }
-    // ship lights: collect point lights under ShipElectricLights
+    const btn = mb(this.btnOpen ? this.btnOpen.children.find(c => c.name.startsWith('Cube')) : null, 'AnimatedObjectTrigger');
+    if (btn && btn.d) this.clips.button = btn.d.boolTrueAudios?.[0]?.$ || btn.d.boolFalseAudios?.[0]?.$;
+    // ship lights: point lights from the manifest; lamp materials glow
     this.shipLights = [];
     this.ship.root.traverse(o => { if (o.isLight) { o.userData.baseIntensity = o.intensity; this.shipLights.push(o); } });
-    // registered interactables (position in shipRoot space)
-    if (this.lever) this.interactables.push({ obj: this.lever, radius: 1.6, label: () => this.shipState === 'orbit' ? '[E] Pull lever : land ship' : this.shipState === 'landed' ? '[E] Pull lever : leave moon' : '', action: () => this.pullLever() });
-    if (this.lightSwitch) this.interactables.push({ obj: this.lightSwitch, radius: 1.3, label: () => '[E] Light switch', action: () => this.toggleLights() });
-    if (this.terminal) this.interactables.push({ obj: this.terminal, radius: 1.8, label: () => '[E] Terminal', action: () => this.game.openTerminal() });
-    if (this.clipboard) this.interactables.push({ obj: this.clipboard, radius: 1.3, label: () => '[E] Read clipboard', action: () => this.game.showManual() });
-    // dim scene inside ship uses point lights from manifest; tone them
-    for (const l of this.shipLights) { l.intensity = Math.min(l.userData.baseIntensity, 40) * 0.02; l.decay = 2; l.distance = Math.max(l.distance, 12); l.castShadow = false; }
+    this.lampMaterials = new Set();
+    this.ship.root.traverse(o => { if (o.isMesh && o.material && o.material.emissive && o.material.emissiveIntensity > 0.05) { o.material.userData.baseEmissive = o.material.emissiveIntensity; this.lampMaterials.add(o.material); } });
+    // interactables
+    if (this.lever) this.interactables.push({ obj: this.lever, radius: 1.5, label: () => this.shipState === 'orbit' ? '[E] Pull lever : land ship' : this.shipState === 'landed' ? '[E] Pull lever : leave moon' : '', action: () => this.pullLever() });
+    if (this.lightSwitch) this.interactables.push({ obj: this.lightSwitch, radius: 1.0, label: () => '[E] Switch lights', action: () => this.toggleLights() });
+    if (this.terminal) this.interactables.push({ obj: this.terminal, radius: 1.6, label: () => '[E] Use terminal', action: () => this.game.openTerminal() });
+    if (this.clipboard) this.interactables.push({ obj: this.clipboard, radius: 1.0, label: () => '[E] Read clipboard', action: () => this.game.showManual() });
+    if (this.btnOpen) this.interactables.push({ obj: this.btnOpen, radius: 0.5, label: () => this.doorsOpen ? 'Open door' : '[E] Open door', action: () => this.pressDoorButton(true) });
+    if (this.btnClose) this.interactables.push({ obj: this.btnClose, radius: 0.5, label: () => !this.doorsOpen ? 'Close door' : '[E] Close door', action: () => this.pressDoorButton(false) });
   }
+
+  async _setupShipAnimators() {
+    const mk = async (obj, ctrl) => { if (!obj) return null; const a = new Animator(obj, ctrl); await a.load(); return a.ready && a.names().length ? a : null; };
+    const ctrlOf = o => o ? (o.userData.node.comps.find(c => c.t === 'Animator') || {}).controller : null;
+    this.anims.ship = await mk(this.shipObj, ctrlOf(this.shipObj));
+    this.anims.door = await mk(this.animDoorNode, ctrlOf(this.animDoorNode));
+    this.anims.lever = await mk(this.leverModel, ctrlOf(this.leverModel));
+    this.anims.lights = await mk(this.lightsNode, ctrlOf(this.lightsNode));
+    this.anims.switch = await mk(this.lightSwitch, ctrlOf(this.lightSwitch));
+    this.anims.panel = await mk(this.buttonPanel, ctrlOf(this.buttonPanel));
+    console.log('ship animators', Object.fromEntries(Object.entries(this.anims).map(([k, v]) => [k, v ? v.names().join(',') : null])));
+  }
+
+  playShip(name, opts) { const a = this.anims.ship; if (a && a.has(name)) return a.play(name, opts); return null; }
 
   toggleLights() {
     this.lightsOn = !this.lightsOn;
     this.game.sound.play(this.clips.switchOn, { pos: this.worldPosOf(this.lightSwitch), vol: 0.7 });
+    if (this.anims.switch) this.anims.switch.play('LightSwitchFlick', { once: true, loop: false, fade: 0 });
   }
 
   worldPosOf(o) { const v = new THREE.Vector3(); o.getWorldPosition(v); return v; }
 
   pullLever() {
-    if (this.shipState === 'orbit') { this.setShipState('landing'); this.game.onShipDeparting(false); }
-    else if (this.shipState === 'landed') { this.setShipState('leaving'); this.game.onShipDeparting(true); }
-    if (this.leverModel) this.leverModel.rotation.x = this.shipState === 'landing' ? 0.6 : -0.6;
-    this.game.sound.play(this.clips.leverStart, { pos: this.worldPosOf(this.lever), vol: 0.8 });
+    if (this.shipState !== 'orbit' && this.shipState !== 'landed') return;
+    const landing = this.shipState === 'orbit';
+    if (this.anims.lever) this.anims.lever.play(landing ? 'IntroLeverPull' : 'IntroLeverPush', { once: true, loop: false, fade: 0.05 });
+    this.game.sound.play(landing ? this.clips.leverStart : this.clips.leverEnd, { pos: this.worldPosOf(this.lever), vol: 0.8 });
+    if (landing) { this.setShipState('landing'); this.game.onShipDeparting(false); }
+    else { this.setShipState('leaving'); this.game.onShipDeparting(true); }
   }
 
-  setShipState(s) {
+  pressDoorButton(open) {
+    if (this.shipState === 'orbit' && open) { this.game.hud.showTip('The doors stay shut in orbit.', 2); return; }
+    if (this.anims.panel) this.anims.panel.play(open ? 'StartButton' : 'StopButton', { once: true, loop: false, fade: 0 });
+    if (this.clips.button) this.game.sound.play(this.clips.button, { pos: this.worldPosOf(open ? this.btnOpen : this.btnClose), vol: 0.6 });
+    this.setDoors(open);
+  }
+
+  setShipState(s, instant = false) {
     this.shipState = s; this.shipT = 0;
-    if (s === 'orbit') { this.shipRoot.position.y = this.shipLandingPos.y + 400; this.setDoors(false, true); this.moonRoot.visible = false; }
-    if (s === 'landing') { this.moonRoot.visible = true; this.startLoop('turbulence', this.clips.turbulence, { vol: 0.9 }); }
-    if (s === 'landed') { this.shipRoot.position.y = this.shipLandingPos.y; this.stopLoop('turbulence'); this.setDoors(true); this.time = 0; }
-    if (s === 'leaving') { this.setDoors(false); this.startLoop('turbulence', this.clips.turbulence, { vol: 0.9 }); }
+    const a = this.anims.ship;
+    if (s === 'orbit') {
+      this.moonRoot.visible = false;
+      this.setDoors(false, true);
+      if (a && a.has('ShipIdle')) a.play('ShipIdle', { fade: instant ? 0 : 0.5 });
+      else this.shipObj.position.copy(SHIP_LANDED_LOCAL).add(new THREE.Vector3(-98, 70, 0));
+    }
+    if (s === 'landing') {
+      this.moonRoot.visible = true;
+      this.startLoop('turbulence', this.clips.turbulence, { vol: 0.9 });
+      if (a && a.has('HangarShipLandB')) { const act = a.play('HangarShipLandB', { once: true, loop: false, fade: 0.2 }); this.shipClipLen = a.clips.get('HangarShipLandB').data.length; }
+      else this.shipClipLen = 9;
+    }
+    if (s === 'landed') {
+      this.stopLoop('turbulence');
+      if (a && a.has('ShipIdleLanded')) a.play('ShipIdleLanded', { once: true, loop: false, fade: 0.1 });
+      else this.shipObj.position.copy(SHIP_LANDED_LOCAL);
+      this.setDoors(true);
+      this.time = 0;
+    }
+    if (s === 'leaving') {
+      this.setDoors(false);
+      this.startLoop('turbulence', this.clips.turbulence, { vol: 0.9 });
+      if (a && a.has('ShipLeave')) { a.play('ShipLeave', { once: true, loop: false, fade: 0.2 }); this.shipClipLen = a.clips.get('ShipLeave').data.length; }
+      else this.shipClipLen = 8;
+    }
   }
 
   setDoors(open, instant = false) {
     if (this.doorsOpen === open && !instant) return;
     this.doorsOpen = open;
-    if (instant) this.doorT = open ? 1 : 0;
+    const a = this.anims.door;
+    if (a) {
+      const name = open ? 'ShipDoorOpen' : 'ShipDoorClose';
+      if (a.has(name)) { const act = a.play(name, { once: true, loop: false, fade: 0 }); if (instant && act) { act.time = a.clips.get(name).data.length - 0.001; a.mixer.update(0); } }
+    }
     if (!instant) this.game.sound.play(open ? this.clips.doorOpen : this.clips.doorShut, { pos: this.worldPosOf(this.doorL || this.shipObj), vol: 0.9, min: 3, max: 60 });
   }
 
@@ -145,7 +207,6 @@ export class World {
   // ---------- moon ----------
   _setupMoonParts() {
     const by = n => this.moon.byName.get(n) || [];
-    // entrances: EntranceTeleportA (main), EntranceTeleportB (fire exit); telePoint child = where you appear when exiting
     const ents = [];
     for (const [id, o] of this.moon.objs) {
       const n = o.userData.node;
@@ -154,21 +215,32 @@ export class World {
         const tp = o.children.find(ch => ch.name === 'telePoint');
         ents.push({ obj: o, tele: tp || o, id: et.d?.entranceId ?? 0, isEntrance: et.d?.isEntranceToBuilding, clips: [et.d?.doorAudios?.[0]?.$, et.d?.doorAudios?.[1]?.$].filter(Boolean) });
       }
+      // ladders
+      const lt = n.comps.find(c => c.t === 'MB' && c.cls === 'InteractTrigger' && c.d && c.d.isLadder);
+      if (lt) {
+        const get = k => { const r = lt.d[k]; return r && r.$ ? this.moon.objs.get(r.$) : null; };
+        const top = get('topOfLadderPosition'), bottom = get('bottomOfLadderPosition'), horiz = get('ladderHorizontalPosition'), node = get('ladderPlayerPositionNode');
+        if (top && bottom) this.ladders.push({ obj: o, top, bottom, horiz: horiz || o, node: node || horiz || o, tip: lt.d.hoverTip || 'Climb' });
+      }
     }
     ents.sort((a, b) => a.id - b.id);
     this.entrance = ents[0] || null; this.fireExit = ents[1] || null;
-    // outside AI nodes
     this.outsideNodes = [];
     for (const o of by('OutsideAIPoints')) o.children.forEach(c => this.outsideNodes.push(this.worldPosOf(c)));
     if (!this.outsideNodes.length) { this.moon.root.traverse(o => { if (/OutsideAINode/.test(o.name)) this.outsideNodes.push(this.worldPosOf(o)); }); }
-    // moon lights
     this.moon.root.traverse(o => { if (o.isLight) { o.userData.baseIntensity = o.intensity; this.moonLights.push(o); } });
     for (const l of this.moonLights) {
       if (l.isPointLight || l.isSpotLight) { l.intensity = Math.min(l.userData.baseIntensity, 60) * 0.03; l.distance = Math.max(l.distance, 14); l.decay = 2; l.castShadow = false; }
       else if (l.isDirectionalLight) { l.visible = false; }
     }
-    // entrance door visuals (OutsideEntranceVisualDoorsContainer) - keep static
-    // quicksand: skip
+    for (const ld of this.ladders) {
+      const top = this.worldPosOf(ld.top), bottom = this.worldPosOf(ld.bottom);
+      const mid = top.clone().add(bottom).multiplyScalar(0.5);
+      ld.topPos = top; ld.bottomPos = bottom; ld.height = Math.abs(top.y - bottom.y);
+      const hp = this.worldPosOf(ld.node);
+      ld.lineX = hp.x; ld.lineZ = hp.z;
+      this.interactables.push({ pos: mid, radius: Math.max(1.2, ld.height * 0.5), label: () => '[E] Climb ladder', action: () => this.game.player.startLadder(ld), area: 'outside' });
+    }
   }
 
   // ---------- sky / time ----------
@@ -185,13 +257,11 @@ export class World {
     this.ambient = new THREE.AmbientLight(0x403830, 0.35); this.scene.add(this.ambient);
     this.scene.fog = new THREE.FogExp2(0x5c4e44, 0.012);
     this.scene.background = new THREE.Color(0x5c4e44);
-    // stars for orbit
     const g = new THREE.BufferGeometry(); const pts = [];
     for (let i = 0; i < 1500; i++) { const v = new THREE.Vector3().randomDirection().multiplyScalar(900); pts.push(v.x, v.y, v.z); }
     g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
     this.stars = new THREE.Points(g, new THREE.PointsMaterial({ color: 0xffffff, size: 2.2, sizeAttenuation: true, fog: false }));
     this.scene.add(this.stars);
-    // planet in orbit view
     const planet = new THREE.Mesh(new THREE.SphereGeometry(260, 48, 32), new THREE.MeshStandardMaterial({ color: 0x7a5a48, roughness: 1, fog: false }));
     planet.position.set(120, -420, -520); this.planet = planet; this.scene.add(planet);
   }
@@ -199,55 +269,35 @@ export class World {
   get inOrbit() { return this.shipState === 'orbit'; }
 
   update(dt) {
-    // ship motion
+    for (const a of Object.values(this.anims)) if (a) a.update(dt);
     if (this.shipState === 'landing') {
       this.shipT += dt;
-      const T = 9; const t = Math.min(1, this.shipT / T);
-      const e = 1 - Math.pow(1 - t, 3);
-      this.shipRoot.position.y = this.shipLandingPos.y + 400 * (1 - e);
-      this.shipRoot.rotation.z = Math.sin(this.shipT * 7) * 0.004 * (1 - t);
-      if (t >= 1) { this.shipRoot.rotation.z = 0; this.setShipState('landed'); this.game.onShipLanded(); }
+      if (this.shipT >= (this.shipClipLen || 9) - 0.05) { this.setShipState('landed'); this.game.onShipLanded(); }
     } else if (this.shipState === 'leaving') {
       this.shipT += dt;
-      if (this.shipT > 3.5) {
-        const t = Math.min(1, (this.shipT - 3.5) / 8);
-        this.shipRoot.position.y = this.shipLandingPos.y + 400 * t * t;
-        if (t >= 1) { this.setShipState('orbit'); this.game.onShipLeft(); }
-      }
+      if (this.shipT >= (this.shipClipLen || 8) - 0.05) { this.setShipState('orbit'); this.game.onShipLeft(); }
     } else if (this.shipState === 'landed') {
       this.time += dt;
     }
-    // doors slide
-    const target = this.doorsOpen ? 1 : 0;
-    this.doorT += (target - this.doorT) * Math.min(1, dt * 2.2);
-    if (this.doorL && this.doorLRest) { this.doorL.position.z = this.doorLRest.z - 2.2 * this.doorT; }
-    if (this.doorR && this.doorRRest) { this.doorR.position.z = this.doorRRest.z + 2.2 * this.doorT; }
-    // time of day
-    if (this.shipState === 'landed' || this.shipState === 'leaving') {
-      this.dayFrac = Math.min(1, this.time / DAY_SECONDS);
-    }
-    const hoursTotal = END_HOUR - START_HOUR;
-    this.hour = START_HOUR + this.dayFrac * hoursTotal;
+    this.shipRoot.updateMatrixWorld(true);
+    if (this.shipState === 'landed' || this.shipState === 'leaving') this.dayFrac = Math.min(1, this.time / DAY_SECONDS);
+    this.hour = START_HOUR + this.dayFrac * (END_HOUR - START_HOUR);
     this._updateSky();
-    // ship lights
     const lit = this.lightsOn ? 1 : 0;
-    for (const l of this.shipLights) l.intensity += ((l.userData.baseIntensity > 0 ? Math.min(l.userData.baseIntensity, 40) * 0.02 : 0) * lit - l.intensity) * Math.min(1, dt * 10);
+    for (const m of this.lampMaterials) m.emissiveIntensity += ((m.userData.baseEmissive || 1) * lit - m.emissiveIntensity) * Math.min(1, dt * 10);
   }
 
   _updateSky() {
     const orbit = this.shipState === 'orbit';
-    // sun elevation: rises from ~20deg at 8AM to 55 at 1PM, sets ~7PM
     const f = this.dayFrac;
     const elev = orbit ? 0.6 : Math.sin(Math.PI * Math.min(1, Math.max(0, (f - 0.02) / 0.72))) * 0.95 - 0.05;
-    const dusk = THREE.MathUtils.smoothstep(f, 0.55, 0.78);   // 6PM -> 9PM darkening
+    const dusk = THREE.MathUtils.smoothstep(f, 0.55, 0.78);
     const night = THREE.MathUtils.smoothstep(f, 0.7, 0.9);
     const az = -0.8 + f * 2.6;
     this.sun.position.set(Math.cos(az) * 120, Math.max(0.03, elev) * 150, Math.sin(az) * 120).add(this.sunTarget.position);
     const dayCol = new THREE.Color(0xffe2c0), duskCol = new THREE.Color(0xd06a3a), nightCol = new THREE.Color(0x1a2038);
-    const sunCol = dayCol.clone().lerp(duskCol, dusk).lerp(nightCol, night);
-    this.sun.color.copy(sunCol);
+    this.sun.color.copy(dayCol.clone().lerp(duskCol, dusk).lerp(nightCol, night));
     this.sun.intensity = orbit ? 2.0 : (1.4 * Math.max(0, elev) + 0.15) * (1 - night * 0.97);
-    this.sun.visible = true;
     const fogDay = new THREE.Color(0x5e5048), fogDusk = new THREE.Color(0x3f2b24), fogNight = new THREE.Color(0x07080b);
     const fog = fogDay.clone().lerp(fogDusk, dusk).lerp(fogNight, night);
     if (orbit) { this.scene.fog.density = 0.0; this.scene.background.set(0x000004); this.stars.visible = true; this.planet.visible = true; }
@@ -256,16 +306,19 @@ export class World {
     this.hemi.intensity = orbit ? 0.25 : this.game.inside ? 0.06 : 0.55 * (1 - night * 0.9) + 0.03;
     this.hemi.color.copy(new THREE.Color(0x9a8c84).lerp(new THREE.Color(0x202838), night));
     this.ambient.intensity = orbit ? 0.15 : this.game.inside ? 0.05 : 0.3 * (1 - night * 0.85) + 0.02;
-    this.inside = false;
   }
 
-  /** keep shadow camera centred on the player */
   setFocus(p) { this.sunTarget.position.copy(p); this.sunTarget.updateMatrixWorld(); }
-
-  clockText() {
-    const h = Math.floor(this.hour) % 24; const m = Math.floor((this.hour % 1) * 60);
-    return { h, m };
-  }
-
+  clockText() { const h = Math.floor(this.hour) % 24; const m = Math.floor((this.hour % 1) * 60); return { h, m }; }
   isNight() { return this.dayFrac > 0.72; }
+
+  /** is a world point inside the ship's room (local box of HangarShip) */
+  inShipRoom(worldPos) {
+    const l = this.shipObj.worldToLocal(worldPos.clone());
+    return l.x > -10.8 && l.x < 7.2 && l.z > -12.6 && l.z < -1.0 && l.y > -2.5 && l.y < 5.5;
+  }
+  onShipDeck(worldPos) {
+    const l = this.shipObj.worldToLocal(worldPos.clone());
+    return l.x > -11.5 && l.x < 13 && l.z > -13.5 && l.z < 1.5 && l.y > -3 && l.y < 6;
+  }
 }

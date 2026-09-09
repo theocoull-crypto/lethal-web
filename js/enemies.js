@@ -36,6 +36,9 @@ const BEHAVIOURS = {
   DocileLocustBees: { kind: 'locust' },
 };
 
+// demo roster: most of the moon's monsters are left out on purpose
+const DEMO_ENEMIES = new Set(['Flowerman', 'HoarderBug', 'Centipede', 'Crawler', 'MouthDog', 'DoublewingedBird']);
+
 export class Enemies {
   constructor(game) {
     this.game = game; this.lib = game.lib;
@@ -60,7 +63,7 @@ export class Enemies {
   onPlayerEntered(inside) { }
 
   pickWeighted(list, budget) {
-    const cands = list.filter(e => e.man && e.beh.kind !== 'none' && (e.power || 1) <= budget && this.list.filter(x => x.def === e).length < (e.maxCount || 1));
+    const cands = list.filter(e => e.man && e.beh.kind !== 'none' && DEMO_ENEMIES.has(e.prefab.split('__')[0]) && (e.power || 1) <= budget && this.list.filter(x => x.def === e).length < (e.maxCount || 1));
     const total = cands.reduce((a, e) => a + e.rarity, 0);
     if (!total) return null;
     let r = Math.random() * total;

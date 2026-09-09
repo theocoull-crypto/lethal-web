@@ -25,19 +25,44 @@ export class Items {
     this.cueTimer = 20;
     this.swingT = 0;
     this.honks = 0;
+    this.deliveries = []; this.deliveryTimer = 0;
+  }
+
+  // ---------- store deliveries ----------
+  queueDelivery(tool, name) { this.deliveries.push({ tool, name }); if (this.deliveryTimer <= 0) this.deliveryTimer = 30; }
+  onLanded() { if (this.deliveries.length && this.deliveryTimer <= 0) this.deliveryTimer = 25; }
+  async _deliver() {
+    const g = this.game; const list = this.deliveries.splice(0);
+    // drop next to the ship, in front of the door
+    const base = g.world.shipObj.localToWorld(new THREE.Vector3(-14.5, 0.5, -6.5));
+    const c = this.sfx('deliver'); if (c) g.sound.play(c, { pos: base, vol: 0.9, min: 4, max: 80 });
+    for (let i = 0; i < list.length; i++) {
+      const t = this.toolDefs[list[i].tool]; if (!t) continue;
+      const def = Object.assign({ name: list[i].name, prefab: t.prefab, weight: 1.05 }, t.item, { itemName: t.item.itemName || list[i].name });
+      const it = await this.makeInstance(def, 0); it.name = def.itemName; if (list[i].tool === 'FlashlightItem') it.isFlashlight = true;
+      g.scene.add(it.obj);
+      this.placeOnFloor(it, base.clone().add(new THREE.Vector3((i % 3) * 0.9, 0.3, Math.floor(i / 3) * 0.9)), [g.world.moonCollider], Math.random() * 6.28);
+      it.area = 'outside'; it.onShip = false;
+      this.world.push(it);
+    }
+    g.hud.showTip('Your order has been delivered next to the ship.', 5);
   }
 
   async load() {
     this.catalog = this.game.dungeon.catalog;
     const sys = await this.lib.manifest('scenes/systems.json').catch(() => null);
+    const shipMan = await this.lib.manifest('scenes/ship.json').catch(() => null);
+    const nodesAll = [].concat(sys ? sys.nodes : [], shipMan ? shipMan.nodes : []);
     if (sys) {
-      for (const n of sys.nodes) for (const c of n.comps) {
+      for (const n of nodesAll) for (const c of n.comps) {
         if (c.t !== 'MB' || !c.d) continue;
         const d = c.d, id = x => x && x.$;
         if (c.cls === 'StartOfRound') {
           for (const s of (d.footstepSurfaces || [])) this.footsteps[(s.surfaceTag || '').toLowerCase()] = (s.clips || []).map(id).filter(Boolean);
           Object.assign(this.sfxTable, { damage: id(d.damageSFX), fallDamage: id(d.fallDamageSFX), landSoft: id(d.playerHitGroundSoft), landHard: id(d.playerHitGroundHard), jump: id(d.playerJumpSFX), death: id(d.playerFallDeath), grab: id(d.playerGrabSFX), space: id(d.suckedIntoSpaceSFX), fired: id(d.firedVoiceSFX), depart: id(d.shipDepartSFX), arrive: id(d.shipArriveSFX), alarm: id(d.alarmSFX), zeroDays: id(d.zeroDaysLeftAlertSFX), doorMetal: id(d.shutDoorMetal), intro: id(d.shipIntroSpeechSFX) });
         }
+        if (c.cls === 'Terminal') Object.assign(this.sfxTable, { enterTerminal: id(d.enterTerminalSFX), exitTerminal: id(d.leaveTerminalSFX), key: pickClip(d.keyboardClips), purchase: id(d.syncedAudios ? d.syncedAudios[0] : null) });
+        if (c.cls === 'ItemDropship') Object.assign(this.sfxTable, { deliver: id(d.shipLandAudio || d.shipAudio) });
         if (c.cls === 'HUDManager') Object.assign(this.sfxTable, { scan: id(d.scanSFX), alert: pickClip(d.warningSFX), notify: id(d.globalNotificationSFX), results: pickClip(d.endStatsMusic), addScrap: id(d.addToScrapTotalSFX), finishScrap: id(d.finishAddingToTotalSFX), tips: pickClip(d.tipsSFX), newQuota: id(d.newProfitQuotaSFX), reachedQuota: id(d.reachedQuotaSFX), oneDay: id(d.OneDayToMeetQuotaSFX), critical: id(d.criticalInjury) });
         if (c.cls === 'SoundManager') Object.assign(this.sfxTable, { heartbeat: pickClip(d.heartbeatClips), steelOpen: pickClip(d.steelDoorOpenSFX), steelClose: pickClip(d.steelDoorCloseSFX) });
         if (c.cls === 'TimeOfDay') this.sfxTable.timeCues = (d.timeOfDayCues || []).map(id);
@@ -215,9 +240,8 @@ export class Items {
     const g = this.game;
     if (g.inside) { g.dungeon.root.add(it.obj); this.placeOnFloor(it, pos, [g.dungeon.collider], g.player.yaw); it.area = 'inside'; it.onShip = false; }
     else {
-      const local = g.world.shipRoot.worldToLocal(pos.clone());
-      const onShip = local.x > -9 && local.x < 11.5 && local.z > -12.5 && local.z < -1 && local.y > -2.5 && local.y < 5;
-      if (onShip) { g.world.shipRoot.add(it.obj); this.placeOnFloor(it, pos, [g.world.shipCollider], g.player.yaw); it.obj.position.copy(g.world.shipRoot.worldToLocal(it.obj.position.clone())); it.onShip = local.x > -2.9; it.area = 'ship'; }
+      const onDeck = g.world.onShipDeck(pos);
+      if (onDeck) { g.scene.add(it.obj); this.placeOnFloor(it, pos, [g.world.shipCollider, ...g.world.doorColliders], g.player.yaw); g.world.shipObj.attach(it.obj); it.onShip = g.world.inShipRoom(it.obj.getWorldPosition(new THREE.Vector3())); it.area = 'ship'; }
       else { g.scene.add(it.obj); this.placeOnFloor(it, pos, [g.world.moonCollider, g.world.shipCollider], g.player.yaw); it.onShip = false; it.area = 'outside'; }
     }
     this.world.push(it);
@@ -270,6 +294,7 @@ export class Items {
   clearInventory() { for (let i = 0; i < 4; i++) { const it = this.inventory[i]; if (it) { this.game.camera.remove(it.obj); this.inventory[i] = null; } } this.select(0); this.updateWeight(); }
 
   update(dt) {
+    if (this.deliveryTimer > 0 && !this.game.world.inOrbit && this.game.world.shipState === 'landed') { this.deliveryTimer -= dt; if (this.deliveryTimer <= 0 && this.deliveries.length) this._deliver(); }
     if (this.swingT > 0) { this.swingT -= dt; if (this.heldObj) this.heldObj.rotation.x = Math.sin(this.swingT * 10) * 0.8; }
     // held item sway
     if (this.heldObj) { const p = this.game.player; this.heldObj.position.y += (Math.sin(p.bob * 2) * p.bobAmp * 0.5 - (this.heldObj.userData.sw || 0)); this.heldObj.userData.sw = Math.sin(p.bob * 2) * p.bobAmp * 0.5; }

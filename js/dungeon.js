@@ -82,7 +82,9 @@ export class Dungeon {
           doorways.push({
             node: n, pos, q, fwd, socket: (c.d.socket || {}).n || 'NormalDoor', priority: c.d.DoorPrefabPriority || 0,
             connectors: (c.d.ConnectorPrefabWeights || []).map(w => w.GameObject && w.GameObject.$).filter(Boolean),
+            connectorWeights: (c.d.ConnectorPrefabWeights || []).filter(w => w.GameObject && w.GameObject.$).map(w => w.Weight ?? 1),
             blockers: (c.d.BlockerPrefabWeights || []).map(w => w.GameObject && w.GameObject.$).filter(Boolean),
+            blockerWeights: (c.d.BlockerPrefabWeights || []).filter(w => w.GameObject && w.GameObject.$).map(w => w.Weight ?? 1),
             connScene: (c.d.ConnectorSceneObjects || []).map(x => x && x.$).filter(Boolean),
             blockScene: (c.d.BlockerSceneObjects || []).map(x => x && x.$).filter(Boolean),
           });
@@ -116,7 +118,7 @@ export class Dungeon {
       console.warn('dungeon: retrying generation', attempt);
     }
     await this._finalize();
-    console.log('dungeon: placed', this.placed.length, 'tiles, doors', this.doors.length, 'scrap spawns', this.scrapSpawns.length, 'vents', this.vents.length);
+    console.log('dungeon: placed', this.placed.length, 'tiles, doors', this.doors.length, 'scrap spawns', this.scrapSpawns.length, 'vents', this.vents.length, 'fire exits', this.fireExits.length);
   }
 
   pickWeighted(entries, rnd, key, depth) {
@@ -235,7 +237,9 @@ export class Dungeon {
     const lib = this.lib;
     const collision = [];
     const propGroups = new Map();
-    this.doors = []; this.scrapSpawns = []; this.hazardSpawns = []; this.vents = []; this.lights = []; this.interactables = [];
+    this._propGroups = propGroups;
+    this._pendingSynced = [];
+    this.doors = []; this.scrapSpawns = []; this.hazardSpawns = []; this.vents = []; this.lights = []; this.interactables = []; this.fireExits = [];
     for (const t of this.placed) {
       const inst = await lib.instantiate(t.def.man, { lights: true, filter: n => true });
       const rootObj = inst.root.children[0];
@@ -283,7 +287,22 @@ export class Dungeon {
       }
       for (const id of propNodes) { const o = inst.objs.get(id); if (o && !o.userData.propOn) o.visible = false; }
     }
-    // global props by group budget
+    // doors + blockers at doorways (their global props / synced spawns are collected, not spawned yet)
+    for (const t of this.placed) {
+      for (const d of t.doorways) {
+        if (d.used) {
+          // one side spawns the door: the side with higher priority, or the tile placed first
+          const other = d.connected; const od = other.doorways.find(x => x.connected === t);
+          const mine = d.def.priority > (od ? od.def.priority : -1) || (d.def.priority === (od ? od.def.priority : -1) && t.index <= other.index && d.def.connectors.length);
+          if (mine && d.def.connectors.length) await this._spawnDoorPart(d, this._pickPart(d.def.connectorWeights, d.def.connectors), t, true);
+          else if (mine && !d.def.connectors.length && od && od.def.connectors.length) await this._spawnDoorPart(od, od.def.connectors[0], other, true);
+        } else if (d.def.blockers.length) {
+          await this._spawnDoorPart(d, this._pickPart(d.def.blockerWeights, d.def.blockers), t, false);
+        }
+      }
+      for (const s of (t.synced || [])) this._pendingSynced.push([s, t]);
+    }
+    // global props by group budget: tiles AND door parts together (this is what limits fire exits to one)
     for (const [g, list] of propGroups) {
       const range = (this.catalog.flow.GlobalProps || []).find(x => x.ID === g);
       const min = range ? range.Count.Min : 0, max = range ? range.Count.Max : 2;
@@ -295,23 +314,11 @@ export class Dungeon {
         const o = pick.inst.objs.get(pick.id); if (o) o.visible = true;
       }
     }
-    // doors + blockers at doorways
-    for (const t of this.placed) {
-      for (const d of t.doorways) {
-        if (d.used) {
-          // one side spawns the door: the side with higher priority, or the tile placed first
-          const other = d.connected; const od = other.doorways.find(x => x.connected === t);
-          const mine = d.def.priority > (od ? od.def.priority : -1) || (d.def.priority === (od ? od.def.priority : -1) && t.index <= other.index && d.def.connectors.length);
-          if (mine && d.def.connectors.length) await this._spawnDoorPart(d, d.def.connectors[Math.floor(this.rnd() * d.def.connectors.length)], t, true);
-          else if (mine && !d.def.connectors.length && od && od.def.connectors.length) await this._spawnDoorPart(od, od.def.connectors[0], other, true);
-        } else if (d.def.blockers.length) {
-          await this._spawnDoorPart(d, d.def.blockers[Math.floor(this.rnd() * d.def.blockers.length)], t, false);
-        }
-      }
-      // synced objects (vents, valves, breaker box, entrance teleports)
-      for (const s of (t.synced || [])) await this._spawnSynced(s, t);
+    // synced objects (vents, valves, breaker box, entrance teleports) - only under active objects
+    for (const [s, t] of this._pendingSynced) {
+      let p = s.obj, on = true; while (p && p !== this.root) { if (p.visible === false) { on = false; break; } p = p.parent; }
+      if (on) await this._spawnSynced(s, t);
     }
-    // entrance / fire exit inside positions: EntranceTeleportA/B prefabs spawned in tiles via SpawnSyncedObject
     // collision
     const entries = [];
     for (const t of this.placed) {
@@ -367,6 +374,13 @@ export class Dungeon {
     t.mergedCount = count;
   }
 
+  _pickPart(weights, ids) {
+    let total = 0; for (const w of weights) total += Math.max(0, w);
+    let r = this.rnd() * (total || ids.length);
+    for (let i = 0; i < ids.length; i++) { r -= total ? Math.max(0, weights[i]) : 1; if (r <= 0) return ids[i]; }
+    return ids[ids.length - 1];
+  }
+
   async _spawnDoorPart(d, prefabAid, tile, isConnector) {
     const file = this.catalog.doorParts.find(f => f.endsWith('__' + prefabAid + '.json'));
     if (!file) return;
@@ -377,10 +391,16 @@ export class Dungeon {
     inst.root.position.copy(d.pos); inst.root.quaternion.copy(d.q);
     this.root.add(inst.root); inst.root.updateMatrixWorld(true);
     tile.extraInst = (tile.extraInst || []).concat([inst]);
-    // nested synced spawns (e.g. BigDoorSpawn -> BigDoor)
+    // nested synced spawns (e.g. BigDoorSpawn -> BigDoor, blockers -> EntranceTeleportB) and global props (fire exit containers)
     for (const n of man.nodes) for (const c of n.comps) {
-      if (c.t === 'MB' && c.cls === 'SpawnSyncedObject' && c.d && c.d.spawnPrefab) {
-        const o = inst.objs.get(n.id); if (o) await this._spawnSynced({ obj: o, prefab: c.d.spawnPrefab.$, name: c.d.spawnPrefab.n }, tile);
+      if (c.t !== 'MB' || !c.d) continue;
+      if (c.cls === 'SpawnSyncedObject' && c.d.spawnPrefab) {
+        const o = inst.objs.get(n.id); if (o) this._pendingSynced.push([{ obj: o, prefab: c.d.spawnPrefab.$, name: c.d.spawnPrefab.n }, tile]);
+      } else if (c.cls === 'GlobalProp') {
+        const o = inst.objs.get(n.id); if (o) o.visible = false;
+        const g = c.d.PropGroupID;
+        if (!this._propGroups.has(g)) this._propGroups.set(g, []);
+        this._propGroups.get(g).push({ inst, id: n.id, main: c.d.MainPathWeight, branch: c.d.BranchPathWeight, isMain: tile.isMain, depthF: tile.depthF });
       }
     }
   }
@@ -408,7 +428,7 @@ export class Dungeon {
     const p = tele.getWorldPosition(new THREE.Vector3()); const q = tele.getWorldQuaternion(new THREE.Quaternion());
     const f = new THREE.Vector3(0, 0, 1).applyQuaternion(q);
     const spot = { pos: p.clone().add(new THREE.Vector3(0, 0.1, 0)), yaw: Math.atan2(-f.x, -f.z) };
-    if (isFire) this.fireExitInside = spot; else this.entranceInside = spot;
+    if (isFire) { this.fireExitInside = spot; this.fireExits.push(spot); } else this.entranceInside = spot;
     const doorPos = root.getWorldPosition(new THREE.Vector3());
     this.interactables.push({ pos: doorPos.clone().add(new THREE.Vector3(0, 1.2, 0)), radius: 1.6, label: () => isFire ? '[E] Exit (fire exit)' : '[E] Exit facility', action: () => this.game.exitFacility(isFire) });
   }

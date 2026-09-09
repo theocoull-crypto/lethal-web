@@ -81,7 +81,7 @@ export class Collider {
           hit = true;
           if (out) {
             const up = dir.y;
-            if (up > out.maxUp) out.maxUp = up;
+            if (up > out.maxUp) { out.maxUp = up; out.groundCollider = this; }
             if (up < out.minUp) out.minUp = up;
           }
         }
@@ -121,6 +121,8 @@ export async function collisionEntries(lib, inst, opts = {}) {
   for (const [id, o] of inst.objs) {
     const n = o.userData.node;
     if (!n || n.active === false) continue;
+    if (opts.exclude && opts.exclude(n)) continue;
+    if (opts.only && !opts.only(n)) continue;
     // skip inactive ancestors
     let p = o, dead = false; while (p && p !== inst.root) { if (p.visible === false) { dead = true; break; } p = p.parent; }
     if (dead) continue;

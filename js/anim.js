@@ -14,7 +14,7 @@ export async function loadAnimIndex() {
 
 /** Resolve "a/b/c" relative to the animator object by child names. */
 function findPath(root, path) {
-  if (!path) return root;
+  if (!path || path === 'null') return root;
   let o = root;
   for (const seg of path.split('/')) {
     if (!o) return null;

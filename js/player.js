@@ -60,7 +60,40 @@ export class Player {
   forward(out) { return out.set(-Math.sin(this.yaw), 0, -Math.cos(this.yaw)); }
   right(out) { return out.set(Math.cos(this.yaw), 0, -Math.sin(this.yaw)); }
 
+  startLadder(ld) {
+    if (this.ladder) return;
+    this.ladder = ld; this.vel.set(0, 0, 0); this.attachTo(null);
+    // snap onto the ladder line at the current height
+    const y = THREE.MathUtils.clamp(this.pos.y, Math.min(ld.topPos.y, ld.bottomPos.y), Math.max(ld.topPos.y, ld.bottomPos.y));
+    this.pos.set(ld.lineX, y, ld.lineZ);
+    this.game.onLadder(true);
+  }
+
+  stopLadder(atTop) {
+    const ld = this.ladder; if (!ld) return;
+    this.ladder = null;
+    if (atTop) { const f = new THREE.Vector3(ld.topPos.x - ld.lineX, 0, ld.topPos.z - ld.lineZ); if (f.lengthSq() < 0.01) this.forward(f); f.normalize(); this.pos.copy(ld.topPos).addScaledVector(f, 0.6); this.pos.y = ld.topPos.y + 0.1; }
+    this.game.onLadder(false);
+  }
+
+  _updateLadder(dt) {
+    const k = this.keys, ld = this.ladder;
+    if (this.locked && this.inputEnabled) { this.yaw -= this.mouse.dx * this.lookSensitivity; this.pitch -= this.mouse.dy * this.lookSensitivity; this.pitch = Math.max(-1.5, Math.min(1.5, this.pitch)); }
+    this.mouse.dx = this.mouse.dy = 0;
+    const up = (k.KeyW ? 1 : 0) - (k.KeyS ? 1 : 0);
+    const top = Math.max(ld.topPos.y, ld.bottomPos.y), bottom = Math.min(ld.topPos.y, ld.bottomPos.y);
+    this.pos.y += up * 3 * dt;
+    if (up !== 0) { this.stepTimer -= dt * 1.2; if (this.stepTimer <= 0) { this.stepTimer = 0.5; this.game.onLadderStep(); } }
+    if (this.pos.y >= top - 0.05 && up > 0) { this.stopLadder(true); return; }
+    if (this.pos.y <= bottom + 0.02 && up < 0) { this.pos.y = bottom; this.stopLadder(false); return; }
+    if (k.Space || k.KeyE && this._ladderExitOk) { this.stopLadder(false); return; }
+    const eye = this.pos.clone(); eye.y += this.eyeHeight;
+    this.camera.position.copy(eye);
+    this.camera.quaternion.setFromEuler(new THREE.Euler(this.pitch, this.yaw, 0, 'YXZ'));
+  }
+
   update(dt, colliders) {
+    if (this.ladder) { this._updateLadder(dt); return; }
     const k = this.keys;
     // look
     if (this.locked && this.inputEnabled) {
@@ -115,15 +148,15 @@ export class Player {
     // integrate in substeps to avoid tunnelling
     const steps = Math.max(1, Math.ceil(this.vel.length() * dt / 0.4));
     const sdt = dt / steps;
-    let grounded = false; let hitInfo = { maxUp: -1, minUp: 1 };
-    let landedSpeed = 0;
+    let grounded = false; let hitInfo = { maxUp: -1, minUp: 1, groundCollider: null };
+    let landedSpeed = 0; let groundCollider = null;
     for (let i = 0; i < steps; i++) {
       this.pos.addScaledVector(this.vel, sdt);
       // capsule segment: from feet+radius to top-radius
       const h = Math.max(this.height, this.radius * 2 + 0.05);
       _start.copy(this.pos).y += this.radius;
       _end.copy(this.pos).y += h - this.radius;
-      hitInfo = { maxUp: -1, minUp: 1 };
+      hitInfo = { maxUp: -1, minUp: 1, groundCollider: null };
       let any = false;
       for (let iter = 0; iter < 3; iter++) {
         let hit = false;
@@ -135,7 +168,7 @@ export class Player {
         this.pos.set(_start.x, _start.y - this.radius, _start.z);
         if (hitInfo.maxUp > 0.5) {
           if (this.vel.y < -0.5) landedSpeed = Math.min(landedSpeed, this.vel.y);
-          grounded = true;
+          grounded = true; groundCollider = hitInfo.groundCollider;
           if (this.vel.y < 0) this.vel.y = 0;
         } else if (hitInfo.minUp < -0.5 && this.vel.y > 0) {
           this.vel.y = 0; // head bump
@@ -155,12 +188,13 @@ export class Player {
       for (const c of colliders) {
         const hit = c.raycast(origin, probe, this.radius + 0.35);
         if (hit && hit.face && hit.face.normal.y > 0.5) {
-          this.pos.y = hit.point.y; grounded = true; if (this.vel.y < 0) { landedSpeed = Math.min(landedSpeed, this.vel.y); this.vel.y = 0; } break;
+          this.pos.y = hit.point.y; grounded = true; groundCollider = c; if (this.vel.y < 0) { landedSpeed = Math.min(landedSpeed, this.vel.y); this.vel.y = 0; } break;
         }
       }
     }
     const wasGround = this.onGround;
     this.onGround = grounded;
+    this.groundCollider = grounded ? groundCollider : null;
     if (grounded) { this.airTime = 0; } else this.airTime += dt;
     if (grounded && !wasGround && landedSpeed < -16) {
       const dmg = Math.min(100, Math.round((-landedSpeed - 16) * 6));
