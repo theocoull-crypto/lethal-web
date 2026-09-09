@@ -21,14 +21,22 @@ item, RMB scan, F flashlight.
 
 ## What is in the demo
 
+* The ship runs on its own animation clips from the game: landing and take-off sequences, the sliding doors and their
+  open/close buttons, the lever, the light switch. You ride the ship while it moves.
+* The terminal works: `help`, `store`, `buy`, `moons`, `route`, `scan`, `quota`. The store has two items; orders are
+  delivered next to the ship after landing.
+* Ladders on the moon can be climbed. Dying makes the ship leave without you.
+* The game's low-resolution "pixel" look is reproduced (internal render at 520 lines, nearest-neighbour upscale, grain).
+  Press **P** to toggle it.
+
 * The company ship in orbit; pull the lever to land on **41-Experimentation** (the real moon geometry, sky and ambience).
 * The facility is generated every day from the game's own DunGen tile set (`Level1Flow`): real doorway sockets, tile
   bounds, main path + branches, blockers/doors, vents, prop sets.
 * Scrap uses the real spawn table for the moon (rarity, value ranges x 0.4 like the game, weights, two-handed flags).
 * Time of day, midnight departure, profit quota with a 3-day deadline, getting fired.
-* Monsters from the moon's actual spawn lists: Bracken, Thumper, Hoarding bug, Snare flea, Bunker spider, Hygrodere,
-  Spore lizard, Ghost girl, Nutcracker inside; Eyeless dogs and Forest keepers outside at night. Behaviours are simplified
-  re-implementations (no navmesh, no animation rig) - see `js/enemies.js`.
+* Monsters use the game's real models, skinning and animation clips (with IK). The demo roster is deliberately small:
+  Bracken, Thumper, Hoarding bug and Snare flea inside, Eyeless dogs outside at night, Manticoils by day. Behaviours are
+  simplified re-implementations on a waypoint graph - see `js/enemies.js`.
 
 ## How the extraction works
 
