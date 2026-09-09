@@ -92,6 +92,8 @@ def main():
         subprocess.check_call([py, os.path.join(HERE, 'pack_prefabs.py')], cwd=ROOT)
         print('== extra clips + bind poses')
         subprocess.check_call([py, os.path.join(HERE, 'pack_extras.py')], cwd=ROOT)
+        print('== animation clips')
+        subprocess.check_call([py, os.path.join(HERE, 'pack_anims.py')], cwd=ROOT)
         print('\nDone. Run START.bat (or python serve.py) and open http://localhost:8220')
     finally:
         proc.terminate()
