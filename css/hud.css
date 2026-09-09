@@ -1,0 +1,44 @@
+@font-face { font-family: 'LCMono'; src: local('3270'), local('IBM 3270'), local('Consolas'); }
+html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-family: '3270', 'IBM 3270', Consolas, 'Courier New', monospace; color: #e8e2c8; user-select: none; }
+#c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+.hidden { display: none !important; }
+#hud { position: fixed; inset: 0; pointer-events: none; }
+#vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+#damage { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(120,0,0,0) 40%, rgba(160,0,0,.75) 100%); opacity: 0; transition: opacity .15s; }
+.panel { background: rgba(6, 8, 6, .55); border: 1px solid rgba(200, 180, 90, .35); box-shadow: 0 0 12px rgba(0,0,0,.6) inset; }
+#clock { position: absolute; left: 22px; top: 18px; padding: 8px 14px; min-width: 120px; text-align: center; }
+#clock-time { font-size: 26px; letter-spacing: 2px; color: #e8c85a; text-shadow: 0 0 6px rgba(232,200,90,.5); }
+#clock-bar { height: 4px; background: #2a2a20; margin-top: 6px; }
+#clock-fill { height: 100%; width: 0; background: #d9b64a; }
+#stamina { position: absolute; left: 22px; bottom: 26px; }
+#stamina-bar { width: 200px; height: 10px; border: 1px solid rgba(200,180,90,.5); background: rgba(0,0,0,.5); transform: skewX(-20deg); }
+#stamina-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #7cd66a, #d9d24a); transition: width .08s linear; }
+#weight { margin-top: 6px; font-size: 14px; color: #cfc9a8; }
+#inventory { position: absolute; right: 26px; bottom: 26px; display: flex; gap: 8px; }
+.slot { width: 62px; height: 62px; border: 2px solid rgba(180,170,120,.35); background: rgba(0,0,0,.45); position: relative; display: flex; align-items: center; justify-content: center; font-size: 10px; text-align: center; color: #d8d2b8; }
+.slot.active { border-color: #e8c85a; box-shadow: 0 0 10px rgba(232,200,90,.4); }
+.slot .val { position: absolute; right: 3px; bottom: 2px; font-size: 10px; color: #8fdc7a; }
+.slot .nm { padding: 2px; }
+#crosshair { position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px; background: rgba(255,255,255,.55); border-radius: 50%; }
+#tooltip { position: absolute; left: 50%; top: 56%; transform: translateX(-50%); font-size: 18px; color: #f2eccc; text-shadow: 0 0 4px #000, 0 0 8px #000; white-space: pre; text-align: center; }
+#tip { position: absolute; right: 26px; top: 18px; padding: 8px 14px; font-size: 14px; max-width: 360px; opacity: 0; transition: opacity .3s; white-space: pre-line; }
+#quota { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); padding: 6px 16px; font-size: 14px; text-align: center; color: #e8c85a; }
+#quota-sub { font-size: 12px; color: #cfc9a8; }
+#notice { position: absolute; left: 50%; top: 30%; transform: translateX(-50%); font-size: 30px; color: #ff5040; text-shadow: 0 0 10px #000; letter-spacing: 3px; opacity: 0; transition: opacity .4s; text-align: center; white-space: pre; }
+#scan .tag { position: absolute; transform: translate(-50%, -100%); font-size: 12px; color: #9fe6ff; border: 1px solid rgba(120,200,255,.6); background: rgba(0,20,40,.55); padding: 2px 6px; white-space: nowrap; }
+#scan .tag .v { color: #8fdc7a; }
+#spectate { position: absolute; left: 50%; bottom: 18%; transform: translateX(-50%); font-size: 18px; color: #ddd; text-shadow: 0 0 6px #000; white-space: pre; text-align: center; }
+
+#loading, #menu, #results { position: fixed; inset: 0; background: #06070a; display: flex; align-items: center; justify-content: center; z-index: 10; }
+.load-inner, .menu-inner, .results-inner { width: min(760px, 90vw); }
+.load-title, .menu-title { font-size: 54px; letter-spacing: 8px; color: #e8c85a; text-shadow: 0 0 20px rgba(232,200,90,.35); }
+.load-sub, .menu-sub { color: #9c9578; margin: 8px 0 26px; letter-spacing: 2px; }
+.load-bar { height: 8px; border: 1px solid #5a5238; background: #111; }
+#load-fill { height: 100%; width: 0; background: #d9b64a; transition: width .2s; }
+#load-text { margin-top: 12px; color: #b8b092; font-size: 14px; }
+.menu-desc { color: #cfc9a8; line-height: 1.55; font-size: 15px; border-left: 2px solid #5a5238; padding-left: 14px; }
+.menu-btn { margin-top: 26px; background: #14160f; color: #e8c85a; border: 1px solid #a08a3c; padding: 12px 26px; font: inherit; font-size: 20px; letter-spacing: 2px; cursor: pointer; }
+.menu-btn:hover { background: #2a2c1a; }
+#menu-status { margin-top: 14px; color: #ff7a60; font-size: 13px; white-space: pre-line; }
+.menu-foot { margin-top: 30px; color: #6c6752; font-size: 12px; }
+#results-text { font-size: 18px; color: #e8e2c8; line-height: 1.5; }

@@ -1,0 +1,391 @@
+// LETHAL WEB - game orchestration.
+import * as THREE from 'three';
+import { AssetLib } from './loader.js';
+import { World } from './world.js';
+import { Player } from './player.js';
+import { HUD } from './hud.js';
+import { SoundManager, pickClip } from './audio.js';
+import { Dungeon } from './dungeon.js';
+import { Items } from './items.js';
+import { Enemies } from './enemies.js';
+import { LightPool } from './lights.js';
+
+const $ = id => document.getElementById(id);
+
+class Game {
+  constructor() {
+    this.canvas = $('c');
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, powerPreference: 'high-performance' });
+    this.renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+    this.renderer.setSize(innerWidth, innerHeight);
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.05;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.08, 1500);
+    this.scene.add(this.camera);
+    this.lib = new AssetLib(this.renderer);
+    this.sound = new SoundManager();
+    this.hud = new HUD();
+    this.clock = new THREE.Clock();
+    this.state = 'loading';
+    this.wantsLock = false;
+    this.keysDown = {};
+    this.quota = 130; this.credits = 60; this.daysLeft = 3; this.scrapOnShip = 0; this.quotaRound = 1;
+    this.dayCount = 0;
+    this.inside = false;   // inside the facility
+    this.flashlightOn = false;
+    this.scanT = 0; this.scanTargets = [];
+    addEventListener('resize', () => { this.camera.aspect = innerWidth / innerHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(innerWidth, innerHeight); });
+    window.G = this;
+  }
+
+  async boot() {
+    const fill = $('load-fill'), text = $('load-text');
+    const setText = t => text.textContent = t;
+    try {
+      await this.lib.init();
+    } catch (e) {
+      $('loading').classList.add('hidden'); $('menu').classList.remove('hidden');
+      $('menu-status').textContent = 'No extracted assets found in assets/. Run tools\\extract.bat with your own Lethal Company install first.';
+      $('btn-play').disabled = true; return;
+    }
+    this.lib.onProgress = (l, t) => { fill.style.width = Math.min(100, 100 * l / Math.max(1, t)) + '%'; };
+    this.world = new World(this);
+    await this.world.load(setText);
+    setText('Loading facility blueprints...');
+    this.dungeon = new Dungeon(this);
+    await this.dungeon.load();
+    setText('Loading company property...');
+    this.items = new Items(this);
+    await this.items.load();
+    this.enemies = new Enemies(this);
+    await this.enemies.load();
+    this.player = new Player(this);
+    this.player.radius = 0.4; this.player.standHeight = 2.5; this.player.crouchHeight = 1.5;
+    this.lightPool = new LightPool(this.scene, 10);
+    this._refreshLightSources();
+    this._setupFlashlight();
+    fill.style.width = '100%';
+    $('loading').classList.add('hidden'); $('menu').classList.remove('hidden');
+    $('btn-play').onclick = () => this.startGame();
+    $('btn-continue').onclick = () => this.continueAfterResults();
+    this.state = 'menu';
+    this.spawnPlayerInShip();
+    this.loop();
+  }
+
+  _refreshLightSources() {
+    const src = [];
+    const add = (l, area) => { if (!l.isPointLight && !l.isSpotLight) return; src.push({ obj: l, area, pos: new THREE.Vector3(), color: l.color.clone(), intensity: l.userData.baseIntensity != null ? Math.min(l.userData.baseIntensity, 60) * 0.03 : l.intensity, distance: Math.max(l.distance || 8, 10) }); l.visible = false; };
+    for (const l of this.world.shipLights) add(l, 'ship');
+    for (const l of this.world.moonLights) add(l, 'moon');
+    for (const l of this.dungeon.lights) src.push({ obj: null, area: 'inside', pos: l.pos.clone(), color: l.color, intensity: l.intensity, distance: l.distance });
+    this.lightSources = src;
+    this.lightPool.setSources(src);
+  }
+
+  _updateLights() {
+    const inside = this.inside, lit = this.world.lightsOn;
+    for (const s of this.lightSources) {
+      if (s.area === 'inside') { s.enabled = inside; continue; }
+      s.enabled = !inside && (s.area !== 'moon' || !this.world.inOrbit);
+      if (s.obj) { s.obj.getWorldPosition(s.pos); if (s.area === 'ship') s.intensity = (lit ? 1 : 0) * (s.obj.userData.baseIntensity != null ? Math.min(s.obj.userData.baseIntensity, 60) * 0.12 : 1.5); }
+    }
+    this.lightPool.update(this.player.pos);
+  }
+
+  _setupFlashlight() {
+    this.flash = new THREE.SpotLight(0xffe9c4, 0, 45, THREE.MathUtils.degToRad(31), 0.7, 1.4);
+    this.flash.layers.set(0);
+    this.flash.castShadow = true; this.flash.shadow.mapSize.set(1024, 1024); this.flash.shadow.bias = -0.002; this.flash.shadow.camera.near = 0.2;
+    this.flashTarget = new THREE.Object3D();
+    this.camera.add(this.flash); this.camera.add(this.flashTarget);
+    this.flash.position.set(0.25, -0.2, 0.1); this.flashTarget.position.set(0, 0, -5); this.flash.target = this.flashTarget;
+    // faint player-held glow so interiors are never fully black
+    this.nearLight = new THREE.PointLight(0xffffff, 0.0, 6, 2); this.camera.add(this.nearLight);
+    this.nearLight.layers.enable(1);
+    this.heldLight = new THREE.DirectionalLight(0xffffff, 0.9); this.heldLight.position.set(0.5, 1, 1); this.camera.add(this.heldLight); this.heldLight.target = this.camera; this.heldLight.layers.set(1);
+    this.camera.layers.enable(1);
+  }
+
+  spawnPlayerInShip() {
+    // stand inside the ship near the terminal
+    const p = this.world.shipRoot.localToWorld(new THREE.Vector3(-4.0, 1.4, -9.0));
+    this.player.teleport(p, Math.PI * 0.5);
+    this.player.attachTo(this.world.shipRoot);
+  }
+
+  startGame() {
+    $('menu').classList.add('hidden');
+    this.hud.show(true);
+    this.sound.resume();
+    this.state = 'play';
+    this.player.lock();
+    this.world.startLoop('shipAmb', this.world.clips.shipAmb, { vol: 0.35 });
+    this.world.startLoop('thruster', this.world.clips.thruster, { vol: 0.25 });
+    this.hud.showTip('Pull the lever by the door to land on 41-Experimentation.\nBring scrap back to the ship before midnight.', 8);
+    this.hud.setQuota(this.scrapOnShip, this.quota, this.daysLeft, this.credits);
+    this.items.giveStarterItems();
+  }
+
+  // ---------- events from player ----------
+  onKey(code, down) {
+    if (!down) return;
+    if (this.state !== 'play') return;
+    if (code === 'KeyE') { this.interact(); this.enemies.onMash(); }
+    if (code === 'KeyG') this.items.dropHeld();
+    if (code === 'KeyF') this.toggleFlashlight();
+    if (code === 'Digit1') this.items.select(0); if (code === 'Digit2') this.items.select(1); if (code === 'Digit3') this.items.select(2); if (code === 'Digit4') this.items.select(3);
+    if (code === 'Escape') { /* pointer lock handles it */ }
+  }
+  onMouse(button, down) {
+    if (this.state !== 'play' || !down) return;
+    if (button === 0) this.items.useHeld();
+    if (button === 2) this.scan();
+  }
+  onWheel(dir) { if (this.state === 'play') this.items.select((this.items.active + (dir > 0 ? 1 : 3)) % 4); }
+  onLockChange(locked) { if (!locked && this.state === 'play') { this.hud.showTip('Click to resume', 3); } }
+  onJump() { }
+  onLand(v) { const clip = this.footClip(); if (clip) this.sound.play(clip, { vol: Math.min(1, 0.5 + -v * 0.03), pitch: 0.9 }); }
+  onFootstep() {
+    const clip = this.footClip();
+    if (clip) this.sound.play(clip, { vol: this.player.sprinting ? 0.55 : this.player.crouching ? 0.15 : 0.35, pitch: 0.95 + Math.random() * 0.1 });
+    this.enemies.onNoise(this.player.pos, this.player.sprinting ? 1 : this.player.crouching ? 0.2 : 0.5);
+  }
+  footClip() {
+    const surf = this.player.attached ? 'metal' : this.inside ? 'concrete' : 'dirt';
+    return this.items.footstep(surf);
+  }
+  onDamage(amount, source) {
+    this.hud.flashDamage(Math.min(1, amount / 40));
+    const c = this.items.sfx('damage');
+    if (c) this.sound.play(c, { vol: 0.8 });
+  }
+  onDeath(source) {
+    this.hud.showNotice('YOU DIED', 4);
+    this.player.inputEnabled = false;
+    const c = this.items.sfx('death'); if (c) this.sound.play(c, { vol: 0.9 });
+    this.items.dropAll();
+    // ship leaves without you after a while; day ends
+    setTimeout(() => { if (this.state === 'play') this.endDay(true); }, 5000);
+  }
+
+  toggleFlashlight() {
+    if (!this.items.hasFlashlight()) { this.hud.showTip('No flashlight.', 2); return; }
+    this.flashlightOn = !this.flashlightOn;
+    const c = this.items.sfx(this.flashlightOn ? 'flashOn' : 'flashOff'); if (c) this.sound.play(c, { vol: 0.6 });
+  }
+
+  // ---------- interaction ----------
+  interact() {
+    const t = this.lookTarget();
+    if (t && t.action) t.action();
+  }
+
+  lookTarget() {
+    const eye = this.camera.position, dir = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion);
+    let best = null, bestD = 1e9;
+    const consider = (pos, radius, entry) => {
+      const to = pos.clone().sub(eye); const d = to.length();
+      if (d > 4.5 + radius) return;
+      const along = to.dot(dir); if (along < 0) return;
+      const perp = Math.sqrt(Math.max(0, d * d - along * along));
+      if (perp < radius && d < bestD) { bestD = d; best = entry; }
+    };
+    if (!this.inside) { for (const it of this.world.interactables) { if (it.obj) consider(this.world.worldPosOf(it.obj), it.radius, it); } }
+    else { for (const it of this.dungeon.interactables) consider(it.pos, it.radius, it); }
+    for (const it of this.items.interactables()) consider(it.pos, it.radius, it);
+    return best;
+  }
+
+  scan() {
+    if (this.scanT > 0.5) return;
+    this.scanT = 3.0;
+    const c = this.items.sfx('scan'); if (c) this.sound.play(c, { vol: 0.5 });
+    this.scanTargets = this.items.scannables(this.camera.position, 60).concat(this.enemies.scannables(this.camera.position, 60), this.dungeon.scannables(this.camera.position, 80));
+  }
+
+  openTerminal() {
+    const q = this.quota, s = this.scrapOnShip;
+    this.hud.showTip(`TERMINAL\nRoute: 41-Experimentation (only moon in this build)\nQuota: $${q}   Collected: $${s}\nDays until deadline: ${this.daysLeft}\nCredits: $${this.credits}`, 8);
+  }
+  showManual() { this.hud.showTip('WELCOME TO THE COMPANY\n1. Land on the moon (lever).\n2. Find the facility entrance.\n3. Collect scrap, bring it to the ship.\n4. Be back before midnight.\n5. Do not die. Cost of replacement is high.', 10); }
+
+  // ---------- day flow ----------
+  onShipDeparting(leaving) {
+    if (leaving) { this.hud.showNotice('SHIP DEPARTING', 3, '#e8c85a'); this.player.inputEnabled = true; }
+  }
+  onShipLanded() {
+    this.hud.showNotice('LANDED ON 41-EXPERIMENTATION', 4, '#e8c85a');
+    this.dayCount++;
+    this.dungeon.generate(this.dayCount * 7919 + Date.now() % 1000).then(() => { this.items.spawnScrap(); this._refreshLightSources(); });
+    this.enemies.beginDay();
+    this.world.stopLoop('thruster');
+    this.world.startLoop('outside', this.items.ambienceClip('outside'), { vol: 0.5 });
+  }
+  onShipLeft() {
+    this.endDay(false);
+  }
+  endDay(playerDead) {
+    if (this.state !== 'play') return;
+    this.state = 'results';
+    // count scrap on ship
+    const collected = this.items.scrapValueOnShip();
+    this.scrapOnShip = collected;
+    this.daysLeft--;
+    const lines = [];
+    lines.push(playerDead ? 'The ship left without you. Your body was not recovered.' : 'You returned to the ship.');
+    lines.push(`Scrap on ship: $${collected}`);
+    lines.push(`Profit quota: $${this.quota}   (${this.daysLeft} day${this.daysLeft === 1 ? '' : 's'} left)`);
+    let fired = false;
+    if (this.daysLeft <= 0) {
+      if (collected >= this.quota) {
+        lines.push(`\nQUOTA MET. The Company is... satisfied. New quota assigned.`);
+        this.credits += collected - this.quota;
+        this.quotaRound++;
+        this.quota = Math.round(this.quota + 100 * (1 + Math.pow(this.quotaRound, 2) / 16) * (0.85 + Math.random() * 0.3));
+        this.items.sellScrap();
+        this.scrapOnShip = 0;
+        this.daysLeft = 3;
+      } else {
+        lines.push(`\nQUOTA NOT MET. Performance review: unacceptable.\nYou have been let go. Every crew member is jettisoned into space.`);
+        fired = true;
+      }
+    }
+    if (playerDead) lines.push('\nA new employee has been hired to replace you.');
+    $('results-text').textContent = lines.join('\n');
+    $('results').classList.remove('hidden');
+    document.exitPointerLock();
+    this.fired = fired;
+    this.enemies.clearAll();
+    this.dungeon.clear();
+    this.items.clearWorldScrap();
+    this.world.stopLoop('outside'); this.world.stopLoop('inside');
+    const c = this.items.sfx('results'); if (c) this.sound.play(c, { vol: 0.5 });
+  }
+  continueAfterResults() {
+    $('results').classList.add('hidden');
+    if (this.fired) { this.quota = 130; this.credits = 60; this.daysLeft = 3; this.scrapOnShip = 0; this.quotaRound = 1; this.items.sellScrap(); this.fired = false; }
+    this.player.dead = false; this.player.health = 100; this.player.inputEnabled = true;
+    this.inside = false;
+    this.spawnPlayerInShip();
+    this.items.clearInventory(); this.items.giveStarterItems();
+    this.state = 'play';
+    this.hud.setQuota(this.scrapOnShip, this.quota, this.daysLeft, this.credits);
+    this.player.lock();
+    this.world.startLoop('thruster', this.world.clips.thruster, { vol: 0.25 });
+  }
+
+  // ---------- facility transitions ----------
+  enterFacility(viaFireExit) {
+    const spot = viaFireExit ? this.dungeon.fireExitInside : this.dungeon.entranceInside;
+    if (!spot) return;
+    this.inside = true;
+    this.player.attachTo(null);
+    this.player.teleport(spot.pos, spot.yaw);
+    const c = pickClip(this.world.entrance?.clips); if (c) this.sound.play(c, { vol: 0.8 });
+    this.world.stopLoop('outside'); this.world.startLoop('inside', this.items.ambienceClip('inside'), { vol: 0.45 });
+    this.enemies.onPlayerEntered(true);
+  }
+  exitFacility(viaFireExit) {
+    const ent = viaFireExit ? this.world.fireExit : this.world.entrance;
+    if (!ent) return;
+    this.inside = false;
+    const p = this.world.worldPosOf(ent.tele);
+    const q = new THREE.Quaternion(); ent.tele.getWorldQuaternion(q);
+    const f = new THREE.Vector3(0, 0, 1).applyQuaternion(q);
+    this.player.teleport(p.clone().add(new THREE.Vector3(0, 0.1, 0)), Math.atan2(-f.x, -f.z));
+    const c = pickClip(ent.clips); if (c) this.sound.play(c, { vol: 0.8 });
+    this.world.stopLoop('inside'); this.world.startLoop('outside', this.items.ambienceClip('outside'), { vol: 0.5 });
+    this.enemies.onPlayerEntered(false);
+  }
+
+  activeColliders() {
+    const list = [];
+    if (this.inside) { if (this.dungeon.collider) list.push(this.dungeon.collider); }
+    else { list.push(this.world.shipCollider); if (!this.world.inOrbit) list.push(this.world.moonCollider); }
+    return list;
+  }
+
+  // ---------- loop ----------
+  loop() {
+    requestAnimationFrame(() => this.loop());
+    const dt = Math.min(0.05, this.clock.getDelta());
+    this.tick(dt);
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  /** debug: advance the simulation n steps without rendering */
+  step(n = 1, dt = 1 / 60) { for (let i = 0; i < n; i++) this.tick(dt); this.renderer.render(this.scene, this.camera); }
+
+  tick(dt) {
+    const p = this.player;
+    if (this.state === 'play' || this.state === 'menu' || this.state === 'results') {
+      this.world.update(dt);
+      if (this.state === 'play') {
+        p.update(dt, this.activeColliders());
+        p.heal(dt);
+        // standing on ship? (inside ship bounds while not inside facility)
+        if (!this.inside) {
+          const local = this.world.shipRoot.worldToLocal(p.pos.clone());
+          const onShip = local.x > -9 && local.x < 11.5 && local.z > -12 && local.z < -1 && local.y > -2.5 && local.y < 5;
+          p.attachTo(onShip ? this.world.shipRoot : null);
+          if (this.world.inOrbit && !onShip) { p.damage(1000, 'space'); }
+        }
+        this.items.update(dt);
+        this.enemies.update(dt);
+        this.dungeon.update(dt);
+        this._updateHud(dt);
+        this._updateScan(dt);
+      }
+      // scene visibility by area
+      this.dungeon.root.visible = this.inside;
+      this.world.moonRoot.visible = !this.inside && !this.world.inOrbit;
+      this.world.shipRoot.visible = !this.inside;
+      this.world.sun.visible = !this.inside;
+      this.world.setFocus(p.pos);
+      this._updateLights();
+      // flashlight
+      const on = this.flashlightOn && this.items.hasFlashlight() && this.state === 'play';
+      this.flash.intensity += ((on ? 110 : 0) - this.flash.intensity) * Math.min(1, dt * 14);
+      this.nearLight.intensity = this.inside ? 0.25 : 0.0;
+      this.sound.setListener(this.camera.position, new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion), new THREE.Vector3(0, 1, 0).applyQuaternion(this.camera.quaternion));
+      this.hud.update(dt);
+    }
+  }
+
+  _updateHud(dt) {
+    const w = this.world, p = this.player;
+    const { h, m } = w.clockText();
+    this.hud.setClock(h, m, w.dayFrac, !this.inside && !w.inOrbit);
+    this.hud.setStamina(p.stamina, this.items.carryWeightLb());
+    this.hud.setHealth(p.health);
+    const t = this.lookTarget();
+    this.hud.setTooltip(t ? (typeof t.label === 'function' ? t.label() : t.label) : '');
+    this.hud.setQuota(this.items.scrapValueOnShip(), this.quota, this.daysLeft, this.credits);
+    // midnight: ship leaves automatically
+    if (w.shipState === 'landed' && w.dayFrac >= 1) { w.setShipState('leaving'); this.hud.showNotice('THE SHIP IS LEAVING', 4); }
+    else if (w.shipState === 'landed' && w.dayFrac > 0.93 && !this._warned) { this._warned = true; this.hud.showNotice('THE SHIP LEAVES AT MIDNIGHT', 4, '#e8c85a'); const c = this.items.sfx('alert'); if (c) this.sound.play(c, { vol: 0.6 }); }
+    if (w.shipState !== 'landed') this._warned = false;
+  }
+
+  _updateScan(dt) {
+    if (this.scanT <= 0) { this.hud.setScanTags([]); return; }
+    this.scanT -= dt;
+    const tags = [];
+    const v = new THREE.Vector3();
+    for (const s of this.scanTargets) {
+      const pos = s.pos();
+      if (!pos) continue;
+      v.copy(pos).project(this.camera);
+      if (v.z > 1 || v.z < -1) continue;
+      tags.push({ x: (v.x * 0.5 + 0.5) * innerWidth, y: (-v.y * 0.5 + 0.5) * innerHeight, text: s.text, value: s.value, alpha: Math.min(1, this.scanT) });
+    }
+    this.hud.setScanTags(tags);
+  }
+}
+
+new Game().boot();

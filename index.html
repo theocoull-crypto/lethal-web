@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LETHAL WEB</title>
+<link rel="stylesheet" href="css/hud.css">
+<script type="importmap">
+{ "imports": { "three": "./lib/three.module.js", "three/addons/": "./lib/addons/" } }
+</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="hud" class="hidden">
+  <div id="vignette"></div>
+  <div id="damage"></div>
+  <div id="clock" class="panel"><div id="clock-time">7:00 AM</div><div id="clock-bar"><div id="clock-fill"></div></div></div>
+  <div id="stamina"><div id="stamina-bar"><div id="stamina-fill"></div></div><div id="weight">0 lb</div></div>
+  <div id="inventory">
+    <div class="slot" data-i="0"></div><div class="slot" data-i="1"></div><div class="slot" data-i="2"></div><div class="slot" data-i="3"></div>
+  </div>
+  <div id="tooltip"></div>
+  <div id="crosshair"></div>
+  <div id="tip" class="panel"></div>
+  <div id="scan"></div>
+  <div id="quota" class="panel"><div id="quota-line"></div><div id="quota-sub"></div></div>
+  <div id="notice"></div>
+  <div id="spectate"></div>
+</div>
+
+<div id="loading">
+  <div class="load-inner">
+    <div class="load-title">LETHAL WEB</div>
+    <div class="load-sub">Unofficial browser build of Lethal Company &mdash; single moon demo (41-Experimentation)</div>
+    <div class="load-bar"><div id="load-fill"></div></div>
+    <div id="load-text">Loading company property...</div>
+  </div>
+</div>
+
+<div id="menu">
+  <div class="menu-inner">
+    <div class="menu-title">LETHAL WEB</div>
+    <div class="menu-sub">41-EXPERIMENTATION &middot; DEMO BUILD</div>
+    <div class="menu-desc">
+      You are a contracted worker for the Company. Land on the moon, get inside the facility, bring scrap back to the ship before midnight and meet the profit quota. Do not get killed.<br><br>
+      <b>WASD</b> move &middot; <b>Shift</b> sprint &middot; <b>Ctrl</b> crouch &middot; <b>Space</b> jump &middot; <b>E</b> interact / grab &middot; <b>G</b> drop &middot; <b>1-4</b> / wheel slots &middot; <b>RMB</b> scan &middot; <b>LMB</b> use item &middot; <b>F</b> flashlight
+    </div>
+    <button id="btn-play" class="menu-btn">&gt; Start job</button>
+    <div id="menu-status"></div>
+    <div class="menu-foot">Assets are read from your own Steam copy of Lethal Company (see README). Nothing here is redistributed.</div>
+  </div>
+</div>
+
+<div id="results" class="hidden"><div class="results-inner"><pre id="results-text"></pre><button id="btn-continue" class="menu-btn">&gt; Continue</button></div></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

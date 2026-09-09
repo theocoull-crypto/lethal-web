@@ -1,0 +1,8 @@
+assets/
+.cache/
+dump/
+tools/AssetRipper/
+tools/*.log
+tools/AssetRipper_win_x64.zip
+__pycache__/
+*.pyc

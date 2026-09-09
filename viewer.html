@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>LETHAL WEB - asset viewer</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;color:#ddd;font:12px monospace;overflow:hidden}
+  #hud{position:fixed;left:8px;top:8px;background:rgba(0,0,0,.6);padding:6px 8px;white-space:pre;pointer-events:none}
+</style>
+<script type="importmap">
+{ "imports": { "three": "./lib/three.module.js", "three/addons/": "./lib/addons/" } }
+</script>
+</head>
+<body>
+<div id="hud">loading...</div>
+<script type="module">
+import * as THREE from 'three';
+import { AssetLib } from './js/loader.js';
+
+const params = new URLSearchParams(location.search);
+const what = params.get('scene') || 'ship';
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(1);
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x060608);
+const camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.05, 2000);
+camera.position.set(0, 3, 8);
+const hud = document.getElementById('hud');
+const lib = new AssetLib(renderer);
+await lib.init();
+const man = await lib.manifest('scenes/' + (what === 'ship' ? 'ship.json' : what === 'moon' ? 'experimentation.json' : what + '.json'));
+const collision = [];
+const inst = await lib.instantiate(man, { collision });
+scene.add(inst.root);
+scene.add(new THREE.HemisphereLight(0x99aacc, 0x332211, params.has('bright') ? 2.0 : 0.25));
+const sun = new THREE.DirectionalLight(0xffeedd, params.has('bright') ? 1.5 : 0.3); sun.position.set(50, 100, 30); scene.add(sun);
+window.V = { scene, camera, inst, lib, THREE, renderer };
+const box = new THREE.Box3().setFromObject(inst.root);
+console.log('bounds', box.min.toArray(), box.max.toArray(), 'lights', inst.lights.length, 'meshes', collision.length);
+if (params.has('at')) { const a = params.get('at').split(',').map(Number); camera.position.set(a[0], a[1], a[2]); }
+if (params.has('look')) { const a = params.get('look').split(',').map(Number); camera.lookAt(a[0], a[1], a[2]); }
+else camera.lookAt(box.getCenter(new THREE.Vector3()));
+// simple fly controls
+const keys = {}; let yaw = 0, pitch = 0; let dragging = false;
+const e = new THREE.Euler().setFromQuaternion(camera.quaternion, 'YXZ'); yaw = e.y; pitch = e.x;
+addEventListener('keydown', ev => keys[ev.code] = true); addEventListener('keyup', ev => keys[ev.code] = false);
+renderer.domElement.addEventListener('mousedown', () => dragging = true); addEventListener('mouseup', () => dragging = false);
+addEventListener('mousemove', ev => { if (dragging) { yaw -= ev.movementX * 0.003; pitch -= ev.movementY * 0.003; } });
+window.setView = (x, y, z, ly, lp) => { camera.position.set(x, y, z); yaw = ly; pitch = lp; };
+let last = performance.now();
+function frame() {
+  const now = performance.now(); const dt = Math.min(0.1, (now - last) / 1000); last = now;
+  camera.quaternion.setFromEuler(new THREE.Euler(pitch, yaw, 0, 'YXZ'));
+  const sp = (keys.ShiftLeft ? 30 : 8) * dt;
+  const f = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion), r = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+  if (keys.KeyW) camera.position.addScaledVector(f, sp); if (keys.KeyS) camera.position.addScaledVector(f, -sp);
+  if (keys.KeyD) camera.position.addScaledVector(r, sp); if (keys.KeyA) camera.position.addScaledVector(r, -sp);
+  if (keys.KeyE) camera.position.y += sp; if (keys.KeyQ) camera.position.y -= sp;
+  renderer.render(scene, camera);
+  hud.textContent = `${what}  pos ${camera.position.x.toFixed(1)},${camera.position.y.toFixed(1)},${camera.position.z.toFixed(1)}  yaw ${yaw.toFixed(2)} pitch ${pitch.toFixed(2)}\nmeshes ${collision.length} lights ${inst.lights.length}  draws ${renderer.info.render.calls} tris ${renderer.info.render.triangles}\nWASD fly, drag to look, shift fast`;
+  requestAnimationFrame(frame);
+}
+frame();
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+</script>
+</body>
+</html>
