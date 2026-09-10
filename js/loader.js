@@ -97,7 +97,7 @@ export class AssetLib {
         mat.roughness = 1 - smooth;
         mat.metalness = d.metallic || 0;
       }
-      mat.envMapIntensity = 0.5;
+      mat.envMapIntensity = 0.3;
       const e = d.emissive || [0, 0, 0];
       const emax = Math.max(e[0], e[1], e[2]);
       if (emax > 0.001) {

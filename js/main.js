@@ -148,7 +148,7 @@ class Game {
     this.flash.position.set(0.25, -0.2, 0.1); this.flashTarget.position.set(0, 0, -5); this.flash.target = this.flashTarget;
     this.nearLight = new THREE.PointLight(0xffffff, 0.0, 6, 2); this.camera.add(this.nearLight);
     this.nearLight.layers.enable(1);
-    this.heldLight = new THREE.DirectionalLight(0xffffff, 0.9); this.heldLight.position.set(0.5, 1, 1); this.camera.add(this.heldLight); this.heldLight.target = this.camera; this.heldLight.layers.set(1);
+    this.heldLight = new THREE.DirectionalLight(0xffffff, 0.35); this.heldLight.position.set(0.5, 1, 1); this.camera.add(this.heldLight); this.heldLight.target = this.camera; this.heldLight.layers.set(1);
     this.camera.layers.enable(1);
   }
 
@@ -412,7 +412,7 @@ class Game {
       if (this.flashlightOn && this.items.flashlightBattery() <= 0) this.flashlightOn = false;
       const on = this.flashlightOn && this.items.hasFlashlight() && this.state === 'play';
       this.flash.intensity += ((on ? 140 : 0) - this.flash.intensity) * Math.min(1, dt * 14);
-      this.nearLight.intensity = this.inside ? 0.45 : 0.15;
+      this.nearLight.intensity = this.inside ? 0.3 : 0.1;
       this.sound.setListener(this.camera.position, new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion), new THREE.Vector3(0, 1, 0).applyQuaternion(this.camera.quaternion));
       this.hud.update(dt);
     }
