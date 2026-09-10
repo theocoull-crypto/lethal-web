@@ -135,8 +135,8 @@ export class Player {
     // gravity / jump
     if (this.onGround && wantJump && !this.crouching && this.jumpCooldown <= 0) { this.vel.y = 9.5; this.onGround = false; this.jumpCooldown = 0.35; this.game.onJump(); }
     this.jumpCooldown = (this.jumpCooldown || 0) - dt;
-    this.vel.y -= 30 * dt;
-    if (this.vel.y < -55) this.vel.y = -55;
+    if (this.riding) { this.vel.y = 0; }   // riding the ship through a cutscene: no gravity, no fall damage
+    else { this.vel.y -= 30 * dt; if (this.vel.y < -55) this.vel.y = -55; }
     // follow moving platform (ship)
     if (this.attached) {
       this.attached.updateMatrixWorld();

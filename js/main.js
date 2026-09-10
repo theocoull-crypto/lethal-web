@@ -292,7 +292,7 @@ class Game {
 
   // ---------- day flow ----------
   onShipDeparting(leaving) {
-    if (leaving) { this.hud.showNotice('SHIP DEPARTING', 3, '#e8c85a'); }
+    if (leaving) { this.hud.showNotice('SHIP DEPARTING', 3, '#e8c85a'); this.stopMoonMusic(); this.world.stopLoop('company', 2.0); this.world.stopLoop('outside', 2.0); }
   }
   onShipLanded() {
     this.dayCount++;
@@ -309,7 +309,15 @@ class Game {
     this.dungeon.generate(this.dayCount * 7919 + Date.now() % 1000).then(() => { this.items.spawnScrap(); this._refreshLightSources(); });
     this.enemies.beginDay();
     this.world.startLoop('outside', this.items.ambienceClip('outside'), { vol: 0.5 });
+    this.startMoonMusic();
   }
+  // the moon's ambient day music (the game's AmbientMusic tracks), one picked per landing
+  startMoonMusic() {
+    const tracks = ['b8_1748', 'b8_1800', 'b8_1568', 'b8_1656', 'b8_1667', 'b8_1728'];
+    const clip = tracks[Math.floor(Math.random() * tracks.length)];
+    this.world.startLoop('moonmusic', clip, { vol: 0.28 });
+  }
+  stopMoonMusic() { this.world.stopLoop('moonmusic', 2.0); }
   onShipLeft() { this.endDay(this.player.dead); }
   endDay(playerDead) {
     if (this.state !== 'play') return;
@@ -345,7 +353,7 @@ class Game {
     this.enemies.clearAll();
     this.dungeon.clear();
     this.items.clearWorldScrap();
-    this.world.stopLoop('outside'); this.world.stopLoop('inside'); this.world.stopLoop('company');
+    this.world.stopLoop('outside'); this.world.stopLoop('inside'); this.world.stopLoop('company'); this.stopMoonMusic();
     this.hud.setSpectate('');
     const c = this.items.sfx('results'); if (c) this.sound.play(c, { vol: 0.5 });
   }
@@ -410,17 +418,24 @@ class Game {
     if (this.state === 'play' || this.state === 'menu' || this.state === 'results') {
       this.world.update(dt);
       if (this.state === 'play') {
+        // during the orbit idle and landing cutscene the player rides the ship: no gravity, no fall damage
+        p.riding = !this.inside && (this.world.shipState === 'orbit' || this.world.shipState === 'landing');
         p.update(dt, this.activeColliders());
         p.heal(dt);
         if (!this.inside) {
-          // riding check uses the player's position AFTER this frame's move, against the ship's current transform
           const w = this.world;
-          const onShipGeom = p.groundCollider === w.shipCollider || w.doorColliders.includes(p.groundCollider);
-          const onDeck = onShipGeom || w.onShipDeck(p.pos);
-          p.attachTo(onDeck ? w.shipObj : null);
-          // off the ship in orbit = space, but only after a moment so a single bad frame never kills
-          if (w.inOrbit && !onDeck) { this._spaceT = (this._spaceT || 0) + dt; if (this._spaceT > 1.5) p.damage(1000, 'space'); }
-          else this._spaceT = 0;
+          if (w.shipState === 'orbit' || w.shipState === 'landing') {
+            // during the orbit idle and the landing cutscene the hull moves fast; keep the player locked to the ship
+            p.attachTo(w.shipObj); this._spaceT = 0;
+          } else {
+            // landed or leaving: the deck test decides riding, checked after this frame's move
+            const onShipGeom = p.groundCollider === w.shipCollider || w.doorColliders.includes(p.groundCollider);
+            const onDeck = onShipGeom || w.onShipDeck(p.pos);
+            p.attachTo(onDeck ? w.shipObj : null);
+            // walked off while it is taking off = space, but only after a moment so a single bad frame never kills
+            if (w.shipState === 'leaving' && !onDeck) { this._spaceT = (this._spaceT || 0) + dt; if (this._spaceT > 2.0) p.damage(1000, 'space'); }
+            else this._spaceT = 0;
+          }
         }
         this.items.update(dt);
         this.enemies.update(dt);
@@ -453,7 +468,7 @@ class Game {
     const t = this.lookTarget();
     this.hud.setTooltip(t ? (typeof t.label === 'function' ? t.label() : t.label) : (p.ladder ? 'W/S climb  ·  Space let go' : ''));
     this.hud.setQuota(this.quotaFulfilled, this.quota, this.daysLeft, this.credits, this.items.scrapValueOnShip());
-    if (w.shipState === 'landed' && w.dayFrac >= 1 && !w.atCompany) { w.setShipState('leaving'); this.hud.showNotice('THE SHIP IS LEAVING', 4); }
+    if (w.shipState === 'landed' && w.dayFrac >= 1 && !w.atCompany) { w.setShipState('leaving'); this.hud.showNotice('THE SHIP IS LEAVING', 4); this.stopMoonMusic(); this.world.stopLoop('outside', 2.0); }
     else if (w.shipState === 'landed' && w.dayFrac > 0.93 && !this._warned) { this._warned = true; this.hud.showNotice('THE SHIP LEAVES AT MIDNIGHT', 4, '#e8c85a'); const c = this.items.sfx('alert'); if (c) this.sound.play(c, { vol: 0.6 }); }
     if (w.shipState !== 'landed') this._warned = false;
   }
