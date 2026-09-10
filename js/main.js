@@ -251,12 +251,41 @@ class Game {
   }
   onDeath(source) {
     this.hud.showNotice('YOU DIED', 4);
-    this.hud.setSpectate(`Cause of death: ${source || 'unknown'}\nThe ship will leave without you.`);
+    this.hud.setSpectate(`Cause of death: ${source || 'unknown'}
+The ship will leave without you.`);
     this.player.inputEnabled = false;
     const c = this.items.sfx(source === 'space' || source === 'void' ? 'space' : 'death'); if (c) this.sound.play(c, { vol: 0.9 });
     this.items.dropAll();
-    // the ship leaves without you: doors shut, takeoff, then the day ends
-    setTimeout(() => { if (this.state === 'play' && this.world.shipState === 'landed') this.world.setShipState('leaving'); else if (this.state === 'play') this.endDay(true); }, 4000);
+    this.flashlightOn = false;
+    // a moment on the body, then cut to a camera outside watching the ship take off without you; the results follow
+    const w = this.world;
+    setTimeout(() => {
+      if (this.state !== 'play') return;
+      if (w.shipState === 'landed' || w.shipState === 'leaving') {
+        this.startSpectate();
+        if (w.shipState === 'landed') { w.setShipState('leaving'); this.onShipDeparting(true); }
+      } else this.endDay(true);
+    }, 2500);
+  }
+
+  /** dead: watch the ship from a spot beside the landing pad */
+  startSpectate() {
+    const w = this.world;
+    this.inside = false; this.player.attachTo(null);
+    if (this.player.ladder) this.player.ladder = null;
+    w.shipObj.updateMatrixWorld(true);
+    // beside the ship, off the door side, a little above the pad; lookAt keeps the hull framed as it climbs
+    this.spectatePos = w.shipObj.localToWorld(new THREE.Vector3(26, 9, -2));
+    this.spectating = true;
+    this.hud.setSpectate('The ship is leaving without you.');
+    this.stopMoonMusic(); w.stopLoop('inside', 1.0); w.stopLoop('company', 1.0);
+    if (!w.loops.outside && !w.atCompany) w.startLoop('outside', this.items.ambienceClip('outside'), { vol: 0.5 });
+  }
+  _updateSpectate() {
+    if (!this.spectating) return;
+    const hull = this.world.shipObj.getWorldPosition(new THREE.Vector3());
+    this.camera.position.copy(this.spectatePos);
+    this.camera.lookAt(hull.x, hull.y + 3, hull.z);
   }
 
   toggleFlashlight() {
@@ -343,6 +372,7 @@ class Game {
   endDay(playerDead) {
     if (this.state !== 'play') return;
     this.state = 'results';
+    this.spectating = false;
     const collected = this.items.scrapValueOnShip();
     this.scrapOnShip = collected;
     const lines = [];
@@ -385,7 +415,7 @@ class Game {
     $('results').classList.add('hidden');
     if (this.fired) { this.quota = 130; this.credits = 60; this.daysLeft = 3; this.scrapOnShip = 0; this.quotaRound = 1; this.quotaFulfilled = 0; this.items.sellScrap(); this.fired = false; }
     this.player.dead = false; this.player.health = 100; this.player.inputEnabled = true; this.player.ladder = null;
-    this.inside = false;
+    this.inside = false; this.spectating = false;
     this.spawnPlayerInShip();
     this.items.clearInventory();
     this.state = 'play';
@@ -466,6 +496,7 @@ class Game {
         this.dungeon.update(dt);
         this._updateHud(dt);
         this._updateScan(dt);
+        this._updateSpectate();
       }
       this.dungeon.root.visible = this.inside;
       this.world.setExteriorVisible(!this.inside && !this.world.inOrbit);
@@ -488,9 +519,9 @@ class Game {
     const { h, m } = w.clockText();
     this.hud.setClock(h, m, w.dayFrac, !this.inside && !w.inOrbit);
     this.hud.setStamina(p.stamina, this.items.carryWeightLb());
-    this.hud.setHealth(p.health);
+    this.hud.setHealth(this.spectating ? 100 : p.health);   // no blood vignette on the spectator camera
     const t = this.lookTarget();
-    this.hud.setTooltip(t ? (typeof t.label === 'function' ? t.label() : t.label) : (p.ladder ? 'W/S climb  ·  Space let go' : ''));
+    this.hud.setTooltip(this.spectating ? '' : t ? (typeof t.label === 'function' ? t.label() : t.label) : (p.ladder ? 'W/S climb  ·  Space let go' : ''));
     this.hud.setQuota(this.quotaFulfilled, this.quota, this.daysLeft, this.credits, this.items.scrapValueOnShip());
     if (w.shipState === 'landed' && w.dayFrac >= 1 && !w.atCompany) { w.setShipState('leaving'); this.hud.showNotice('THE SHIP IS LEAVING', 4); this.stopMoonMusic(); this.world.stopLoop('outside', 2.0); }
     else if (w.shipState === 'landed' && w.dayFrac > 0.93 && !this._warned) { this._warned = true; this.hud.showNotice('THE SHIP LEAVES AT MIDNIGHT', 4, '#e8c85a'); const c = this.items.sfx('alert'); if (c) this.sound.play(c, { vol: 0.6 }); }
