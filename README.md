@@ -1,8 +1,8 @@
 # LETHAL WEB
 
-A single-moon, single-player "demo" of Lethal Company that runs in a browser (three.js), built from the **real game's own
-assets** - the ship, 41-Experimentation, the facility tiles, scrap, hazards and monsters - pulled straight out of *your*
-Steam install at extraction time.
+A two-moon, single-player "demo" of Lethal Company that runs in a browser (three.js), built from the **real game's own
+assets** - the ship, 41-Experimentation, 220-Assurance, the Company building, the facility tiles, scrap, hazards and
+monsters - pulled straight out of *your* Steam install at extraction time.
 
 **No game content is in this repository.** Lethal Company belongs to Zeekerss. You need to own the game on Steam;
 `tools/extract.py` reads your local copy and writes the converted assets into `./assets`, which is gitignored.
@@ -31,14 +31,16 @@ item, RMB scan, F flashlight.
 * The game's low-resolution "pixel" look is reproduced (internal render at 520 lines, nearest-neighbour upscale, grain).
   Press **P** to toggle it.
 
-* The company ship in orbit; pull the lever to land on **41-Experimentation** (the real moon geometry, sky and ambience).
+* The company ship in orbit; route to **41-Experimentation** or **220-Assurance** at the terminal and pull the lever to
+  land (the real moon geometry, sky and ambience). Each moon uses its own scrap table, enemy list and spawn budgets.
 * The facility is generated every day from the game's own DunGen tile set (`Level1Flow`): real doorway sockets, tile
   bounds, main path + branches, blockers/doors, vents, prop sets.
 * Scrap uses the real spawn table for the moon (rarity, value ranges x 0.4 like the game, weights, two-handed flags).
 * Time of day, midnight departure, profit quota with a 3-day deadline, getting fired.
-* Monsters use the game's real models, skinning and animation clips (with IK). The demo roster is deliberately small:
-  Bracken, Thumper, Hoarding bug and Snare flea inside, Eyeless dogs outside at night, Manticoils by day. Behaviours are
-  simplified re-implementations on a waypoint graph - see `js/enemies.js`.
+* Monsters use the game's real models, skinning and animation clips (with IK). Every monster with a web behaviour can
+  spawn if it is on the moon's real spawn list: Bracken, Thumper, Hoarding bug, Snare flea, Bunker spider, Hygrodere,
+  Spore lizard, Ghost girl and Nutcracker inside; Eyeless dogs and Forest keepers outside at night; Manticoils and
+  Circuit bees by day. Behaviours are simplified re-implementations on a waypoint graph - see `js/enemies.js`.
 
 ## Debug menu
 
