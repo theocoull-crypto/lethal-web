@@ -40,6 +40,10 @@ item, RMB scan, F flashlight.
   Bracken, Thumper, Hoarding bug and Snare flea inside, Eyeless dogs outside at night, Manticoils by day. Behaviours are
   simplified re-implementations on a waypoint graph - see `js/enemies.js`.
 
+## Debug menu
+
+Press **F3** in-game for the debug panel: god mode, noclip/fly, infinite stamina and battery, frozen enemies, credits, quota, ship land/leave/skip-cutscene, route, a time-of-day slider, teleports (ship, entrance, inside, fire exit, Company counter, random tile), an enemy spawner for every enemy in the catalog, regenerate facility, open all doors, collision wireframe, and live stats (fps, draw calls, triangles, player and ship-local position, tile/door/item/enemy counts).
+
 ## How the extraction works
 
 `tools/ar.py` talks to AssetRipper's local web API per asset (no full project export), `tools/walk.py` dumps Unity
