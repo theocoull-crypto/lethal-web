@@ -39,7 +39,7 @@ class Game {
     this.clock = new THREE.Clock();
     this.state = 'loading';
     this.wantsLock = false;
-    this.quota = 130; this.credits = 60; this.daysLeft = 3; this.scrapOnShip = 0; this.quotaRound = 1;
+    this.quota = 130; this.credits = 60; this.daysLeft = 3; this.scrapOnShip = 0; this.quotaRound = 1; this.quotaFulfilled = 0;
     this.dayCount = 0;
     this.inside = false;
     this.flashlightOn = false;
@@ -131,6 +131,7 @@ class Game {
     const add = (l, area) => { if (!l.isPointLight && !l.isSpotLight) return; src.push({ obj: l, area, pos: new THREE.Vector3(), color: l.color.clone(), intensity: l.userData.baseIntensity != null ? Math.min(l.userData.baseIntensity, 60) * LIGHT_GAIN : l.intensity, distance: Math.max((l.distance || 8) * RANGE_GAIN, 14) }); l.visible = false; };
     for (const l of this.world.shipLights) add(l, 'ship');
     for (const l of this.world.moonLights) add(l, 'moon');
+    for (const l of this.world.companyLights) add(l, 'company');
     for (const l of this.dungeon.lights) src.push({ obj: null, area: 'inside', pos: l.pos.clone(), color: l.color, intensity: l.intensity, distance: l.distance });
     this.lightSources = src;
     this.lightPool.setSources(src);
@@ -140,7 +141,7 @@ class Game {
     const inside = this.inside, lit = this.world.lightsOn;
     for (const s of this.lightSources) {
       if (s.area === 'inside') { s.enabled = inside; continue; }
-      s.enabled = !inside && (s.area !== 'moon' || !this.world.inOrbit);
+      s.enabled = !inside && (s.area === 'ship' || (!this.world.inOrbit && ((s.area === 'moon' && !this.world.atCompany) || (s.area === 'company' && this.world.atCompany))));
       if (s.obj) { s.obj.getWorldPosition(s.pos); if (s.area === 'ship') s.intensity = (lit ? 1 : 0) * (s.obj.userData.baseIntensity != null ? Math.min(s.obj.userData.baseIntensity, 60) * LIGHT_GAIN : 0.5); }
     }
     this.lightPool.update(this.player.pos);
@@ -187,7 +188,7 @@ class Game {
     this.world.startLoop('shipAmb', this.world.clips.shipAmb, { vol: 0.35 });
     this.world.startLoop('thruster', this.world.clips.thruster, { vol: 0.25 });
     this.hud.showTip('Pull the lever by the door to land on 41-Experimentation.\nUse the terminal to buy gear and check the quota.', 8);
-    this.hud.setQuota(this.scrapOnShip, this.quota, this.daysLeft, this.credits);
+    this.hud.setQuota(this.quotaFulfilled, this.quota, this.daysLeft, this.credits);
   }
 
   // ---------- events from player ----------
@@ -227,7 +228,7 @@ class Game {
   onLadder(on) { }
   onLadderStep() { const c = this.items.footstep('metal'); if (c) this.sound.play(c, { vol: 0.35, pitch: 1.1 }); }
   footClip() {
-    const surf = this.player.attached ? 'metal' : this.inside ? 'concrete' : 'dirt';
+    const surf = this.player.attached ? 'metal' : this.inside ? 'concrete' : this.world.atCompany ? 'concrete' : 'dirt';
     return this.items.footstep(surf);
   }
   onDamage(amount, source) {
@@ -271,7 +272,7 @@ class Game {
       const perp = Math.sqrt(Math.max(0, d * d - along * along));
       if (perp < radius && d < bestD) { bestD = d; best = entry; }
     };
-    if (!this.inside) { for (const it of this.world.interactables) { if (it.obj) consider(this.world.worldPosOf(it.obj), it.radius, it); else if (it.pos) consider(it.pos, it.radius, it); } }
+    if (!this.inside) { for (const it of this.world.interactables) { if (it.area === 'moon' && (this.world.atCompany || this.world.inOrbit)) continue; if (it.area === 'company' && (!this.world.atCompany || this.world.inOrbit)) continue; if (it.obj) consider(this.world.worldPosOf(it.obj), it.radius, it); else if (it.pos) consider(it.pos, it.radius, it); } }
     else for (const it of this.dungeon.interactables) consider(it.pos, it.radius, it);
     for (const it of this.items.interactables()) consider(it.pos, it.radius, it);
     return best;
@@ -283,7 +284,7 @@ class Game {
     this.scanT = 3.0;
     this.hud.scanPulse();
     const c = this.items.sfx('scan'); if (c) this.sound.play(c, { vol: 0.5 });
-    this.scanTargets = this.items.scannables(this.camera.position, 60).concat(this.enemies.scannables(this.camera.position, 60), this.dungeon.scannables(this.camera.position, 80));
+    this.scanTargets = this.items.scannables(this.camera.position, 22).concat(this.enemies.scannables(this.camera.position, 30), this.dungeon.scannables(this.camera.position, 30));
   }
 
   openTerminal() { this._suppressSettings = true; this.terminal.show(); }
@@ -294,13 +295,20 @@ class Game {
     if (leaving) { this.hud.showNotice('SHIP DEPARTING', 3, '#e8c85a'); }
   }
   onShipLanded() {
-    this.hud.showNotice('LANDED ON 41-EXPERIMENTATION', 4, '#e8c85a');
     this.dayCount++;
+    this.world.stopLoop('thruster');
+    this.items.onLanded();
+    if (this.world.atCompany) {
+      this.hud.showNotice('WELCOME TO THE COMPANY', 4, '#e8c85a');
+      this.hud.showTip(`Put scrap on the counter and ring the bell.\nThe Company is buying at ${Math.round(this.world.buyingRate() * 100)}% today.`, 8);
+      const d = this.world.desk; if (d && d.clips.music) this.world.startLoop('company', d.clips.music, { vol: 0.35 });
+      this._refreshLightSources();
+      return;
+    }
+    this.hud.showNotice('LANDED ON 41-EXPERIMENTATION', 4, '#e8c85a');
     this.dungeon.generate(this.dayCount * 7919 + Date.now() % 1000).then(() => { this.items.spawnScrap(); this._refreshLightSources(); });
     this.enemies.beginDay();
-    this.world.stopLoop('thruster');
     this.world.startLoop('outside', this.items.ambienceClip('outside'), { vol: 0.5 });
-    this.items.onLanded();
   }
   onShipLeft() { this.endDay(this.player.dead); }
   endDay(playerDead) {
@@ -308,25 +316,26 @@ class Game {
     this.state = 'results';
     const collected = this.items.scrapValueOnShip();
     this.scrapOnShip = collected;
-    this.daysLeft--;
     const lines = [];
-    lines.push(playerDead ? 'The ship left without you. Your body was not recovered.' : 'You returned to the ship.');
-    lines.push(`Scrap on ship: $${collected}`);
-    lines.push(`Profit quota: $${this.quota}   (${this.daysLeft} day${this.daysLeft === 1 ? '' : 's'} left)`);
+    lines.push(playerDead ? 'The ship left without you. Your body was not recovered.' : (this.world.atCompany ? 'You left the Company building.' : 'You returned to the ship.'));
+    lines.push(`Scrap on ship: $${collected}   (sell it at the Company)`);
     let fired = false;
     if (this.daysLeft <= 0) {
-      if (collected >= this.quota) {
-        lines.push(`\nQUOTA MET. The Company is... satisfied. New quota assigned.`);
-        this.credits += collected - this.quota;
+      // the deadline just passed
+      if (this.quotaFulfilled >= this.quota) {
+        lines.push(`\nQUOTA MET ($${this.quotaFulfilled} of $${this.quota}). The Company is... satisfied. New quota assigned.`);
         this.quotaRound++;
         this.quota = Math.round(this.quota + 100 * (1 + Math.pow(this.quotaRound, 2) / 16) * (0.85 + Math.random() * 0.3));
-        this.items.sellScrap();
-        this.scrapOnShip = 0;
+        this.quotaFulfilled = 0;
         this.daysLeft = 3;
+        lines.push(`New profit quota: $${this.quota}. 3 days.`);
       } else {
-        lines.push(`\nQUOTA NOT MET. Performance review: unacceptable.\nYou have been let go. Every crew member is jettisoned into space.`);
+        lines.push(`\nQUOTA NOT MET ($${this.quotaFulfilled} of $${this.quota}). Performance review: unacceptable.\nYou have been let go. Every crew member is jettisoned into space.`);
         fired = true;
       }
+    } else {
+      this.daysLeft--;
+      lines.push(`Profit quota: $${this.quotaFulfilled} / $${this.quota}   (${this.daysLeft} day${this.daysLeft === 1 ? '' : 's'} left)`);
     }
     if (playerDead) lines.push('\nA new employee has been hired to replace you.');
     $('results-text').textContent = lines.join('\n');
@@ -336,19 +345,19 @@ class Game {
     this.enemies.clearAll();
     this.dungeon.clear();
     this.items.clearWorldScrap();
-    this.world.stopLoop('outside'); this.world.stopLoop('inside');
+    this.world.stopLoop('outside'); this.world.stopLoop('inside'); this.world.stopLoop('company');
     this.hud.setSpectate('');
     const c = this.items.sfx('results'); if (c) this.sound.play(c, { vol: 0.5 });
   }
   continueAfterResults() {
     $('results').classList.add('hidden');
-    if (this.fired) { this.quota = 130; this.credits = 60; this.daysLeft = 3; this.scrapOnShip = 0; this.quotaRound = 1; this.items.sellScrap(); this.fired = false; }
+    if (this.fired) { this.quota = 130; this.credits = 60; this.daysLeft = 3; this.scrapOnShip = 0; this.quotaRound = 1; this.quotaFulfilled = 0; this.items.sellScrap(); this.fired = false; }
     this.player.dead = false; this.player.health = 100; this.player.inputEnabled = true; this.player.ladder = null;
     this.inside = false;
     this.spawnPlayerInShip();
     this.items.clearInventory();
     this.state = 'play';
-    this.hud.setQuota(this.scrapOnShip, this.quota, this.daysLeft, this.credits);
+    this.hud.setQuota(this.quotaFulfilled, this.quota, this.daysLeft, this.credits);
     this.player.lock();
     this.world.startLoop('thruster', this.world.clips.thruster, { vol: 0.25 });
   }
@@ -380,7 +389,7 @@ class Game {
   activeColliders() {
     const list = [];
     if (this.inside) { if (this.dungeon.collider) list.push(this.dungeon.collider); for (const d of this.dungeon.doors) if (d.collider && !d.open) list.push(d.collider); }
-    else { list.push(this.world.shipCollider, ...this.world.doorColliders); if (!this.world.inOrbit) list.push(this.world.moonCollider); }
+    else { list.push(this.world.shipCollider, ...this.world.doorColliders); if (!this.world.inOrbit && this.world.levelCollider) list.push(this.world.levelCollider); }
     return list;
   }
 
@@ -404,12 +413,14 @@ class Game {
         p.update(dt, this.activeColliders());
         p.heal(dt);
         if (!this.inside) {
-          // ride the ship whenever we stand on it (or on its doors) or are inside its room while it moves
+          // riding check uses the player's position AFTER this frame's move, against the ship's current transform
           const w = this.world;
-          // anywhere on the deck (room + catwalk) counts as riding the ship, whatever the terrain under it says
           const onShipGeom = p.groundCollider === w.shipCollider || w.doorColliders.includes(p.groundCollider);
-          p.attachTo(onShipGeom || w.onShipDeck(p.pos) ? w.shipObj : null);
-          if (w.inOrbit && !p.attached && !w.onShipDeck(p.pos)) p.damage(1000, 'space');
+          const onDeck = onShipGeom || w.onShipDeck(p.pos);
+          p.attachTo(onDeck ? w.shipObj : null);
+          // off the ship in orbit = space, but only after a moment so a single bad frame never kills
+          if (w.inOrbit && !onDeck) { this._spaceT = (this._spaceT || 0) + dt; if (this._spaceT > 1.5) p.damage(1000, 'space'); }
+          else this._spaceT = 0;
         }
         this.items.update(dt);
         this.enemies.update(dt);
@@ -418,7 +429,8 @@ class Game {
         this._updateScan(dt);
       }
       this.dungeon.root.visible = this.inside;
-      this.world.moonRoot.visible = !this.inside && !this.world.inOrbit;
+      this.world.moonRoot.visible = !this.inside && !this.world.inOrbit && !this.world.atCompany;
+      this.world.companyRoot.visible = !this.inside && !this.world.inOrbit && this.world.atCompany;
       this.world.shipRoot.visible = !this.inside;
       this.world.sun.visible = !this.inside;
       this.world.setFocus(p.pos);
@@ -440,8 +452,8 @@ class Game {
     this.hud.setHealth(p.health);
     const t = this.lookTarget();
     this.hud.setTooltip(t ? (typeof t.label === 'function' ? t.label() : t.label) : (p.ladder ? 'W/S climb  ·  Space let go' : ''));
-    this.hud.setQuota(this.items.scrapValueOnShip(), this.quota, this.daysLeft, this.credits);
-    if (w.shipState === 'landed' && w.dayFrac >= 1) { w.setShipState('leaving'); this.hud.showNotice('THE SHIP IS LEAVING', 4); }
+    this.hud.setQuota(this.quotaFulfilled, this.quota, this.daysLeft, this.credits, this.items.scrapValueOnShip());
+    if (w.shipState === 'landed' && w.dayFrac >= 1 && !w.atCompany) { w.setShipState('leaving'); this.hud.showNotice('THE SHIP IS LEAVING', 4); }
     else if (w.shipState === 'landed' && w.dayFrac > 0.93 && !this._warned) { this._warned = true; this.hud.showNotice('THE SHIP LEAVES AT MIDNIGHT', 4, '#e8c85a'); const c = this.items.sfx('alert'); if (c) this.sound.play(c, { vol: 0.6 }); }
     if (w.shipState !== 'landed') this._warned = false;
   }

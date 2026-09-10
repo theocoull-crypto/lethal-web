@@ -87,7 +87,7 @@ def main():
         os.environ['AR_BASE'] = f'http://127.0.0.1:{PORT}'
         py = sys.executable
         print('== packing ship + moon')
-        subprocess.check_call([py, os.path.join(HERE, 'pack.py'), 'ship', 'moon'], cwd=ROOT)
+        subprocess.check_call([py, os.path.join(HERE, 'pack.py'), 'ship', 'moon', 'company'], cwd=ROOT)
         print('== packing prefabs (tiles, scrap, enemies, tools)')
         subprocess.check_call([py, os.path.join(HERE, 'pack_prefabs.py')], cwd=ROOT)
         print('== extra clips + bind poses')

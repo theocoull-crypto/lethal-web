@@ -242,6 +242,8 @@ export class Items {
     for (const it of this.world) {
       if (it.area === 'inside' && !this.game.inside) continue;
       if (it.area !== 'inside' && this.game.inside) continue;
+      if (it.area === 'company' && !this.game.world.atCompany) continue;
+      if (it.area === 'outside' && this.game.world.atCompany) continue;
       const p = it.obj.getWorldPosition(new THREE.Vector3());
       if (p.distanceToSquared(eye) > 36) continue;
       out.push({ pos: p, radius: Math.max(0.5, Math.max(it.size.x, it.size.z) * 0.6 + 0.2), label: () => this.inventory.every(x => x) ? `${it.scanName}\n(inventory full)` : `[E] Grab ${it.scanName}${it.value ? '  $' + it.value : ''}`, action: () => this.pickUp(it) });
@@ -279,7 +281,7 @@ export class Items {
     else {
       const onDeck = g.world.onShipDeck(pos);
       if (onDeck) { g.scene.add(it.obj); this.placeOnFloor(it, pos, [g.world.shipCollider, ...g.world.doorColliders], g.player.yaw); g.world.shipObj.attach(it.obj); it.onShip = g.world.inShipRoom(it.obj.getWorldPosition(new THREE.Vector3())); it.area = 'ship'; }
-      else { g.scene.add(it.obj); this.placeOnFloor(it, pos, [g.world.moonCollider, g.world.shipCollider], g.player.yaw); it.onShip = false; it.area = 'outside'; }
+      else { g.scene.add(it.obj); this.placeOnFloor(it, pos, [g.world.levelCollider, g.world.shipCollider].filter(Boolean), g.player.yaw); it.onShip = false; it.area = g.world.atCompany ? 'company' : 'outside'; it.onCounter = g.world.atCompany && g.world.onCounter(it.obj.getWorldPosition(new THREE.Vector3())); }
     }
     this.world.push(it);
     if (it.onShip && it.value) { const c = this.sfx('addScrap'); }
@@ -320,6 +322,25 @@ export class Items {
     return it;
   }
 
+  /** drop the held item onto the Company counter */
+  placeOnCounter() {
+    const g = this.game, it = this.inventory[this.active];
+    if (!it) return;
+    const p = g.world.counterPoint(); if (!p) return;
+    this.inventory[this.active] = null; it.held = false;
+    g.camera.remove(it.obj);
+    it.obj.traverse(m => { if (m.isMesh) { m.frustumCulled = true; m.castShadow = true; m.layers.set(0); } });
+    g.scene.add(it.obj);
+    const spot = p.clone().add(new THREE.Vector3((Math.random() - 0.5) * 1.6, 0.6, (Math.random() - 0.5) * 0.8));
+    this.placeOnFloor(it, spot, [g.world.companyCollider], Math.random() * 6.28);
+    it.area = 'company'; it.onShip = false; it.onCounter = true;
+    this.world.push(it);
+    this.select(this.active); this.updateWeight();
+    const c = it.dropSFX || this.sfx('grab'); if (c) g.sound.play(c, { vol: 0.6 });
+  }
+  itemsOnCounter() { return this.world.filter(it => it.onCounter || (it.area === 'company' && this.game.world.onCounter(it.obj.getWorldPosition(new THREE.Vector3())))); }
+  removeItems(list) { for (const it of list) { it.obj.parent && it.obj.parent.remove(it.obj); const i = this.world.indexOf(it); if (i >= 0) this.world.splice(i, 1); } }
+
   // ---------- queries ----------
   scannables(from, range) {
     const out = [];
@@ -337,12 +358,12 @@ export class Items {
   sellScrap() { for (const it of this.world.slice()) if (it.onShip) { it.obj.parent && it.obj.parent.remove(it.obj); this.world.splice(this.world.indexOf(it), 1); } }
 
   clearWorldScrap() {
-    for (const it of this.world.slice()) if (it.area === 'inside' || it.area === 'outside') { it.obj.parent && it.obj.parent.remove(it.obj); this.world.splice(this.world.indexOf(it), 1); }
+    for (const it of this.world.slice()) if (it.area === 'inside' || it.area === 'outside' || it.area === 'company') { it.obj.parent && it.obj.parent.remove(it.obj); this.world.splice(this.world.indexOf(it), 1); }
   }
   clearInventory() { for (let i = 0; i < 4; i++) { const it = this.inventory[i]; if (it) { this.game.camera.remove(it.obj); this.inventory[i] = null; } } this.select(0); this.updateWeight(); }
 
   update(dt) {
-    if (this.deliveryTimer > 0 && !this.game.world.inOrbit && this.game.world.shipState === 'landed') { this.deliveryTimer -= dt; if (this.deliveryTimer <= 0 && this.deliveries.length) this._deliver(); }
+    if (this.deliveryTimer > 0 && !this.game.world.inOrbit && this.game.world.shipState === 'landed' && !this.game.world.atCompany) { this.deliveryTimer -= dt; if (this.deliveryTimer <= 0 && this.deliveries.length) this._deliver(); }
     if (this.game.flashlightOn) {
       const f = this.flashlightItem();
       if (f && f.battery != null) { f.battery = Math.max(0, f.battery - dt / (f.batterySeconds || 200)); this._batT = (this._batT || 0) + dt; if (this._batT > 1) { this._batT = 0; this.game.hud.setInventory(this.inventory.map(x => x ? { name: x.name, value: x.value, battery: x.battery } : null), this.active); } }
@@ -355,7 +376,7 @@ export class Items {
     if (this.cueTimer <= 0) {
       this.cueTimer = 15 + Math.random() * 35;
       const g = this.game;
-      const area = g.inside ? 'inside' : g.player.attached ? 'ship' : 'outside';
+      const area = g.inside ? 'inside' : g.player.attached ? 'ship' : (g.world.atCompany ? 'ship' : 'outside');
       const list = this.ambience.cues[area];
       if (list && list.length && g.state === 'play' && !g.world.inOrbit) {
         const a = Math.random() * Math.PI * 2, r = 6 + Math.random() * 12;

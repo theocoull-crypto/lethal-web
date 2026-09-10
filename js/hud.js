@@ -45,9 +45,9 @@ export class HUD {
 
   showTip(text, seconds = 5) { this.tip.textContent = text; this.tip.style.opacity = 1; this.tipTimer = seconds; }
 
-  setQuota(collected, quota, daysLeft, credits) {
-    this.quotaLine.textContent = `SCRAP ON SHIP $${collected}  /  QUOTA $${quota}`;
-    this.quotaSub.textContent = daysLeft == null ? '' : `${daysLeft} day${daysLeft === 1 ? '' : 's'} until deadline   ·   credits $${credits}`;
+  setQuota(fulfilled, quota, daysLeft, credits, onShip) {
+    this.quotaLine.textContent = `PROFIT QUOTA $${fulfilled} / $${quota}`;
+    this.quotaSub.textContent = daysLeft == null ? '' : `${daysLeft} day${daysLeft === 1 ? '' : 's'} until deadline   ·   credits $${credits}${onShip ? `   ·   scrap on ship $${onShip}` : ''}`;
   }
 
   showNotice(text, seconds = 3, color = '#ff5040') { this.notice.textContent = text; this.notice.style.color = color; this.notice.style.opacity = 1; this.noticeTimer = seconds; }

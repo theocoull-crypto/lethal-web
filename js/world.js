@@ -32,7 +32,15 @@ export class World {
     this.ladders = [];
     this.anims = {};
     this.shipLandingPos = new THREE.Vector3();
+    this.destination = 'moon';      // 'moon' (41-Experimentation) or 'company'
+    this.companyRoot = new THREE.Group(); this.companyRoot.name = 'CompanyRoot'; this.scene.add(this.companyRoot);
+    this.company = null; this.companyCollider = null; this.companyLights = [];
+    this.desk = null;
   }
+
+  get levelRoot() { return this.destination === 'company' ? this.companyRoot : this.moonRoot; }
+  get levelCollider() { return this.destination === 'company' ? this.companyCollider : this.moonCollider; }
+  get atCompany() { return this.destination === 'company'; }
 
   async load(progress) {
     const lib = this.lib;
@@ -78,9 +86,90 @@ export class World {
     this.moonCollider = new Collider('moon').build(mEntries, null);
     this.colliders.push(this.moonCollider);
     this._setupMoonParts();
+    progress && progress('Loading the Company building...');
+    try {
+      const cMan = await lib.manifest('scenes/company.json');
+      const cInst = await lib.instantiate(cMan, { lights: true, staticRoot: this.companyRoot });
+      this.company = cInst;
+      this.companyRoot.add(cInst.root); this.companyRoot.visible = false;
+      const cEntries = await collisionEntries(lib, cInst, { exclude: n => NOCOLLIDE.has(n.layer) });
+      this.companyCollider = new Collider('company').build(cEntries, null);
+      this.colliders.push(this.companyCollider);
+      cInst.root.traverse(o => { if (o.isLight) { o.userData.baseIntensity = o.intensity; if (o.isPointLight || o.isSpotLight) { o.intensity = Math.min(o.userData.baseIntensity, 60) * 0.03; } else if (o.isDirectionalLight) o.visible = false; this.companyLights.push(o); } });
+      this._setupCompanyParts();
+    } catch (e) { console.warn('company building not available', e); }
     this._setupSky();
     this.setShipState('orbit', true);
     return this;
+  }
+
+  // ---------- the Company building ----------
+  _setupCompanyParts() {
+    const inst = this.company; const by = n => inst.byName.get(n) || [];
+    const deskNode = by('DoorAndHookAnim')[0]; if (!deskNode) return;
+    const mb = deskNode.userData.node.comps.find(c => c.t === 'MB' && c.cls === 'DepositItemsDesk');
+    const d = mb && mb.d ? mb.d : {};
+    const sellCube = by('InteractCube')[0];
+    const bellTrig = by('BellDinger')[0] ? by('BellDinger')[0].children.find(c => c.name === 'Trigger') : null;
+    const bellAnimNode = by('BellDingerAnimContainer')[0];
+    const ac = deskNode.userData.node.comps.find(c => c.t === 'Animator');
+    const bac = bellAnimNode ? bellAnimNode.userData.node.comps.find(c => c.t === 'Animator') : null;
+    const bellAudio = bellTrig ? bellTrig.userData.node.comps.find(c => c.t === 'Audio') : null;
+    const musicNode = by('Music')[0]; const musicAudio = musicNode ? musicNode.userData.node.comps.find(c => c.t === 'Audio') : null;
+    // counter box in world space (the InteractCube's box)
+    const box = sellCube ? sellCube.userData.node.comps.find(c => c.t === 'Box') : null;
+    this.desk = {
+      node: deskNode, sellCube, bellTrig, items: [], busy: false,
+      anim: ac && ac.controller ? new Animator(deskNode, ac.controller) : null,
+      bellAnim: bac && bac.controller ? new Animator(bellAnimNode, bac.controller) : null,
+      clips: { doorOpen: d.doorOpenSFX && d.doorOpenSFX.$, doorShut: d.doorShutSFX && d.doorShutSFX.$, rumble: d.rumbleSFX && d.rumbleSFX.$, good: d.rewardGood && d.rewardGood.$, bad: d.rewardBad && d.rewardBad.$, mic: (d.microphoneAudios || []).map(x => x && x.$).filter(Boolean), bell: bellAudio && bellAudio.clip, music: musicAudio && musicAudio.clip },
+      counterBox: box ? { center: new THREE.Vector3(box.c[0], box.c[1], box.c[2]), size: new THREE.Vector3(box.s[0], box.s[1], box.s[2]) } : null,
+    };
+    if (this.desk.anim) this.desk.anim.load(); if (this.desk.bellAnim) this.desk.bellAnim.load();
+    if (sellCube) this.interactables.push({ obj: sellCube, radius: 1.6, reach: 2.8, area: 'company', label: () => this.game.items.inventory[this.game.items.active] ? '[E] Place item on counter' : 'Counter', action: () => this.game.items.placeOnCounter() });
+    if (bellTrig) this.interactables.push({ obj: bellTrig, radius: 0.8, reach: 2.4, area: 'company', label: () => '[E] Ring bell', action: () => this.ringBell() });
+  }
+
+  /** is this world position on the counter (inside the deposit box)? */
+  onCounter(p) {
+    const d = this.desk; if (!d || !d.sellCube || !d.counterBox) return false;
+    const l = d.sellCube.worldToLocal(p.clone()).sub(d.counterBox.center);
+    return Math.abs(l.x) < d.counterBox.size.x / 2 + 0.3 && Math.abs(l.y) < d.counterBox.size.y / 2 + 0.8 && Math.abs(l.z) < d.counterBox.size.z / 2 + 0.3;
+  }
+  counterPoint() { const d = this.desk; return d && d.sellCube ? d.sellCube.localToWorld(d.counterBox.center.clone()) : null; }
+
+  buyingRate() { const g = this.game; return g.daysLeft <= 0 ? 1 : 0.3 + (0.7 / 3) * (3 - g.daysLeft); }
+
+  ringBell() {
+    const d = this.desk, g = this.game; if (!d || d.busy) return;
+    if (d.bellAnim && d.bellAnim.ready) d.bellAnim.play('BellDingerPress', { once: true, loop: false, fade: 0 });
+    if (d.clips.bell) g.sound.play(d.clips.bell, { pos: this.worldPosOf(d.bellTrig), vol: 0.9 });
+    const items = g.items.itemsOnCounter();
+    if (!items.length) { g.hud.showTip('Place scrap on the counter first.', 3); return; }
+    d.busy = true;
+    const pos = this.counterPoint();
+    setTimeout(() => {
+      if (d.anim && d.anim.ready) d.anim.play('DoorOpen', { once: true, loop: false, fade: 0 });
+      if (d.clips.doorOpen) g.sound.play(d.clips.doorOpen, { pos, vol: 0.9 });
+      if (d.clips.mic.length) g.sound.play(d.clips.mic[Math.floor(Math.random() * d.clips.mic.length)], { pos, vol: 0.8 });
+    }, 1200);
+    setTimeout(() => {
+      if (d.anim && d.anim.ready) d.anim.play('HookSwoop', { once: true, loop: false, fade: 0 });
+      if (d.clips.rumble) g.sound.play(d.clips.rumble, { pos, vol: 0.7 });
+    }, 3200);
+    setTimeout(() => {
+      const total = items.reduce((a, it) => a + (it.value || 0), 0);
+      const rate = this.buyingRate();
+      const profit = Math.round(total * rate);
+      g.items.removeItems(items);
+      g.credits += profit; g.quotaFulfilled += profit;
+      g.hud.showNotice(`SOLD ${items.length} ITEM${items.length === 1 ? '' : 'S'} FOR $${profit}  (${Math.round(rate * 100)}%)`, 5, '#8fdc7a');
+      const clip = profit >= g.credits / 4 ? d.clips.good : d.clips.bad; if (clip) g.sound.play(clip, { pos, vol: 0.9 });
+      if (d.anim && d.anim.ready) d.anim.play('DoorClose', { once: true, loop: false, fade: 0 });
+      if (d.clips.doorShut) g.sound.play(d.clips.doorShut, { pos, vol: 0.9 });
+      d.busy = false;
+      g.hud.setQuota(g.quotaFulfilled, g.quota, g.daysLeft, g.credits);
+    }, 5200);
   }
 
   // ---------- ship ----------
@@ -193,13 +282,13 @@ export class World {
     this.shipState = s; this.shipT = 0;
     const a = this.anims.ship;
     if (s === 'orbit') {
-      this.moonRoot.visible = false;
+      this.moonRoot.visible = false; this.companyRoot.visible = false;
       this.setDoors(false, true);
       if (a && a.has('ShipIdle')) a.play('ShipIdle', { fade: instant ? 0 : 0.5 });
       else this.shipObj.position.copy(SHIP_LANDED_LOCAL).add(new THREE.Vector3(-98, 70, 0));
     }
     if (s === 'landing') {
-      this.moonRoot.visible = true;
+      this.levelRoot.visible = true;
       this.startLoop('turbulence', this.clips.turbulence, { vol: 0.9 });
       if (a && a.has('HangarShipLandB')) { const act = a.play('HangarShipLandB', { once: true, loop: false, fade: 0.2 }); this.shipClipLen = a.clips.get('HangarShipLandB').data.length; }
       else this.shipClipLen = 9;
@@ -260,7 +349,7 @@ export class World {
     this.entrance = ents[0] || null; this.fireExit = ents[1] || null;
     for (const e of ents) {
       const isFire = e !== this.entrance;
-      this.interactables.push({ obj: e.obj, radius: 1.8, reach: 3.0, label: () => this.game.dungeon.placed.length ? (isFire ? '[E] Enter (fire exit)' : '[E] Enter facility') : 'Facility is sealed', action: () => { if (this.game.dungeon.placed.length) { this.playEntranceDoor(true); this.game.enterFacility(isFire); } } });
+      this.interactables.push({ obj: e.obj, radius: 1.8, reach: 3.0, area: 'moon', label: () => this.game.dungeon.placed.length ? (isFire ? '[E] Enter (fire exit)' : '[E] Enter facility') : 'Facility is sealed', action: () => { if (this.game.dungeon.placed.length) { this.playEntranceDoor(true); this.game.enterFacility(isFire); } } });
     }
     // the main entrance's visible double doors have their own animator
     const vis = by('OutsideEntranceVisualDoorsContainer')[0];
@@ -279,7 +368,7 @@ export class World {
       ld.topPos = top; ld.bottomPos = bottom; ld.height = Math.abs(top.y - bottom.y);
       const hp = this.worldPosOf(ld.node);
       ld.lineX = hp.x; ld.lineZ = hp.z;
-      this.interactables.push({ pos: mid, radius: 0.9, reach: 2.4, segment: () => [ld.bottomPos, ld.topPos], label: () => '[E] Climb ladder', action: () => this.game.player.startLadder(ld), area: 'outside' });
+      this.interactables.push({ pos: mid, radius: 0.9, reach: 2.4, segment: () => [ld.bottomPos, ld.topPos], label: () => '[E] Climb ladder', action: () => this.game.player.startLadder(ld), area: 'moon' });
     }
   }
 
@@ -329,7 +418,7 @@ export class World {
 
   _updateSky() {
     const orbit = this.shipState === 'orbit';
-    const f = this.dayFrac;
+    const f = this.atCompany ? 0.35 : this.dayFrac;   // the Company sits in permanent overcast afternoon
     const elev = orbit ? 0.6 : Math.sin(Math.PI * Math.min(1, Math.max(0, (f - 0.02) / 0.72))) * 0.95 - 0.05;
     const dusk = THREE.MathUtils.smoothstep(f, 0.55, 0.78);
     const night = THREE.MathUtils.smoothstep(f, 0.7, 0.9);

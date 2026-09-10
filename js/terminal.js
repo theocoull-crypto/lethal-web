@@ -72,7 +72,7 @@ To scan for the number of items left on the current moon.
 Current profit quota and deadline.
 
 >ROUTE [moon]
-To route the autopilot to a moon.
+To route the autopilot to a moon or to the Company building (sell your scrap there).
 
 >CLEAR   >EXIT
 `);
@@ -80,8 +80,10 @@ To route the autopilot to a moon.
 To route the autopilot to a moon, use the word ROUTE.
 ____________________________
 
-* 41-Experimentation  [demo]   ${this.weather()}
-* (all other moons are unavailable in this demo)
+* The Company building   //   Buying at ${Math.round(g.world.buyingRate() * 100)}%
+
+* 41-Experimentation   ${this.weather()}${g.world.destination === 'moon' ? '   (current route)' : ''}
+(other moons are not available in this demo)
 `);
     if ('store'.startsWith(cmd)) return this.print(`Welcome to the Company store.
 Use words BUY to buy an item.
@@ -108,11 +110,13 @@ Please CONFIRM or DENY.
       const left = g.items.world.filter(it => it.area === 'inside' && it.value);
       return this.print(`There are ${left.length} objects outside the ship, totalling at an approximate value of $${left.reduce((a, i) => a + i.value, 0)}.\n`);
     }
-    if ('quota'.startsWith(cmd)) return this.print(`Profit quota: $${g.quota}\nScrap on ship: $${g.items.scrapValueOnShip()}\nDays until deadline: ${g.daysLeft}\nCredits: $${g.credits}\n`);
+    if ('quota'.startsWith(cmd)) return this.print(`Profit quota: $${g.quotaFulfilled} / $${g.quota}\nScrap on ship: $${g.items.scrapValueOnShip()}\nDays until deadline: ${g.daysLeft}\nCompany buying rate: ${Math.round(g.world.buyingRate() * 100)}%\nCredits: $${g.credits}\n`);
     if ('route'.startsWith(cmd)) {
       const to = words.slice(1).join(' ');
-      if (to.startsWith('exp') || to === '41') return this.print('The autopilot is already routed to 41-Experimentation.\nPull the lever to land.\n');
-      return this.print('Only 41-Experimentation is available in this demo.\n');
+      if (!g.world.inOrbit) return this.print('You can only route the autopilot while in orbit.\n');
+      if (to.startsWith('exp') || to === '41') { g.world.destination = 'moon'; return this.print('The autopilot is now routed to 41-Experimentation.\nPull the lever to land.\n'); }
+      if (to.startsWith('comp') || to.startsWith('the comp')) { g.world.destination = 'company'; return this.print(`The autopilot is now routed to the Company building.\nThe Company is buying at ${Math.round(g.world.buyingRate() * 100)}%.\nPull the lever to land.\n`); }
+      return this.print('Only 41-Experimentation and the Company building are available in this demo.\n');
     }
     if ('clear'.startsWith(cmd)) { this.clear(); return; }
     if ('exit'.startsWith(cmd) || cmd === 'quit') { this.hide(); return; }
