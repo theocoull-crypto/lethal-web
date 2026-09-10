@@ -25,7 +25,9 @@ item, RMB scan, F flashlight.
   open/close buttons, the lever, the light switch. You ride the ship while it moves.
 * The terminal works: `help`, `store`, `buy`, `moons`, `route`, `scan`, `quota`. The store has two items; orders are
   delivered next to the ship after landing.
-* Ladders on the moon can be climbed. Dying makes the ship leave without you.
+* The Company building: `route company` at the terminal, land, put scrap on the counter, ring the bell. Scrap is
+  bought at the game's rate (30% three days out, 100% on the last day) and only sold scrap counts toward the quota.
+* Ladders on the moon and the ship can be climbed. Dying makes the ship leave without you.
 * The game's low-resolution "pixel" look is reproduced (internal render at 520 lines, nearest-neighbour upscale, grain).
   Press **P** to toggle it.
 
