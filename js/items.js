@@ -17,6 +17,7 @@ const HOLD_POSES = {
   BBFlashlight: { rot: [-90, 0, 0], pos: [0.38, -0.32, -0.55] },
   FlashlightItem: { rot: [-90, 0, 0], pos: [0.38, -0.32, -0.55] },
   WalkieTalkie: { rot: [-90, 0, -90], pos: [0.42, -0.42, -0.65] },
+  ShovelItem: { rot: [-20, 15, -95], pos: [0.36, -0.42, -0.62] },
 };
 
 export class Items {
@@ -103,6 +104,9 @@ export class Items {
     this.toolDefs = {};
     for (const catalog of catalogs) for (const [k, v] of Object.entries(catalog.tools)) if (!k.endsWith('_item') && v) { this.toolDefs[k] = { name: k, prefab: v, item: catalog.tools[k + '_item'] || {} }; await this.lib.manifest('prefabs/' + v).catch(() => null); }
     // flashlight click clips from the prefab
+    // shovel clips (reel up / swing / hit) from the shovel prefab
+    const sh = this.toolDefs.ShovelItem ? await this.lib.manifest('prefabs/' + this.toolDefs.ShovelItem.prefab).catch(() => null) : null;
+    if (sh) for (const n of sh.nodes) for (const c of n.comps) if (c.t === 'MB' && c.cls === 'Shovel' && c.d) { const id = x => x && x.$; this.sfxTable.shovelReel = id(c.d.reelUp); this.sfxTable.shovelSwing = id(c.d.swing); this.sfxTable.shovelHit = (c.d.hitSFX || []).map(id).filter(Boolean); }
     for (const key of ['BBFlashlight', 'FlashlightItem']) {
       const fl = this.toolDefs[key] ? await this.lib.manifest('prefabs/' + this.toolDefs[key].prefab).catch(() => null) : null;
       if (fl) for (const n of fl.nodes) for (const c of n.comps) if (c.t === 'MB' && c.cls === 'FlashlightItem' && c.d) { const cl = (c.d.flashlightClips || []).map(x => x && x.$).filter(Boolean); if (cl.length && !this.sfxTable.flashOn) { this.sfxTable.flashOn = cl[0]; this.sfxTable.flashOff = cl[1] || cl[0]; } }
@@ -251,6 +255,7 @@ export class Items {
     const out = [];
     const eye = this.game.camera.position;
     for (const it of this.world) {
+      if (it.carriedBy) continue;   // a hoarding bug has it
       if (it.area === 'inside' && !this.game.inside) continue;
       if (it.area !== 'inside' && this.game.inside) continue;
       if (it.area === 'company' && !this.game.world.atCompany) continue;
@@ -318,12 +323,19 @@ export class Items {
     if (/walkie/.test(n)) { g.hud.showTip('Nobody is on the other end.', 2); return; }
   }
 
+  /** shovel: reel up, then swing; whatever is in front gets hit at the bottom of the swing */
   swing(it) {
     if (this.swingT > 0) return;
-    this.swingT = 0.6;
     const g = this.game;
-    const c = this.sfx('grab');
-    setTimeout(() => { g.enemies.hitInFront(g.player, 3.2, 1); }, 250);
+    this.swingT = 0.75; this.swingHit = false;
+    const reel = this.sfx('shovelReel'); if (reel) g.sound.play(reel, { vol: 0.6 });
+    setTimeout(() => {
+      if (this.inventory[this.active] !== it) return;
+      const sw = this.sfx('shovelSwing'); if (sw) g.sound.play(sw, { vol: 0.7 });
+      g.enemies.onNoise(g.player.pos, 0.6);
+      const hit = g.enemies.hitInFront(g.player, 2.6, 1);
+      if (hit) { const h = this.sfx('shovelHit'); const c = Array.isArray(h) ? h[Math.floor(Math.random() * h.length)] : h; if (c) g.sound.play(c, { vol: 0.9 }); }
+    }, 300);
   }
 
   /** the facility's apparatus (spawned with the tiles) is grabbable scrap worth $80 */
@@ -383,7 +395,19 @@ export class Items {
       const f = this.flashlightItem();
       if (f && f.battery != null && !this.infBattery) { f.battery = Math.max(0, f.battery - dt / (f.batterySeconds || 200)); this._batT = (this._batT || 0) + dt; if (this._batT > 1) { this._batT = 0; this.game.hud.setInventory(this.inventory.map(x => x ? { name: x.name, value: x.value, battery: x.battery } : null), this.active); } }
     }
-    if (this.swingT > 0) { this.swingT -= dt; if (this.heldObj) this.heldObj.rotation.x = Math.sin(this.swingT * 10) * 0.8; }
+    if (this.swingT > 0) {
+      this.swingT -= dt;
+      if (this.heldObj) {
+        // 0.75 -> 0.45: reel up (raise), 0.45 -> 0.25: swing down, then settle back
+        const t = 0.75 - this.swingT;
+        const raise = t < 0.3 ? t / 0.3 : t < 0.5 ? 1 - (t - 0.3) / 0.2 * 1.6 : -0.6 + (t - 0.5) / 0.25 * 0.6;
+        const it = this.inventory[this.active]; const pose = it && HOLD_POSES[it.tool];
+        if (pose) {
+          this.heldObj.quaternion.setFromEuler(new THREE.Euler(THREE.MathUtils.degToRad(pose.rot[0] + raise * 55), THREE.MathUtils.degToRad(pose.rot[1] - raise * 25), THREE.MathUtils.degToRad(pose.rot[2]), 'YXZ'));
+          this.heldObj.position.set(pose.pos[0] - raise * 0.12, pose.pos[1] + raise * 0.18, pose.pos[2] + raise * 0.1);
+        } else this.heldObj.rotation.x = raise * 0.8;
+      }
+    }
     // held item sway
     if (this.heldObj) { const p = this.game.player; this.heldObj.position.y += (Math.sin(p.bob * 2) * p.bobAmp * 0.5 - (this.heldObj.userData.sw || 0)); this.heldObj.userData.sw = Math.sin(p.bob * 2) * p.bobAmp * 0.5; }
     // ambience cues

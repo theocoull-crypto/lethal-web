@@ -140,6 +140,7 @@ export class Player {
     if (this.stamina <= 0.02) this.sprinting = false;
     let sp = this.speed * (this.sprinting ? this.sprintMul : 1) * (this.crouching ? this.crouchMul : 1);
     sp /= (1 + this.carryWeight / 105);
+    if (this.slowT > 0) { this.slowT -= dt; sp *= 0.35; }   // caught in a bunker spider web
     if (move.lengthSq() > 0) {
       move.normalize();
       const f = this.forward(new THREE.Vector3()), r = this.right(new THREE.Vector3());

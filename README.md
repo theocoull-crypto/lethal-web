@@ -23,8 +23,9 @@ item, RMB scan, F flashlight.
 
 * The ship runs on its own animation clips from the game: landing and take-off sequences, the sliding doors and their
   open/close buttons, the lever, the light switch. You ride the ship while it moves.
-* The terminal works: `help`, `store`, `buy`, `moons`, `route`, `scan`, `quota`. The store has two items; orders are
-  delivered next to the ship after landing.
+* The terminal works: `help`, `store`, `buy`, `moons`, `route`, `scan`, `quota`. Partial words are fine ("rou exp",
+  "the com", "fla"). The store has three items - flashlight, walkie-talkie and shovel - delivered next to the ship
+  after landing. The shovel swings with the left mouse button and kills monsters in the same number of hits as the game.
 * The Company building: `route company` at the terminal, land, put scrap on the counter, ring the bell. Scrap is
   bought at the game's rate (30% three days out, 100% on the last day) and only sold scrap counts toward the quota.
 * Ladders on the moon and the ship can be climbed. Dying makes the ship leave without you.
@@ -40,7 +41,13 @@ item, RMB scan, F flashlight.
 * Monsters use the game's real models, skinning and animation clips (with IK). Every monster with a web behaviour can
   spawn if it is on the moon's real spawn list: Bracken, Thumper, Hoarding bug, Snare flea, Bunker spider, Hygrodere,
   Spore lizard, Ghost girl and Nutcracker inside; Eyeless dogs and Forest keepers outside at night; Manticoils and
-  Circuit bees by day. Behaviours are simplified re-implementations on a waypoint graph - see `js/enemies.js`.
+  Circuit bees by day. Each behaviour follows the real game's AI: the Bracken sneaks up from behind, freezes when
+  looked at and snaps if stared at too long; the Thumper charges fast in straight lines and slows through turns; the
+  Hoarding bug gathers scrap into a nest and attacks if you take it; the Snare flea waits on ceilings and drops on you
+  (mash E or get outside); the Bunker spider spins webs that slow you and alert it; the Hygrodere is slow and
+  unkillable; the Spore lizard puffs a spore cloud and backs away; the Ghost girl haunts you and occasionally chases;
+  the Nutcracker only spots movement, then aims, fires its shotgun and reloads; the Eyeless dog is blind and hunts
+  by sound (crouch to sneak past); the Forest keeper spots you from far away and eats you. See `js/enemies.js`.
 
 ## Debug menu
 

@@ -54,6 +54,7 @@ export class Terminal {
     this.store = [
       { key: 'flashlight', name: 'Flashlight', price: 15, tool: 'BBFlashlight', names: ['flashlight', 'pro-flashlight', 'light'] },
       { key: 'walkie', name: 'Walkie-talkie', price: 12, tool: 'WalkieTalkie', names: ['walkie-talkie', 'walkie', 'walkie talkie', 'radio'] },
+      { key: 'shovel', name: 'Shovel', price: 30, tool: 'ShovelItem', names: ['shovel', 'spade'] },
     ];
     this.input.addEventListener('keydown', e => {
       e.stopPropagation();
