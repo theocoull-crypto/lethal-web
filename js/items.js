@@ -12,6 +12,13 @@ export function unityEulerToQuat(x, y, z) {
   return new THREE.Quaternion(q.x, -q.y, -q.z, q.w); // mirror X
 }
 
+// camera-relative poses for the store tools (rot = degrees YXZ, pos = camera space)
+const HOLD_POSES = {
+  BBFlashlight: { rot: [-90, 0, 0], pos: [0.38, -0.32, -0.55] },
+  FlashlightItem: { rot: [-90, 0, 0], pos: [0.38, -0.32, -0.55] },
+  WalkieTalkie: { rot: [-15, 180, 0], pos: [0.36, -0.36, -0.5] },
+};
+
 export class Items {
   constructor(game) {
     this.game = game; this.lib = game.lib;
@@ -31,15 +38,36 @@ export class Items {
   // ---------- store deliveries ----------
   queueDelivery(tool, name) { this.deliveries.push({ tool, name }); if (this.deliveryTimer <= 0) this.deliveryTimer = 30; }
   onLanded() { if (this.deliveries.length && this.deliveryTimer <= 0) this.deliveryTimer = 25; }
+  async makeTool(toolKey, displayName) {
+    const t = this.toolDefs[toolKey]; if (!t) return null;
+    const def = Object.assign({ name: displayName || toolKey, prefab: t.prefab, weight: 1.0 }, t.item, { itemName: t.item.itemName || displayName || toolKey });
+    const it = await this.makeInstance(def, 0);
+    it.name = def.itemName; it.tool = toolKey;
+    if (/Flashlight/i.test(toolKey)) it.isFlashlight = true;
+    if (def.requiresBattery) { it.battery = 1; it.batterySeconds = def.batteryUsage || 200; }
+    return it;
+  }
+
+  /** the flashlight whose battery is used: the active one if it is a flashlight, else the first charged one */
+  flashlightItem() {
+    const a = this.inventory[this.active];
+    if (a && a.isFlashlight) return a;
+    return this.inventory.find(x => x && x.isFlashlight && (x.battery == null || x.battery > 0)) || this.inventory.find(x => x && x.isFlashlight) || null;
+  }
+  flashlightBattery() { const f = this.flashlightItem(); return f ? (f.battery == null ? 1 : f.battery) : 0; }
+  chargeHeld() {
+    const it = this.inventory[this.active];
+    if (!it || it.battery == null) { this.game.hud.showTip('Hold a battery-powered item to charge it.', 3); return false; }
+    it.battery = 1; this.select(this.active); return true;
+  }
+
   async _deliver() {
     const g = this.game; const list = this.deliveries.splice(0);
     // drop next to the ship, in front of the door
     const base = g.world.shipObj.localToWorld(new THREE.Vector3(-14.5, 0.5, -6.5));
     const c = this.sfx('deliver'); if (c) g.sound.play(c, { pos: base, vol: 0.9, min: 4, max: 80 });
     for (let i = 0; i < list.length; i++) {
-      const t = this.toolDefs[list[i].tool]; if (!t) continue;
-      const def = Object.assign({ name: list[i].name, prefab: t.prefab, weight: 1.05 }, t.item, { itemName: t.item.itemName || list[i].name });
-      const it = await this.makeInstance(def, 0); it.name = def.itemName; if (list[i].tool === 'FlashlightItem') it.isFlashlight = true;
+      const it = await this.makeTool(list[i].tool, list[i].name); if (!it) continue;
       g.scene.add(it.obj);
       this.placeOnFloor(it, base.clone().add(new THREE.Vector3((i % 3) * 0.9, 0.3, Math.floor(i / 3) * 0.9)), [g.world.moonCollider], Math.random() * 6.28);
       it.area = 'outside'; it.onShip = false;
@@ -76,8 +104,10 @@ export class Items {
     this.toolDefs = {};
     for (const [k, v] of Object.entries(this.catalog.tools)) if (!k.endsWith('_item') && v) { this.toolDefs[k] = { name: k, prefab: v, item: this.catalog.tools[k + '_item'] || {} }; await this.lib.manifest('prefabs/' + v).catch(() => null); }
     // flashlight click clips from the prefab
-    const fl = await this.lib.manifest('prefabs/' + this.catalog.tools.FlashlightItem).catch(() => null);
-    if (fl) for (const n of fl.nodes) for (const c of n.comps) if (c.t === 'MB' && c.cls === 'FlashlightItem' && c.d) { const cl = (c.d.flashlightClips || []).map(x => x && x.$).filter(Boolean); this.sfxTable.flashOn = cl[0]; this.sfxTable.flashOff = cl[1] || cl[0]; }
+    for (const key of ['BBFlashlight', 'FlashlightItem']) {
+      const fl = this.catalog.tools[key] ? await this.lib.manifest('prefabs/' + this.catalog.tools[key]).catch(() => null) : null;
+      if (fl) for (const n of fl.nodes) for (const c of n.comps) if (c.t === 'MB' && c.cls === 'FlashlightItem' && c.d) { const cl = (c.d.flashlightClips || []).map(x => x && x.$).filter(Boolean); if (cl.length && !this.sfxTable.flashOn) { this.sfxTable.flashOn = cl[0]; this.sfxTable.flashOff = cl[1] || cl[0]; } }
+    }
   }
 
   sfx(name) { return this.sfxTable[name] || null; }
@@ -149,6 +179,7 @@ export class Items {
   }
 
   async giveStarterItems() {
+    return;   // the demo starts with nothing, like the game: buy gear at the terminal
     if (this.inventory.some(x => x)) return;
     const fl = this.toolDefs.FlashlightItem;
     if (fl) {
@@ -184,14 +215,20 @@ export class Items {
     if (this.heldObj) { this.game.camera.remove(this.heldObj); this.heldObj = null; }
     if (it) {
       const o = it.obj; this.heldObj = o;
-      const ro = it.def.rotationOffset || { x: 0, y: 0, z: 0 }, po = it.def.positionOffset || { x: 0, y: 0, z: 0 };
-      o.quaternion.copy(unityEulerToQuat(ro.x || 0, ro.y || 0, ro.z || 0));
-      const base = it.twoHanded ? new THREE.Vector3(0.05, -0.5, -0.75) : new THREE.Vector3(0.42, -0.36, -0.62);
-      o.position.copy(base).add(new THREE.Vector3(-(po.x || 0), po.y || 0, po.z || 0));
+      const pose = HOLD_POSES[it.tool] || null;
+      if (pose) {
+        o.quaternion.setFromEuler(new THREE.Euler(THREE.MathUtils.degToRad(pose.rot[0]), THREE.MathUtils.degToRad(pose.rot[1]), THREE.MathUtils.degToRad(pose.rot[2]), 'YXZ'));
+        o.position.set(pose.pos[0], pose.pos[1], pose.pos[2]);
+      } else {
+        const ro = it.def.rotationOffset || { x: 0, y: 0, z: 0 }, po = it.def.positionOffset || { x: 0, y: 0, z: 0 };
+        o.quaternion.copy(unityEulerToQuat(ro.x || 0, ro.y || 0, ro.z || 0));
+        const base = it.twoHanded ? new THREE.Vector3(0.05, -0.5, -0.75) : new THREE.Vector3(0.42, -0.36, -0.62);
+        o.position.copy(base).add(new THREE.Vector3(-(po.x || 0), po.y || 0, po.z || 0));
+      }
       o.traverse(m => { if (m.isMesh) { m.frustumCulled = false; m.castShadow = false; m.layers.set(1); } });
       this.game.camera.add(o);
     }
-    this.game.hud.setInventory(this.inventory.map(x => x ? { name: x.name, value: x.value } : null), this.active);
+    this.game.hud.setInventory(this.inventory.map(x => x ? { name: x.name, value: x.value, battery: x.battery } : null), this.active);
     this.game.flashlightOn = this.game.flashlightOn && this.hasFlashlight();
   }
 
@@ -272,6 +309,17 @@ export class Items {
     setTimeout(() => { g.enemies.hitInFront(g.player, 3.2, 1); }, 250);
   }
 
+  /** the facility's apparatus (spawned with the tiles) is grabbable scrap worth $80 */
+  registerApparatus(inst) {
+    const root = inst.root;
+    const bbox = new THREE.Box3().setFromObject(root);
+    const def = { name: 'Apparatus', itemName: 'Apparatus', weight: 1.25, twoHanded: false, restingRotation: { x: 0, y: 0, z: 0 } };
+    const it = { def, value: 80, obj: root, inst, held: false, onShip: false, scanName: 'Apparatus', name: 'Apparatus', weightLb: 26, twoHanded: false, size: bbox.getSize(new THREE.Vector3()), bboxMinY: bbox.min.y, grabSFX: this.sfx('grab'), dropSFX: this.sfx('grab'), area: 'inside' };
+    root.userData.item = it;
+    this.world.push(it);
+    return it;
+  }
+
   // ---------- queries ----------
   scannables(from, range) {
     const out = [];
@@ -295,6 +343,10 @@ export class Items {
 
   update(dt) {
     if (this.deliveryTimer > 0 && !this.game.world.inOrbit && this.game.world.shipState === 'landed') { this.deliveryTimer -= dt; if (this.deliveryTimer <= 0 && this.deliveries.length) this._deliver(); }
+    if (this.game.flashlightOn) {
+      const f = this.flashlightItem();
+      if (f && f.battery != null) { f.battery = Math.max(0, f.battery - dt / (f.batterySeconds || 200)); this._batT = (this._batT || 0) + dt; if (this._batT > 1) { this._batT = 0; this.game.hud.setInventory(this.inventory.map(x => x ? { name: x.name, value: x.value, battery: x.battery } : null), this.active); } }
+    }
     if (this.swingT > 0) { this.swingT -= dt; if (this.heldObj) this.heldObj.rotation.x = Math.sin(this.swingT * 10) * 0.8; }
     // held item sway
     if (this.heldObj) { const p = this.game.player; this.heldObj.position.y += (Math.sin(p.bob * 2) * p.bobAmp * 0.5 - (this.heldObj.userData.sw || 0)); this.heldObj.userData.sw = Math.sin(p.bob * 2) * p.bobAmp * 0.5; }

@@ -13,7 +13,7 @@ export class Terminal {
       if (e.key === 'Escape') this.hide();
     });
     this.store = [
-      { key: 'flashlight', name: 'Pro-flashlight', price: 25, tool: 'FlashlightItem' },
+      { key: 'flashlight', name: 'Flashlight', price: 15, tool: 'BBFlashlight' },
       { key: 'walkie', name: 'Walkie-talkie', price: 12, tool: 'WalkieTalkie' },
     ];
   }
@@ -125,7 +125,7 @@ Please CONFIRM or DENY.
     g.credits -= p.total;
     const c = g.items.sfx('purchase'); if (c) g.sound.play(c, { vol: 0.6 });
     for (let i = 0; i < p.qty; i++) g.items.queueDelivery(p.item.tool, p.item.name);
-    const where = g.world.inOrbit ? 'It will arrive by dropship once you land.' : 'The dropship is on its way.';
+    const where = g.world.inOrbit ? 'It will be delivered next to the ship shortly after you land.' : 'The dropship is on its way.';
     this.print(`Ordered ${p.qty} ${p.item.name}${p.qty > 1 ? 's' : ''}. Your new balance is $${g.credits}.\n${where}\n`);
   }
 

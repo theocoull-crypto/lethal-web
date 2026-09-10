@@ -24,6 +24,7 @@
   <div id="crosshair"></div>
   <div id="tip" class="panel"></div>
   <div id="scan"></div>
+  <div id="scanpulse"></div>
   <div id="quota" class="panel"><div id="quota-line"></div><div id="quota-sub"></div></div>
   <div id="notice"></div>
   <div id="spectate"></div>
@@ -31,22 +32,25 @@
 
 <div id="loading">
   <div class="load-inner">
-    <div class="load-title">LETHAL WEB</div>
-    <div class="load-sub">Unofficial browser build of Lethal Company &mdash; single moon demo (41-Experimentation)</div>
+    <img class="logo" src="assets/ui/logo.png" alt="" onerror="this.style.display='none'">
     <div class="load-bar"><div id="load-fill"></div></div>
-    <div id="load-text">Loading company property...</div>
+    <div id="load-text">Loading...</div>
   </div>
 </div>
 
 <div id="menu">
   <div class="menu-inner">
-    <div class="menu-title">LETHAL WEB</div>
-    <div class="menu-sub">41-EXPERIMENTATION &middot; DEMO BUILD</div>
-    <div class="menu-desc">
+    <img class="logo" src="assets/ui/logo.png" alt="LETHAL COMPANY" onerror="this.style.display='none'">
+    <div class="menu-sub">DEMO BUILD &middot; 41-EXPERIMENTATION</div>
+    <div class="menu-desc hidden" id="menu-controls">
       You are a contracted worker for the Company. Land on the moon, get inside the facility, bring scrap back to the ship before midnight and meet the profit quota. Do not get killed.<br><br>
       <b>WASD</b> move &middot; <b>Shift</b> sprint &middot; <b>Ctrl</b> crouch &middot; <b>Space</b> jump &middot; <b>E</b> interact / grab &middot; <b>G</b> drop &middot; <b>1-4</b> / wheel slots &middot; <b>RMB</b> scan &middot; <b>LMB</b> use item &middot; <b>F</b> flashlight &middot; <b>Esc</b> settings
     </div>
-    <button id="btn-play" class="menu-btn">&gt; Start job</button>
+    <div class="menu-list">
+      <button id="btn-play" class="menu-btn">&gt; Start job</button>
+      <button id="btn-menu-settings" class="menu-btn">&gt; Settings</button>
+      <button id="btn-menu-controls" class="menu-btn">&gt; Controls</button>
+    </div>
     <div id="menu-status"></div>
     <div class="menu-foot">Assets are read from your own Steam copy of Lethal Company (see README). Nothing here is redistributed.</div>
   </div>

@@ -11,6 +11,7 @@ import { Enemies } from './enemies.js';
 import { LightPool } from './lights.js';
 import { Terminal } from './terminal.js';
 import { Settings } from './settings.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const $ = id => document.getElementById(id);
 const PIXEL_HEIGHT = 520;
@@ -26,6 +27,10 @@ class Game {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.scene = new THREE.Scene();
+    // a neutral environment so metals and glossy surfaces have something to reflect
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    pmrem.dispose();
     this.camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.08, 1500);
     this.scene.add(this.camera);
     this.lib = new AssetLib(this.renderer);
@@ -58,7 +63,7 @@ class Game {
     const aspect = innerWidth / innerHeight;
     this.camera.aspect = aspect; this.camera.updateProjectionMatrix();
     if (this.pixelFilter) {
-      const h = Math.min(PIXEL_HEIGHT, innerHeight), w = Math.round(h * aspect);
+      const h = Math.min(this.pixelLines || PIXEL_HEIGHT, innerHeight), w = Math.round(h * aspect);
       this.renderer.setPixelRatio(1); this.renderer.setSize(w, h, false);
       this.canvas.style.imageRendering = 'pixelated';
     } else {
@@ -101,7 +106,10 @@ class Game {
     fill.style.width = '100%';
     $('loading').classList.add('hidden'); $('menu').classList.remove('hidden');
     $('btn-continue').onclick = () => this.continueAfterResults();
+    $('btn-menu-settings').onclick = () => { this.settings.show(); };
+    $('btn-menu-controls').onclick = () => { $('menu-controls').classList.toggle('hidden'); };
     this.state = 'menu'; this.ready = true;
+    this.startMenuMusic();
     this.spawnPlayerInShip();
     this.loop();
     } catch (e) {
@@ -150,8 +158,19 @@ class Game {
     this.player.attachTo(this.world.shipObj);
   }
 
+  startMenuMusic() {
+    if (this.menuMusic) return;
+    const kick = () => { this.sound.resume(); this.sound.play('b9_16', { loop: true, vol: 0.55 }).then(h => { this.menuMusic = h; }); removeEventListener('pointerdown', kick); removeEventListener('keydown', kick); };
+    // browsers only allow audio after a gesture; the first click/key on the menu starts it
+    addEventListener('pointerdown', kick); addEventListener('keydown', kick);
+    this.menuMusic = true;
+  }
+  stopMenuMusic() { if (this.menuMusic && this.menuMusic.stop) this.menuMusic.stop(1.0); this.menuMusic = null; }
+
   startGame() {
     if (this.state === 'play') return;
+    this.stopMenuMusic();
+    this.sound.play('b9_18', { vol: 0.5 });
     $('menu-status').textContent = '';
     $('menu').classList.add('hidden');
     this.hud.show(true);
@@ -162,7 +181,6 @@ class Game {
     this.world.startLoop('thruster', this.world.clips.thruster, { vol: 0.25 });
     this.hud.showTip('Pull the lever by the door to land on 41-Experimentation.\nUse the terminal to buy gear and check the quota.', 8);
     this.hud.setQuota(this.scrapOnShip, this.quota, this.daysLeft, this.credits);
-    this.items.giveStarterItems();
   }
 
   // ---------- events from player ----------
@@ -189,6 +207,8 @@ class Game {
   backToMenu() {
     this.state = 'menu'; this.hud.show(false); document.exitPointerLock();
     $('menu').classList.remove('hidden');
+    this.sound.stopAll(); this.world.loops = {};
+    this.menuMusic = null; this.startMenuMusic();
   }
   onJump() { }
   onLand(v) { const clip = this.footClip(); if (clip) this.sound.play(clip, { vol: Math.min(1, 0.5 + -v * 0.03), pitch: 0.9 }); }
@@ -219,6 +239,7 @@ class Game {
 
   toggleFlashlight() {
     if (!this.items.hasFlashlight()) { this.hud.showTip('No flashlight.', 2); return; }
+    if (!this.flashlightOn && this.items.flashlightBattery() <= 0) { this.hud.showTip('Flashlight battery is dead. Charge it on the ship.', 3); return; }
     this.flashlightOn = !this.flashlightOn;
     const c = this.items.sfx(this.flashlightOn ? 'flashOn' : 'flashOff'); if (c) this.sound.play(c, { vol: 0.6 });
   }
@@ -243,8 +264,10 @@ class Game {
   }
 
   scan() {
-    if (this.scanT > 0.5) return;
+    if (this.scanCooldown > 0) return;
+    this.scanCooldown = 1.1;
     this.scanT = 3.0;
+    this.hud.scanPulse();
     const c = this.items.sfx('scan'); if (c) this.sound.play(c, { vol: 0.5 });
     this.scanTargets = this.items.scannables(this.camera.position, 60).concat(this.enemies.scannables(this.camera.position, 60), this.dungeon.scannables(this.camera.position, 80));
   }
@@ -309,7 +332,7 @@ class Game {
     this.player.dead = false; this.player.health = 100; this.player.inputEnabled = true; this.player.ladder = null;
     this.inside = false;
     this.spawnPlayerInShip();
-    this.items.clearInventory(); this.items.giveStarterItems();
+    this.items.clearInventory();
     this.state = 'play';
     this.hud.setQuota(this.scrapOnShip, this.quota, this.daysLeft, this.credits);
     this.player.lock();
@@ -386,6 +409,7 @@ class Game {
       this.world.sun.visible = !this.inside;
       this.world.setFocus(p.pos);
       this._updateLights();
+      if (this.flashlightOn && this.items.flashlightBattery() <= 0) this.flashlightOn = false;
       const on = this.flashlightOn && this.items.hasFlashlight() && this.state === 'play';
       this.flash.intensity += ((on ? 140 : 0) - this.flash.intensity) * Math.min(1, dt * 14);
       this.nearLight.intensity = this.inside ? 0.45 : 0.15;
@@ -409,6 +433,7 @@ class Game {
   }
 
   _updateScan(dt) {
+    this.scanCooldown = (this.scanCooldown || 0) - dt;
     if (this.scanT <= 0) { this.hud.setScanTags([]); return; }
     this.scanT -= dt;
     const tags = [];

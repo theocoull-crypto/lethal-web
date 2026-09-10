@@ -36,11 +36,12 @@ export class HUD {
     this.slots.forEach((s, i) => {
       s.classList.toggle('active', i === active);
       const it = items[i];
-      s.innerHTML = it ? `<div class="nm">${it.name}</div>${it.value ? `<div class="val">$${it.value}</div>` : ''}` : '';
+      s.innerHTML = it ? `<div class="nm">${it.name}</div>${it.value ? `<div class="val">$${it.value}</div>` : ''}${it.battery != null ? `<div class="bat"><i style="width:${Math.round(it.battery * 100)}%"></i></div>` : ''}` : '';
     });
   }
 
   setTooltip(t) { this.tooltip.textContent = t || ''; }
+  scanPulse() { const p = document.getElementById('scanpulse'); p.classList.remove('go'); void p.offsetWidth; p.classList.add('go'); }
 
   showTip(text, seconds = 5) { this.tip.textContent = text; this.tip.style.opacity = 1; this.tipTimer = seconds; }
 

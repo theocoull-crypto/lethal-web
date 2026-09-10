@@ -188,7 +188,8 @@ export class Dungeon {
     matrix.decompose(pos, q, s);
     const bounds = def.bounds.clone().applyMatrix4(matrix);
     const doorways = def.doorways.map(d => ({ def: d, pos: d.pos.clone().applyMatrix4(matrix), fwd: d.fwd.clone().applyQuaternion(q).normalize(), q: q.clone().multiply(d.q), used: false, connected: null, socket: d.socket }));
-    return { def, matrix, pos, q, bounds, doorways, parent: parentTile, index, isMain, depthF: 0, obj: null, viaDoorway };
+    this._serial = (this._serial || 0) + 1;
+    return { def, matrix, pos, q, bounds, doorways, parent: parentTile, index, serial: this._serial, isMain, depthF: 0, obj: null, viaDoorway };
   }
 
   _unplace(t) { if (t.viaDoorway) { t.viaDoorway.used = false; t.viaDoorway.connected = null; } }
@@ -294,7 +295,7 @@ export class Dungeon {
         if (d.used) {
           // one side spawns the door: the side with higher priority, or the tile placed first
           const other = d.connected; const od = other.doorways.find(x => x.connected === t);
-          const mine = d.def.priority > (od ? od.def.priority : -1) || (d.def.priority === (od ? od.def.priority : -1) && t.index <= other.index && d.def.connectors.length);
+          const mine = d.def.priority > (od ? od.def.priority : -1) || (d.def.priority === (od ? od.def.priority : -1) && t.serial < other.serial && d.def.connectors.length);
           // demo: the terminal-controlled blast doors (BigDoorSpawn) are left out, hallway connections stay open
           const pick = (dd) => { const ids = dd.def.connectors, ws = dd.def.connectorWeights; const keep = ids.map((id, i) => [id, ws[i]]).filter(([id]) => !this._isBigDoor(id)); return keep.length ? this._pickPart(keep.map(x => x[1]), keep.map(x => x[0])) : null; };
           if (mine && d.def.connectors.length) { const id = pick(d); if (id) await this._spawnDoorPart(d, id, t, true); }
@@ -330,6 +331,14 @@ export class Dungeon {
       for (const ex of (t.extraInst || [])) { const e2 = await collisionEntries(lib, ex, { exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) || n.comps.some(c => c.t === 'MB' && c.cls === 'DoorLock') }); for (const x of e2) entries.push(x); }
     }
     this.collider = new Collider('dungeon').build(entries, null);
+    // drop vents that float in the room (no wall within 1.2 m behind or in front of them)
+    this.vents = this.vents.filter(v => {
+      const c = v.inst.root.userData.ventCheck; if (!c) return true;
+      const o = c.pos.clone(); o.y += 0.6;
+      const hitB = this.collider.raycast(o, c.back, 1.4), hitF = this.collider.raycast(o, c.fwd, 1.4);
+      if (hitB || hitF) return true;
+      v.inst.root.visible = false; return false;
+    });
     for (const t of this.placed) this._mergeStatic(t);
     console.log('dungeon collider tris', this.collider.triCount);
     this._buildGraph();
@@ -422,7 +431,13 @@ export class Dungeon {
     tile.extraInst = (tile.extraInst || []).concat([inst]);
     const name = s.name || '';
     if (/BigDoor|SteelDoor|FancyDoor/.test(name)) this._setupDoor(inst, name);
-    if (/^VentEntrance/.test(name)) this.vents.push({ pos: inst.root.getWorldPosition(new THREE.Vector3()), inst, tile });
+    if (/^VentEntrance/.test(name)) {
+      // vents must sit against a wall: check for geometry just behind the vent, otherwise drop it
+      const vp = inst.root.getWorldPosition(new THREE.Vector3()); const vq = inst.root.getWorldQuaternion(new THREE.Quaternion());
+      inst.userData = inst.userData || {}; inst.root.userData.ventCheck = { pos: vp, back: new THREE.Vector3(0, 0, -1).applyQuaternion(vq), fwd: new THREE.Vector3(0, 0, 1).applyQuaternion(vq) };
+      this.vents.push({ pos: vp, inst, tile });
+    }
+    if (/^LungApparatus/.test(name)) this.game.items.registerApparatus(inst);
     if (/^EntranceTeleportA/.test(name)) this._setupEntrance(inst, false);
     if (/^EntranceTeleportB/.test(name)) this._setupEntrance(inst, true);
   }

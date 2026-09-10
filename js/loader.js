@@ -88,13 +88,16 @@ export class AssetLib {
       }
       const smooth = d.smoothness == null ? 0.5 : d.smoothness;
       if (d.maskMap) {
-        const orm = this.texture(d.maskMap.id, 'mask', d.map ? d.map.scale : d.maskMap.scale, d.map ? d.map.offset : d.maskMap.offset);
+        // HDRP: smoothness = lerp(remapMin, remapMax, mask.A); metallic = mask.R; AO = lerp(aoMin, aoMax, mask.G)
+        const rm = d.smoothnessRemap || [0, 1];
+        const orm = this.ormTexture(d.maskMap.id, rm, d.map ? d.map.scale : d.maskMap.scale, d.map ? d.map.offset : d.maskMap.offset);
         mat.roughnessMap = orm; mat.metalnessMap = orm; mat.aoMap = orm;
         mat.roughness = 1.0; mat.metalness = 1.0; mat.aoMapIntensity = 1.0;
       } else {
         mat.roughness = 1 - smooth;
         mat.metalness = d.metallic || 0;
       }
+      mat.envMapIntensity = 0.5;
       const e = d.emissive || [0, 0, 0];
       const emax = Math.max(e[0], e[1], e[2]);
       if (emax > 0.001) {
@@ -113,7 +116,30 @@ export class AssetLib {
     if (d.alphaTest) { mat.alphaTest = d.cutoff || 0.5; mat.transparent = false; }
     if (d.doubleSided || d.cull === 0) mat.side = THREE.DoubleSide;
     if (/testTrigger|Trigger/i.test(name) && d.surfaceType === 1) { mat.visible = false; }
+    if (/HDRP\/Decal/.test(shader)) { mat.visible = false; }   // projected decals (puddles, grime) are not supported
     return mat;
+  }
+
+  /** ORM texture with the HDRP smoothness remap baked into the roughness channel. */
+  ormTexture(id, remap, scale, offset) {
+    const key = 'orm|' + id + '|' + remap.join(',') + '|' + (scale ? scale.join(',') : '') + '|' + (offset ? offset.join(',') : '');
+    if (this.texCache.has(key)) return this.texCache.get(key);
+    const base = this.texture(id, 'mask', scale, offset);
+    if (Math.abs(remap[0]) < 1e-3 && Math.abs(remap[1] - 1) < 1e-3) { this.texCache.set(key, base); return base; }
+    const tex = base.clone();
+    const apply = img => {
+      const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+      const ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0);
+      const im = ctx.getImageData(0, 0, c.width, c.height); const p = im.data;
+      const lo = remap[0], hi = remap[1];
+      for (let i = 0; i < p.length; i += 4) { const s = 1 - p[i + 1] / 255; const s2 = lo + (hi - lo) * s; p[i + 1] = Math.round((1 - s2) * 255); }
+      ctx.putImageData(im, 0, 0);
+      tex.image = c; tex.needsUpdate = true;
+    };
+    if (base.image && base.image.width) apply(base.image);
+    else { const t = setInterval(() => { if (base.image && base.image.width) { clearInterval(t); apply(base.image); } }, 100); }
+    this.texCache.set(key, tex);
+    return tex;
   }
 
   mesh(id) {

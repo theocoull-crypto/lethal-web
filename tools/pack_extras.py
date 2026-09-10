@@ -6,7 +6,7 @@ from pack import Packer, ASSETS
 
 ar = AR()
 pk = Packer(ar)
-EXTRA_AUDIO = {'b8_1757': 'FactoryAmbience1', 'b7_174': 'WindOutside', 'b7_164': 'FactoryWindAmbiance', 'b8_1520': 'v50ShipWind'}
+EXTRA_AUDIO = {'b8_1757': 'FactoryAmbience1', 'b7_174': 'WindOutside', 'b7_164': 'FactoryWindAmbiance', 'b8_1520': 'v50ShipWind', 'b9_16': 'Menu1', 'b9_18': 'BootUp2'}
 for aid, name in EXTRA_AUDIO.items():
     try:
         k, p = pk.kp(aid)
@@ -24,6 +24,17 @@ for f in glob.glob(os.path.join(ASSETS, 'prefabs', '*.json')) + glob.glob(os.pat
         for c in n['comps']:
             if c['t'] == 'SMR' and c['mesh']:
                 pk.skinned.add(c['mesh'])
+# title logo sprite for the menu
+try:
+    import urllib.request
+    from ar import BASE, q, asset_path
+    os.makedirs(os.path.join(ASSETS, 'ui'), exist_ok=True)
+    hits = [h for h in ar.search('LogoTextV1') if h[2] == 'Sprite']
+    if hits:
+        data = urllib.request.urlopen(f'{BASE}/Assets/Image?Path={q(asset_path(hits[0][0], hits[0][1]))}&Extension=png').read()
+        open(os.path.join(ASSETS, 'ui', 'logo.png'), 'wb').write(data)
+except Exception as e:
+    print('  !! logo export failed', e)
 pk.flush()
 n = 0
 for f in glob.glob(os.path.join(ASSETS, '**', '*.json'), recursive=True):

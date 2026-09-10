@@ -1,6 +1,6 @@
 // In-game settings (Esc): brightness, light gain, shadows, FOV, sensitivity, volume, pixel filter, grain. Saved in localStorage.
 const $ = id => document.getElementById(id);
-const DEFAULTS = { exposure: 1.15, lightGain: 1.0, shadows: 1, fov: 75, sensitivity: 1.0, volume: 0.9, pixel: true, grain: true };
+const DEFAULTS = { exposure: 1.15, lightGain: 1.0, shadows: 1, fov: 75, sensitivity: 1.0, volume: 0.9, pixel: true, pixelSize: 2, grain: true };
 
 export class Settings {
   constructor(game) {
@@ -22,6 +22,7 @@ export class Settings {
       ['sensitivity', 'Mouse sensitivity', 'range', 0.2, 3.0, 0.05],
       ['volume', 'Volume', 'range', 0, 1, 0.05],
       ['pixel', 'Pixel filter (P)', 'check'],
+      ['pixelSize', 'Pixel size', 'select', ['Fine (520 lines)', 'Game (440 lines)', 'Strong (360 lines)', 'Chunky (280 lines)']],
       ['grain', 'Film grain', 'check'],
     ];
     const box = $('settings-rows');
@@ -57,7 +58,8 @@ export class Settings {
     g.camera.fov = v.fov; g.camera.updateProjectionMatrix();
     if (g.player) g.player.lookSensitivity = 0.0022 * v.sensitivity;
     if (g.sound && g.sound.master) g.sound.master.gain.value = v.volume;
-    if (g.pixelFilter !== !!v.pixel) { g.pixelFilter = !!v.pixel; g._resize(); }
+    const lines = [520, 440, 360, 280][v.pixelSize] || 440;
+    if (g.pixelFilter !== !!v.pixel || g.pixelLines !== lines) { g.pixelFilter = !!v.pixel; g.pixelLines = lines; g._resize(); }
     document.body.classList.toggle('nofilter', !v.pixel);
     document.body.classList.toggle('nograin', !v.grain);
     if (g.lightPool) g.lightPool.setShadowCount(g.shadowLamps);

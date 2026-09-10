@@ -122,6 +122,32 @@ export class World {
     if (this.terminal) this.interactables.push({ obj: this.terminal, radius: 1.6, label: () => '[E] Use terminal', action: () => this.game.openTerminal() });
     if (this.clipboard) this.interactables.push({ obj: this.clipboard, radius: 1.0, label: () => '[E] Read clipboard', action: () => this.game.showManual() });
     if (this.btnOpen) this.interactables.push({ obj: this.btnOpen, radius: 0.5, label: () => this.doorsOpen ? 'Open door' : '[E] Open door', action: () => this.pressDoorButton(true) });
+    // ladders on the ship (they move with it, so their world positions are read when used)
+    for (const [id, o] of this.ship.objs) {
+      const n = o.userData.node;
+      const lt = n.comps.find(c => c.t === 'MB' && c.cls === 'InteractTrigger' && c.d && c.d.isLadder);
+      if (!lt) continue;
+      const get = k => { const r = lt.d[k]; return r && r.$ ? this.ship.objs.get(r.$) : null; };
+      const top = get('topOfLadderPosition'), bottom = get('bottomOfLadderPosition'), node = get('ladderPlayerPositionNode') || get('ladderHorizontalPosition') || o;
+      if (!top || !bottom) continue;
+      const ld = { obj: o, top, bottom, node, tip: 'Climb' };
+      const refresh = () => { ld.topPos = this.worldPosOf(top); ld.bottomPos = this.worldPosOf(bottom); const hp = this.worldPosOf(node); ld.lineX = hp.x; ld.lineZ = hp.z; ld.height = Math.abs(ld.topPos.y - ld.bottomPos.y); };
+      this.interactables.push({ obj: o, radius: 1.6, label: () => '[E] Climb ladder', action: () => { refresh(); this.game.player.startLadder(ld); } });
+    }
+    // item charger
+    const chargeTrig = [...this.ship.objs.values()].find(o => o.userData.node.comps.some(c => c.t === 'MB' && c.cls === 'ItemCharger'));
+    if (chargeTrig) {
+      const cs = by('ChargeStation');
+      const ac = cs ? cs.userData.node.comps.find(c => c.t === 'Animator') : null;
+      const zap = chargeTrig.userData.node.comps.find(c => c.t === 'Audio');
+      this.interactables.push({ obj: chargeTrig, radius: 1.0, label: () => '[E] Charge item', action: () => {
+        if (this.game.items.chargeHeld()) {
+          if (this.anims.charger && this.anims.charger.ready) this.anims.charger.play(this.anims.charger.names()[0], { once: true, loop: false, fade: 0 });
+          if (zap && zap.clip) this.game.sound.play(zap.clip, { pos: this.worldPosOf(chargeTrig), vol: 0.8 });
+        }
+      } });
+      if (cs && ac && ac.controller) { this.anims.charger = new Animator(cs, ac.controller); this.anims.charger.load(); }
+    }
     if (this.btnClose) this.interactables.push({ obj: this.btnClose, radius: 0.5, label: () => !this.doorsOpen ? 'Close door' : '[E] Close door', action: () => this.pressDoorButton(false) });
   }
 
