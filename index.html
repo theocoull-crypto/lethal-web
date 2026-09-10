@@ -15,17 +15,21 @@
 <div id="hud" class="hidden">
   <div id="vignette"></div>
   <div id="damage"></div>
-  <div id="clock" class="panel"><div id="clock-time">7:00 AM</div><div id="clock-bar"><div id="clock-fill"></div></div></div>
-  <div id="stamina"><div id="stamina-bar"><div id="stamina-fill"></div></div><div id="weight">0 lb</div></div>
+  <div id="helmet"><div class="helmet-top"></div><div class="helmet-side helmet-left"></div><div class="helmet-side helmet-right"></div><div class="helmet-glass"></div></div>
+  <div id="clock"><div class="clock-sun"><i></i></div><div class="clock-readout"><div id="clock-time">7:00 AM</div><div id="clock-bar"><div id="clock-fill"></div><span></span><span></span><span></span><span></span></div></div></div>
+  <div id="suit-status">
+    <div class="crew-icon"><i class="crew-head"></i><i class="crew-body"></i></div>
+    <div id="stamina"><div id="stamina-bar"><div id="stamina-fill"></div></div><div id="weight">0 lb</div></div>
+  </div>
   <div id="inventory">
-    <div class="slot" data-i="0"></div><div class="slot" data-i="1"></div><div class="slot" data-i="2"></div><div class="slot" data-i="3"></div>
+    <div class="slot" data-i="0"><b>1</b></div><div class="slot" data-i="1"><b>2</b></div><div class="slot" data-i="2"><b>3</b></div><div class="slot" data-i="3"><b>4</b></div>
   </div>
   <div id="tooltip"></div>
   <div id="crosshair"></div>
-  <div id="tip" class="panel"></div>
+  <div id="tip"><div class="tip-label">SYSTEM MESSAGE</div><div id="tip-text"></div></div>
   <div id="scan"></div>
   <div id="scanpulse"></div>
-  <div id="quota" class="panel"><div id="quota-line"></div><div id="quota-sub"></div></div>
+  <div id="quota"><div class="quota-label">COMPANY CONTRACT</div><div id="quota-line"></div><div id="quota-sub"></div></div>
   <div id="notice"></div>
   <div id="spectate"></div>
 </div>
@@ -40,16 +44,17 @@
 
 <div id="menu">
   <div class="menu-inner">
+    <div class="menu-build">v64 // ONLINE</div>
     <img class="logo" src="assets/ui/logo.png" alt="LETHAL COMPANY" onerror="this.style.display='none'">
-    <div class="menu-sub">DEMO BUILD &middot; 41-EXPERIMENTATION</div>
+    <div class="menu-sub">WEB CONTRACT TERMINAL &middot; TWO MOONS AVAILABLE</div>
     <div class="menu-desc hidden" id="menu-controls">
       You are a contracted worker for the Company. Land on the moon, get inside the facility, bring scrap back to the ship before midnight and meet the profit quota. Do not get killed.<br><br>
       <b>WASD</b> move &middot; <b>Shift</b> sprint &middot; <b>Ctrl</b> crouch &middot; <b>Space</b> jump &middot; <b>E</b> interact / grab &middot; <b>G</b> drop &middot; <b>1-4</b> / wheel slots &middot; <b>RMB</b> scan &middot; <b>LMB</b> use item &middot; <b>F</b> flashlight &middot; <b>Esc</b> settings &middot; <b>F3</b> debug menu
     </div>
     <div class="menu-list">
-      <button id="btn-play" class="menu-btn">&gt; Start job</button>
-      <button id="btn-menu-settings" class="menu-btn">&gt; Settings</button>
-      <button id="btn-menu-controls" class="menu-btn">&gt; Controls</button>
+      <button id="btn-play" class="menu-btn"><span>▶</span> Host solo job</button>
+      <button id="btn-menu-settings" class="menu-btn"><span>▶</span> Settings</button>
+      <button id="btn-menu-controls" class="menu-btn"><span>▶</span> How to play</button>
     </div>
     <div id="menu-status"></div>
     <div class="menu-foot">Assets are read from your own Steam copy of Lethal Company (see README). Nothing here is redistributed.</div>
@@ -59,20 +64,24 @@
 <div id="grain"></div>
 <div id="settings" class="hidden">
   <div class="settings-inner">
-    <div class="settings-title">SETTINGS</div>
+    <div class="settings-kicker">QUICK MENU</div>
+    <div class="settings-title">Settings</div>
     <div id="settings-rows"></div>
     <div class="settings-btns"><button id="btn-settings-close" class="menu-btn">&gt; Resume</button><button id="btn-settings-reset" class="menu-btn">&gt; Defaults</button><button id="btn-settings-menu" class="menu-btn">&gt; Quit to menu</button></div>
     <div class="menu-foot">Esc opens and closes this menu.</div>
   </div>
 </div>
 <div id="terminal" class="hidden">
-  <div class="term-screen">
-    <pre id="term-out"></pre>
-    <div class="term-line"><span>&gt;</span><input id="term-input" type="text" autocomplete="off" spellcheck="false"></div>
-    <div class="term-hint">ESC or EXIT to leave the terminal</div>
+  <div class="term-bezel">
+    <div class="term-brand">FORTUNE-9 // COMPANY PROPERTY</div>
+    <div class="term-screen">
+      <pre id="term-out"></pre>
+      <div class="term-line"><span>&gt;</span><input id="term-input" type="text" autocomplete="off" spellcheck="false"></div>
+      <div class="term-hint">ESC or EXIT to leave the terminal</div>
+    </div>
   </div>
 </div>
-<div id="results" class="hidden"><div class="results-inner"><pre id="results-text"></pre><button id="btn-continue" class="menu-btn">&gt; Continue</button></div></div>
+<div id="results" class="hidden"><div class="results-inner"><div class="results-kicker">THE COMPANY</div><div class="results-title">PERFORMANCE REPORT</div><div class="results-rule"></div><pre id="results-text"></pre><div class="results-stamp">SUBJECT TO REVIEW</div><button id="btn-continue" class="menu-btn"><span>▶</span> Continue</button></div></div>
 
 <script>
   // if the game code itself fails to load (syntax error, missing file), say so on the menu instead of leaving a dead button

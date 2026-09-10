@@ -1,5 +1,10 @@
-"""Pack every prefab the Experimentation 'demo' needs: facility tiles for Level1Flow, doorway connectors/blockers,
-scrap items, hazards, enemies, outside props, tools, and the player model. Writes assets/prefabs/<name>.json"""
+"""Pack every prefab a moon needs: facility tiles for Level1Flow, doorway connectors/blockers,
+scrap items, hazards, enemies, outside props, tools, and the player model.
+
+Usage:
+  python tools/pack_prefabs.py                 # Experimentation -> assets/catalog.json
+  python tools/pack_prefabs.py assurance       # Assurance -> assets/catalog_assurance.json
+"""
 import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ar import AR
@@ -11,6 +16,18 @@ b8 = ar.key_by_id['b8']
 OUT = os.path.join(ASSETS, 'prefabs')
 os.makedirs(OUT, exist_ok=True)
 catalog = {'tiles': {}, 'tileSets': {}, 'flow': None, 'scrap': [], 'hazards': [], 'enemies': {'inside': [], 'outside': [], 'daytime': []}, 'outsideObjects': [], 'tools': {}, 'doorParts': [], 'level': {}}
+
+LEVELS = {
+    'experimentation': (34533, 'catalog.json'),
+    'assurance': (34526, 'catalog_assurance.json'),
+}
+level_key = (sys.argv[1].lower() if len(sys.argv) > 1 else 'experimentation')
+if level_key == 'moon':
+    level_key = 'experimentation'
+if level_key not in LEVELS:
+    raise SystemExit('moon must be one of: ' + ', '.join(LEVELS))
+level_pid, catalog_file = LEVELS[level_key]
+catalog['levelKey'] = level_key
 
 
 def safe(name):
@@ -91,7 +108,7 @@ for l in flow['Lines']:
     catalog['flow']['lines'].append({'pos': l.get('Position'), 'len': l.get('Length'), 'archetypes': arch})
 
 # ---- level data ----
-lvl = ar.json(b8, 34533)['m_Structure']
+lvl = ar.json(b8, level_pid)['m_Structure']
 catalog['level'] = {k: lvl.get(k) for k in ('PlanetName', 'LevelDescription', 'riskLevel', 'minScrap', 'maxScrap', 'minTotalScrapValue', 'maxTotalScrapValue',
                                               'maxEnemyPowerCount', 'maxOutsideEnemyPowerCount', 'maxDaytimeEnemyPowerCount', 'timeToArrive',
                                               'DaySpeedMultiplier', 'planetHasTime', 'enemySpawnChanceThroughoutDay', 'outsideEnemySpawnChanceThroughDay',
@@ -168,6 +185,6 @@ pk.pack_hierarchy(ar.key_by_id['g9'], 1, os.path.join(ASSETS, 'scenes', 'player.
 pk.pack_hierarchy(ar.key_by_id['g9'], 1, os.path.join(ASSETS, 'scenes', 'systems.json'), root_filter={'Systems'},
                   prune={'UI', 'Canvas', 'PlayerScreen'})
 
-open(os.path.join(ASSETS, 'catalog.json'), 'w', encoding='utf-8').write(json.dumps(catalog, indent=1).replace('-Infinity', '-1e30').replace('Infinity', '1e30').replace('NaN', '0'))
+open(os.path.join(ASSETS, catalog_file), 'w', encoding='utf-8').write(json.dumps(catalog, indent=1).replace('-Infinity', '-1e30').replace('Infinity', '1e30').replace('NaN', '0'))
 pk.flush()
-print('prefabs done:', len([v for v in packed.values() if v]))
+print(level_key, 'prefabs done:', len([v for v in packed.values() if v]), '->', catalog_file)

@@ -2,12 +2,13 @@
 const $ = id => document.getElementById(id);
 
 export class HUD {
-  constructor() {
+  constructor(game) {
+    this.game = game;
     this.el = $('hud');
     this.clock = $('clock'); this.clockTime = $('clock-time'); this.clockFill = $('clock-fill');
     this.staminaFill = $('stamina-fill'); this.weight = $('weight');
     this.slots = [...document.querySelectorAll('#inventory .slot')];
-    this.tooltip = $('tooltip'); this.tip = $('tip'); this.tipTimer = 0;
+    this.tooltip = $('tooltip'); this.tip = $('tip'); this.tipText = $('tip-text'); this.tipTimer = 0;
     this.quotaLine = $('quota-line'); this.quotaSub = $('quota-sub');
     this.notice = $('notice'); this.noticeTimer = 0;
     this.damage = $('damage'); this.damageT = 0;
@@ -20,6 +21,7 @@ export class HUD {
 
   setClock(hour, minute, frac, visible = true) {
     this.clock.style.display = visible ? '' : 'none';
+    this.clock.classList.toggle('night', frac > 0.72);
     const h12 = ((Math.floor(hour) + 11) % 12) + 1;
     const ampm = hour >= 12 && hour < 24 ? 'PM' : 'AM';
     this.clockTime.textContent = `${h12}:${String(Math.floor(minute)).padStart(2, '0')} ${ampm}`;
@@ -36,21 +38,38 @@ export class HUD {
     this.slots.forEach((s, i) => {
       s.classList.toggle('active', i === active);
       const it = items[i];
-      s.innerHTML = it ? `<div class="nm">${it.name}</div>${it.value ? `<div class="val">$${it.value}</div>` : ''}${it.battery != null ? `<div class="bat"><i style="width:${Math.round(it.battery * 100)}%"></i></div>` : ''}` : '';
+      s.innerHTML = `<b>${i + 1}</b>` + (it ? `<div class="nm">${it.name}</div>${it.value ? `<div class="val">$${it.value}</div>` : ''}${it.battery != null ? `<div class="bat"><i style="width:${Math.round(it.battery * 100)}%"></i></div>` : ''}` : '');
     });
   }
 
   setTooltip(t) { this.tooltip.textContent = t || ''; }
   scanPulse() { const p = document.getElementById('scanpulse'); p.classList.remove('go'); void p.offsetWidth; p.classList.add('go'); }
 
-  showTip(text, seconds = 5) { this.tip.textContent = text; this.tip.style.opacity = 1; this.tipTimer = seconds; }
+  showTip(text, seconds = 5) {
+    this.tipText.textContent = text;
+    this.tip.style.opacity = 1;
+    this.tipTimer = seconds;
+    this._sound('tips', 0.34);
+  }
 
   setQuota(fulfilled, quota, daysLeft, credits, onShip) {
     this.quotaLine.textContent = `PROFIT QUOTA $${fulfilled} / $${quota}`;
     this.quotaSub.textContent = daysLeft == null ? '' : `${daysLeft} day${daysLeft === 1 ? '' : 's'} until deadline   ·   credits $${credits}${onShip ? `   ·   scrap on ship $${onShip}` : ''}`;
   }
 
-  showNotice(text, seconds = 3, color = '#ff5040') { this.notice.textContent = text; this.notice.style.color = color; this.notice.style.opacity = 1; this.noticeTimer = seconds; }
+  showNotice(text, seconds = 3, color = '#ff5b22') {
+    this.notice.textContent = text;
+    this.notice.style.color = color;
+    this.notice.style.opacity = text ? 1 : 0;
+    this.noticeTimer = seconds;
+    if (text) this._sound('notify', 0.42);
+  }
+
+  _sound(name, vol) {
+    const items = this.game && this.game.items;
+    const clip = items && items.sfx(name);
+    if (clip) this.game.sound.play(clip, { vol });
+  }
 
   flashDamage(strength = 1) { this.damageT = Math.max(this.damageT, 0.6 * strength); }
 

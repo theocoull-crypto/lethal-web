@@ -36,8 +36,8 @@ const BEHAVIOURS = {
   DocileLocustBees: { kind: 'locust' },
 };
 
-// demo roster: most of the moon's monsters are left out on purpose
-const DEMO_ENEMIES = new Set(['Flowerman', 'HoarderBug', 'Centipede', 'Crawler', 'MouthDog', 'DoublewingedBird']);
+// Behaviours that have a web implementation. Entries still use each moon's real rarity and power budget.
+const SUPPORTED_ENEMIES = new Set(['Flowerman', 'HoarderBug', 'Centipede', 'Crawler', 'SandSpider', 'Blob', 'PufferEnemy', 'DressGirl', 'NutcrackerEnemy', 'MouthDog', 'ForestGiant', 'DoublewingedBird', 'DocileLocustBees']);
 
 export class Enemies {
   constructor(game) {
@@ -50,10 +50,13 @@ export class Enemies {
   }
 
   async load() {
+    const catalogs = Object.values(this.game.dungeon.catalogs);
     this.catalog = this.game.dungeon.catalog;
-    const all = [...this.catalog.enemies.inside, ...this.catalog.enemies.outside, ...this.catalog.enemies.daytime];
+    const all = catalogs.flatMap(c => [...c.enemies.inside, ...c.enemies.outside, ...c.enemies.daytime]);
     for (const e of all) if (e.prefab) { e.man = await this.lib.manifest('prefabs/' + e.prefab).catch(() => null); e.beh = BEHAVIOURS[e.prefab.split('__')[0]] || { kind: 'idle', speed: 2 }; }
   }
+
+  setCatalog(catalog) { this.catalog = catalog; }
 
   beginDay() { this.clearAll(); this.spawnTimer = 40 + Math.random() * 40; this.outsideTimer = 20; this.insidePower = 0; this.outsidePower = 0; }
   clearAll() { for (const e of this.list) this._remove(e); this.list = []; }
@@ -63,7 +66,7 @@ export class Enemies {
   onPlayerEntered(inside) { }
 
   pickWeighted(list, budget) {
-    const cands = list.filter(e => e.man && e.beh.kind !== 'none' && DEMO_ENEMIES.has(e.prefab.split('__')[0]) && (e.power || 1) <= budget && this.list.filter(x => x.def === e).length < (e.maxCount || 1));
+    const cands = list.filter(e => e.man && e.beh.kind !== 'none' && SUPPORTED_ENEMIES.has(e.prefab.split('__')[0]) && (e.power || 1) <= budget && this.list.filter(x => x.def === e).length < (e.maxCount || 1));
     const total = cands.reduce((a, e) => a + e.rarity, 0);
     if (!total) return null;
     let r = Math.random() * total;
@@ -76,7 +79,7 @@ export class Enemies {
     const rootObj = inst.root.children[0];
     if (rootObj) { rootObj.position.set(0, 0, 0); rootObj.quaternion.identity(); }
     const root = inst.root; root.position.copy(pos);
-    const parent = area === 'inside' ? this.game.dungeon.root : this.game.world.moonRoot;
+    const parent = area === 'inside' ? this.game.dungeon.root : this.game.world.levelRoot;
     parent.add(root); root.updateMatrixWorld(true);
     const skin = await buildSkinned(this.lib, inst, parent);
     // hide LOD duplicates: keep first skinned mesh set only
@@ -164,7 +167,7 @@ export class Enemies {
     const to = target.clone(); const d = from.distanceTo(to);
     if (d > maxDist) return false;
     const dir = to.clone().sub(from).normalize();
-    const col = e.area === 'inside' ? this.game.dungeon.collider : this.game.world.moonCollider;
+    const col = e.area === 'inside' ? this.game.dungeon.collider : this.game.world.levelCollider;
     const hit = col && col.raycast(from, dir, d - 0.3);
     return !hit;
   }
@@ -187,7 +190,7 @@ export class Enemies {
     const step = Math.min(d, speed * dt);
     e.pos.x += Math.sin(e.yaw) * step; e.pos.z += Math.cos(e.yaw) * step;
     // ground follow
-    const col = e.area === 'inside' ? this.game.dungeon.collider : this.game.world.moonCollider;
+    const col = e.area === 'inside' ? this.game.dungeon.collider : this.game.world.levelCollider;
     if (col) {
       const hit = col.raycast(e.pos.clone().add(new THREE.Vector3(0, 1.2, 0)), new THREE.Vector3(0, -1, 0), 4);
       if (hit) e.pos.y += (hit.point.y - e.pos.y) * Math.min(1, dt * 10);

@@ -478,6 +478,10 @@ if __name__ == '__main__':
         print('== experimentation')
         pk.pack_hierarchy(ar.key_by_id['g8'], 1, os.path.join(ASSETS, 'scenes', 'experimentation.json'),
                           prune={'ConstructingLevelTiles', 'TestRoom', 'Editor', 'OutOfBoundsColliders', 'Cutscenes', 'ItemShipAnimContainer'})
+    if 'assurance' in what:
+        print('== assurance')
+        pk.pack_hierarchy(ar.key_by_id['g7'], 1, os.path.join(ASSETS, 'scenes', 'assurance.json'),
+                          prune={'ConstructingLevelTiles', 'TestRoom', 'Editor', 'OutOfBoundsColliders', 'Cutscenes', 'ItemShipAnimContainer'})
     if 'company' in what:
         print('== company building')
         name = [n for n in ar.by_name if n.startswith('CompanyBuilding')][0]

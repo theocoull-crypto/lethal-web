@@ -4,7 +4,7 @@ Usage:  python tools/extract.py ["C:\\Path\\To\\Lethal Company"]
 
 1. downloads AssetRipper (official GitHub release) into tools/AssetRipper if missing
 2. starts it headless on a local port and loads your own Lethal Company install
-3. packs the ship, 41-Experimentation, facility tiles, scrap, hazards, enemies, tools into ./assets
+3. packs the ship, 41-Experimentation, 220-Assurance, facility tiles, scrap, hazards, enemies, tools into ./assets
 Nothing from the game is committed to the repository: ./assets is gitignored.
 """
 import os, sys, subprocess, time, urllib.request, urllib.error, zipfile, json, shutil
@@ -86,10 +86,12 @@ def main():
             time.sleep(2)
         os.environ['AR_BASE'] = f'http://127.0.0.1:{PORT}'
         py = sys.executable
-        print('== packing ship + moon')
-        subprocess.check_call([py, os.path.join(HERE, 'pack.py'), 'ship', 'moon', 'company'], cwd=ROOT)
-        print('== packing prefabs (tiles, scrap, enemies, tools)')
+        print('== packing ship + moons')
+        subprocess.check_call([py, os.path.join(HERE, 'pack.py'), 'ship', 'moon', 'assurance', 'company'], cwd=ROOT)
+        print('== packing Experimentation prefabs (tiles, scrap, enemies, tools)')
         subprocess.check_call([py, os.path.join(HERE, 'pack_prefabs.py')], cwd=ROOT)
+        print('== packing Assurance prefabs (tiles, scrap, enemies, tools)')
+        subprocess.check_call([py, os.path.join(HERE, 'pack_prefabs.py'), 'assurance'], cwd=ROOT)
         print('== extra clips + bind poses')
         subprocess.check_call([py, os.path.join(HERE, 'pack_extras.py')], cwd=ROOT)
         print('== animation clips')

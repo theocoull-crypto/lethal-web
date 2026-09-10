@@ -23,6 +23,7 @@ export class Dungeon {
     this.root = new THREE.Group(); this.root.name = 'Dungeon'; this.root.visible = false;
     game.scene.add(this.root);
     this.catalog = null;
+    this.catalogs = {};
     this.tileDefs = new Map();     // prefab file -> parsed def
     this.prefabCache = new Map();  // file -> manifest
     this.placed = [];
@@ -36,12 +37,30 @@ export class Dungeon {
   }
 
   async load() {
-    this.catalog = await fetch('assets/catalog.json').then(r => r.json());
+    const [experimentation, assurance] = await Promise.all([
+      fetch('assets/catalog.json').then(r => r.json()),
+      fetch('assets/catalog_assurance.json').then(r => {
+        if (!r.ok) throw new Error('Assurance assets are missing; run tools\\extract.bat again.');
+        return r.json();
+      }),
+    ]);
+    this.catalogs = { experimentation, assurance };
+    await Promise.all(Object.values(this.catalogs).map(c => this._primeCatalog(c)));
+    this.catalog = experimentation;
+  }
+
+  async _primeCatalog(catalog) {
     const files = new Set();
-    for (const set of Object.values(this.catalog.tileSets)) for (const e of set) files.add(e.prefab);
-    for (const f of this.catalog.doorParts) files.add(f);
+    for (const set of Object.values(catalog.tileSets)) for (const e of set) files.add(e.prefab);
+    for (const f of catalog.doorParts) files.add(f);
     await Promise.all([...files].map(f => this.prefab(f)));
     for (const f of files) this.parseTile(f);
+  }
+
+  setLevel(key) {
+    const catalog = this.catalogs[key] || this.catalogs.experimentation;
+    this.catalog = catalog;
+    return catalog;
   }
 
   async prefab(file) {

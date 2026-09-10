@@ -36,7 +36,7 @@ class Game {
     this.scene.add(this.camera);
     this.lib = new AssetLib(this.renderer);
     this.sound = new SoundManager();
-    this.hud = new HUD();
+    this.hud = new HUD(this);
     this.clock = new THREE.Clock();
     this.state = 'loading';
     this.wantsLock = false;
@@ -112,6 +112,7 @@ class Game {
     this.terminal = new Terminal(this);
     this.settings = new Settings(this);
     this.debug = new DebugMenu(this);
+    this._bindUISounds();
     fill.style.width = '100%';
     $('loading').classList.add('hidden'); $('menu').classList.remove('hidden');
     $('btn-continue').onclick = () => this.continueAfterResults();
@@ -132,7 +133,7 @@ class Game {
     const src = [];
     const add = (l, area) => { if (!l.isPointLight && !l.isSpotLight) return; src.push({ obj: l, area, pos: new THREE.Vector3(), color: l.color.clone(), intensity: l.userData.baseIntensity != null ? Math.min(l.userData.baseIntensity, 60) * LIGHT_GAIN : l.intensity, distance: Math.max((l.distance || 8) * RANGE_GAIN, 14) }); l.visible = false; };
     for (const l of this.world.shipLights) add(l, 'ship');
-    for (const l of this.world.moonLights) add(l, 'moon');
+    for (const moon of Object.values(this.world.moons)) for (const l of moon.lights) add(l, moon.key);
     for (const l of this.world.companyLights) add(l, 'company');
     for (const l of this.dungeon.lights) src.push({ obj: null, area: 'inside', pos: l.pos.clone(), color: l.color, intensity: l.intensity, distance: l.distance });
     this.lightSources = src;
@@ -143,7 +144,7 @@ class Game {
     const inside = this.inside, lit = this.world.lightsOn;
     for (const s of this.lightSources) {
       if (s.area === 'inside') { s.enabled = inside; continue; }
-      s.enabled = !inside && (s.area === 'ship' || (!this.world.inOrbit && ((s.area === 'moon' && !this.world.atCompany) || (s.area === 'company' && this.world.atCompany))));
+      s.enabled = !inside && (s.area === 'ship' || (!this.world.inOrbit && s.area === this.world.destination));
       if (s.obj) { s.obj.getWorldPosition(s.pos); if (s.area === 'ship') s.intensity = (lit ? 1 : 0) * (s.obj.userData.baseIntensity != null ? Math.min(s.obj.userData.baseIntensity, 60) * LIGHT_GAIN : 0.5); }
     }
     this.lightPool.update(this.player.pos);
@@ -178,6 +179,12 @@ class Game {
   }
   stopMenuMusic() { if (this.menuMusic && this.menuMusic.stop) this.menuMusic.stop(1.0); this.menuMusic = null; }
 
+  _bindUISounds() {
+    const play = (name, vol = 0.28) => { const c = this.items.sfx(name); if (c) this.sound.play(c, { vol }); };
+    for (const b of document.querySelectorAll('.menu-btn')) b.addEventListener('click', () => play('uiSelect', 0.3));
+    for (const input of document.querySelectorAll('#settings input, #settings select')) input.addEventListener('change', () => play('key', 0.2));
+  }
+
   startGame() {
     if (this.state === 'play') return;
     this.stopMenuMusic();
@@ -190,7 +197,7 @@ class Game {
     this._suppressSettings = true; this.player.lock();
     this.world.startLoop('shipAmb', this.world.clips.shipAmb, { vol: 0.35 });
     this.world.startLoop('thruster', this.world.clips.thruster, { vol: 0.25 });
-    this.hud.showTip('Pull the lever by the door to land on 41-Experimentation.\nUse the terminal to buy gear and check the quota.', 8);
+    this.hud.showTip(`Pull the lever by the door to land on ${this.world.levelName}.\nUse the terminal to buy gear or change your route.`, 8);
     this.hud.setQuota(this.quotaFulfilled, this.quota, this.daysLeft, this.credits);
   }
 
@@ -221,8 +228,12 @@ class Game {
     this.sound.stopAll(); this.world.loops = {};
     this.menuMusic = null; this.startMenuMusic();
   }
-  onJump() { }
-  onLand(v) { const clip = this.footClip(); if (clip) this.sound.play(clip, { vol: Math.min(1, 0.5 + -v * 0.03), pitch: 0.9 }); }
+  onJump() { const c = this.items.sfx('jump'); if (c) this.sound.play(c, { vol: 0.42, pitch: 0.98 + Math.random() * 0.04 }); }
+  onLand(v) {
+    const impact = this.items.sfx(v < -14 ? 'landHard' : 'landSoft');
+    if (impact) this.sound.play(impact, { vol: Math.min(0.9, 0.35 + -v * 0.025), pitch: 0.98 });
+    const clip = this.footClip(); if (clip) this.sound.play(clip, { vol: Math.min(0.7, 0.28 + -v * 0.02), pitch: 0.9 });
+  }
   onFootstep() {
     const clip = this.footClip();
     if (clip) this.sound.play(clip, { vol: this.player.sprinting ? 0.55 : this.player.crouching ? 0.15 : 0.35, pitch: 0.95 + Math.random() * 0.1 });
@@ -236,13 +247,13 @@ class Game {
   }
   onDamage(amount, source) {
     this.hud.flashDamage(Math.min(1, amount / 40));
-    const c = this.items.sfx('damage'); if (c) this.sound.play(c, { vol: 0.8 });
+    const c = this.items.sfx(source === 'fall' ? 'fallDamage' : 'damage'); if (c) this.sound.play(c, { vol: 0.8 });
   }
   onDeath(source) {
     this.hud.showNotice('YOU DIED', 4);
     this.hud.setSpectate(`Cause of death: ${source || 'unknown'}\nThe ship will leave without you.`);
     this.player.inputEnabled = false;
-    const c = this.items.sfx('death'); if (c) this.sound.play(c, { vol: 0.9 });
+    const c = this.items.sfx(source === 'space' || source === 'void' ? 'space' : 'death'); if (c) this.sound.play(c, { vol: 0.9 });
     this.items.dropAll();
     // the ship leaves without you: doors shut, takeoff, then the day ends
     setTimeout(() => { if (this.state === 'play' && this.world.shipState === 'landed') this.world.setShipState('leaving'); else if (this.state === 'play') this.endDay(true); }, 4000);
@@ -275,7 +286,7 @@ class Game {
       const perp = Math.sqrt(Math.max(0, d * d - along * along));
       if (perp < radius && d < bestD) { bestD = d; best = entry; }
     };
-    if (!this.inside) { for (const it of this.world.interactables) { if (it.area === 'moon' && (this.world.atCompany || this.world.inOrbit)) continue; if (it.area === 'company' && (!this.world.atCompany || this.world.inOrbit)) continue; if (it.obj) consider(this.world.worldPosOf(it.obj), it.radius, it); else if (it.pos) consider(it.pos, it.radius, it); } }
+    if (!this.inside) { for (const it of this.world.interactables) { if (it.area && (this.world.inOrbit || it.area !== this.world.destination)) continue; if (it.obj) consider(this.world.worldPosOf(it.obj), it.radius, it); else if (it.pos) consider(it.pos, it.radius, it); } }
     else for (const it of this.dungeon.interactables) consider(it.pos, it.radius, it);
     for (const it of this.items.interactables()) consider(it.pos, it.radius, it);
     return best;
@@ -295,11 +306,13 @@ class Game {
 
   // ---------- day flow ----------
   onShipDeparting(leaving) {
+    const depart = this.items.sfx('depart'); if (depart) this.sound.play(depart, { vol: 0.55 });
     if (leaving) { this.hud.showNotice('SHIP DEPARTING', 3, '#e8c85a'); this.stopMoonMusic(); this.world.stopLoop('company', 2.0); this.world.stopLoop('outside', 2.0); }
   }
-  onShipLanded() {
+  async onShipLanded() {
     this.dayCount++;
     this.world.stopLoop('thruster');
+    const arrive = this.items.sfx('arrive'); if (arrive) this.sound.play(arrive, { vol: 0.6 });
     this.items.onLanded();
     if (this.world.atCompany) {
       this.hud.showNotice('WELCOME TO THE COMPANY', 4, '#e8c85a');
@@ -308,8 +321,13 @@ class Game {
       this._refreshLightSources();
       return;
     }
-    this.hud.showNotice('LANDED ON 41-EXPERIMENTATION', 4, '#e8c85a');
-    this.dungeon.generate(this.dayCount * 7919 + Date.now() % 1000).then(() => { this.items.spawnScrap(); this._refreshLightSources(); });
+    const catalog = this.dungeon.setLevel(this.world.levelCatalog);
+    this.items.setCatalog(catalog);
+    this.enemies.setCatalog(catalog);
+    this.hud.showNotice(`LANDED ON ${this.world.levelName}`, 4, '#e8c85a');
+    await this.dungeon.generate(this.dayCount * 7919 + Date.now() % 1000);
+    await this.items.spawnScrap();
+    this._refreshLightSources();
     this.enemies.beginDay();
     this.world.startLoop('outside', this.items.ambienceClip('outside'), { vol: 0.5 });
     this.startMoonMusic();
@@ -328,7 +346,7 @@ class Game {
     const collected = this.items.scrapValueOnShip();
     this.scrapOnShip = collected;
     const lines = [];
-    lines.push(playerDead ? 'The ship left without you. Your body was not recovered.' : (this.world.atCompany ? 'You left the Company building.' : 'You returned to the ship.'));
+    lines.push(playerDead ? 'The ship left without you. Your body was not recovered.' : (this.world.atCompany ? 'You left the Company building.' : `You returned from ${this.world.levelName}.`));
     lines.push(`Scrap on ship: $${collected}   (sell it at the Company)`);
     let fired = false;
     if (this.daysLeft <= 0) {
@@ -340,13 +358,16 @@ class Game {
         this.quotaFulfilled = 0;
         this.daysLeft = 3;
         lines.push(`New profit quota: $${this.quota}. 3 days.`);
+        setTimeout(() => { const q = this.items.sfx('newQuota'); if (q) this.sound.play(q, { vol: 0.65 }); }, 800);
       } else {
         lines.push(`\nQUOTA NOT MET ($${this.quotaFulfilled} of $${this.quota}). Performance review: unacceptable.\nYou have been let go. Every crew member is jettisoned into space.`);
         fired = true;
+        setTimeout(() => { const f = this.items.sfx('fired'); if (f) this.sound.play(f, { vol: 0.75 }); }, 700);
       }
     } else {
       this.daysLeft--;
       lines.push(`Profit quota: $${this.quotaFulfilled} / $${this.quota}   (${this.daysLeft} day${this.daysLeft === 1 ? '' : 's'} left)`);
+      if (this.daysLeft === 1) setTimeout(() => { const d = this.items.sfx('oneDay'); if (d) this.sound.play(d, { vol: 0.65 }); }, 700);
     }
     if (playerDead) lines.push('\nA new employee has been hired to replace you.');
     $('results-text').textContent = lines.join('\n');
@@ -447,8 +468,7 @@ class Game {
         this._updateScan(dt);
       }
       this.dungeon.root.visible = this.inside;
-      this.world.moonRoot.visible = !this.inside && !this.world.inOrbit && !this.world.atCompany;
-      this.world.companyRoot.visible = !this.inside && !this.world.inOrbit && this.world.atCompany;
+      this.world.setExteriorVisible(!this.inside && !this.world.inOrbit);
       this.world.shipRoot.visible = !this.inside;
       this.world.sun.visible = !this.inside;
       this.world.setFocus(p.pos);

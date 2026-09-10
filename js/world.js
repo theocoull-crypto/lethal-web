@@ -9,16 +9,24 @@ const START_HOUR = 8, END_HOUR = 24;
 // Unity "Environment" root of the ship scene (mirrored X); the ship's animation clips are relative to it
 const ENVIRONMENT_POS = new THREE.Vector3(17.4, 7.6, -16.5);
 const SHIP_LANDED_LOCAL = new THREE.Vector3(-18.71032, -7.326942, 8.971304);
+const MOON_DEFS = [
+  { key: 'moon', asset: 'experimentation', name: '41-EXPERIMENTATION', catalog: 'experimentation' },
+  { key: 'assurance', asset: 'assurance', name: '220-ASSURANCE', catalog: 'assurance' },
+];
 
 export class World {
   constructor(game) {
     this.game = game; this.lib = game.lib; this.scene = game.scene;
-    this.ship = null; this.moon = null;
+    this.ship = null;
     this.shipRoot = new THREE.Group(); this.shipRoot.name = 'ShipRoot';
-    this.moonRoot = new THREE.Group(); this.moonRoot.name = 'MoonRoot';
-    this.scene.add(this.shipRoot, this.moonRoot);
+    this.moons = {};
+    for (const d of MOON_DEFS) {
+      const root = new THREE.Group(); root.name = d.name + 'Root'; root.visible = false;
+      this.moons[d.key] = { ...d, root, inst: null, collider: null, lights: [], entrance: null, fireExit: null, outsideNodes: [], ladders: [], entranceAnim: null };
+    }
+    this.scene.add(this.shipRoot, ...Object.values(this.moons).map(m => m.root));
     this.colliders = [];
-    this.shipCollider = null; this.moonCollider = null; this.doorColliders = [];
+    this.shipCollider = null; this.doorColliders = [];
     this.shipState = 'orbit';   // orbit | landing | landed | leaving
     this.shipT = 0;
     this.doorsOpen = false; this.doorPower = 1;
@@ -27,20 +35,33 @@ export class World {
     this.sun = null; this.hemi = null; this.ambient = null;
     this.interactables = [];
     this.loops = {};
-    this.moonLights = [];
-    this.entrance = null; this.fireExit = null;
     this.ladders = [];
     this.anims = {};
     this.shipLandingPos = new THREE.Vector3();
-    this.destination = 'moon';      // 'moon' (41-Experimentation) or 'company'
+    this.destination = 'moon';      // moon | assurance | company
     this.companyRoot = new THREE.Group(); this.companyRoot.name = 'CompanyRoot'; this.scene.add(this.companyRoot);
     this.company = null; this.companyCollider = null; this.companyLights = [];
     this.desk = null;
   }
 
-  get levelRoot() { return this.destination === 'company' ? this.companyRoot : this.moonRoot; }
-  get levelCollider() { return this.destination === 'company' ? this.companyCollider : this.moonCollider; }
+  get activeMoon() { return this.moons[this.destination] || this.moons.moon; }
+  get moon() { return this.activeMoon.inst; }
+  get moonRoot() { return this.activeMoon.root; }
+  get moonCollider() { return this.activeMoon.collider; }
+  get moonLights() { return this.activeMoon.lights; }
+  get entrance() { return this.activeMoon.entrance; }
+  get fireExit() { return this.activeMoon.fireExit; }
+  get outsideNodes() { return this.activeMoon.outsideNodes; }
+  get levelRoot() { return this.destination === 'company' ? this.companyRoot : this.activeMoon.root; }
+  get levelCollider() { return this.destination === 'company' ? this.companyCollider : this.activeMoon.collider; }
+  get levelName() { return this.destination === 'company' ? 'THE COMPANY BUILDING' : this.activeMoon.name; }
+  get levelCatalog() { return this.atCompany ? null : this.activeMoon.catalog; }
   get atCompany() { return this.destination === 'company'; }
+
+  setExteriorVisible(visible) {
+    for (const [key, moon] of Object.entries(this.moons)) moon.root.visible = visible && this.destination === key;
+    this.companyRoot.visible = visible && this.atCompany;
+  }
 
   async load(progress) {
     const lib = this.lib;
@@ -75,17 +96,19 @@ export class World {
     }
     await this._setupShipAnimators();
 
-    progress && progress('Loading 41-Experimentation...');
-    const moonMan = await lib.manifest('scenes/experimentation.json');
-    const moonInst = await lib.instantiate(moonMan, { lights: true, staticRoot: this.moonRoot });
-    this.moon = moonInst;
-    this.moonRoot.add(moonInst.root);
-    this.moonRoot.visible = false;
-    // layer 15 = nav-mesh-only boxes (there is a slab of them floating over the landing pad), 22 = scan nodes, etc.
-    const mEntries = await collisionEntries(lib, moonInst, { exclude: n => NOCOLLIDE.has(n.layer) });
-    this.moonCollider = new Collider('moon').build(mEntries, null);
-    this.colliders.push(this.moonCollider);
-    this._setupMoonParts();
+    for (const moon of Object.values(this.moons)) {
+      progress && progress(`Loading ${moon.name}...`);
+      const moonMan = await lib.manifest(`scenes/${moon.asset}.json`);
+      const moonInst = await lib.instantiate(moonMan, { lights: true, staticRoot: moon.root });
+      moon.inst = moonInst;
+      moon.root.add(moonInst.root);
+      moon.root.visible = false;
+      // layer 15 = nav-mesh-only boxes, 22 = scan nodes, and the other trigger-only layers.
+      const mEntries = await collisionEntries(lib, moonInst, { exclude: n => NOCOLLIDE.has(n.layer) });
+      moon.collider = new Collider(moon.key).build(mEntries, null);
+      this.colliders.push(moon.collider);
+      this._setupMoonParts(moon);
+    }
     progress && progress('Loading the Company building...');
     try {
       const cMan = await lib.manifest('scenes/company.json');
@@ -161,10 +184,12 @@ export class World {
       const total = items.reduce((a, it) => a + (it.value || 0), 0);
       const rate = this.buyingRate();
       const profit = Math.round(total * rate);
+      const quotaWasMet = g.quotaFulfilled >= g.quota;
       g.items.removeItems(items);
       g.credits += profit; g.quotaFulfilled += profit;
       g.hud.showNotice(`SOLD ${items.length} ITEM${items.length === 1 ? '' : 'S'} FOR $${profit}  (${Math.round(rate * 100)}%)`, 5, '#8fdc7a');
       const clip = profit >= g.credits / 4 ? d.clips.good : d.clips.bad; if (clip) g.sound.play(clip, { pos, vol: 0.9 });
+      if (!quotaWasMet && g.quotaFulfilled >= g.quota) { const q = g.items.sfx('reachedQuota'); if (q) g.sound.play(q, { vol: 0.7 }); }
       if (d.anim && d.anim.ready) d.anim.play('DoorClose', { once: true, loop: false, fade: 0 });
       if (d.clips.doorShut) g.sound.play(d.clips.doorShut, { pos, vol: 0.9 });
       d.busy = false;
@@ -282,7 +307,7 @@ export class World {
     this.shipState = s; this.shipT = 0;
     const a = this.anims.ship;
     if (s === 'orbit') {
-      this.moonRoot.visible = false; this.companyRoot.visible = false;
+      this.setExteriorVisible(false);
       this.setDoors(false, true);
       if (a && a.has('ShipIdle')) a.play('ShipIdle', { fade: instant ? 0 : 0.5 });
       else this.shipObj.position.copy(SHIP_LANDED_LOCAL).add(new THREE.Vector3(-98, 70, 0));
@@ -327,10 +352,11 @@ export class World {
   stopLoop(name, fade = 1) { const h = this.loops[name]; if (h && h !== true) h.stop(fade); delete this.loops[name]; }
 
   // ---------- moon ----------
-  _setupMoonParts() {
-    const by = n => this.moon.byName.get(n) || [];
+  _setupMoonParts(moon) {
+    const inst = moon.inst;
+    const by = n => inst.byName.get(n) || [];
     const ents = [];
-    for (const [id, o] of this.moon.objs) {
+    for (const [id, o] of inst.objs) {
       const n = o.userData.node;
       const et = n.comps.find(c => c.t === 'MB' && c.cls === 'EntranceTeleport');
       if (et) {
@@ -340,35 +366,34 @@ export class World {
       // ladders
       const lt = n.comps.find(c => c.t === 'MB' && c.cls === 'InteractTrigger' && c.d && c.d.isLadder);
       if (lt) {
-        const get = k => { const r = lt.d[k]; return r && r.$ ? this.moon.objs.get(r.$) : null; };
+        const get = k => { const r = lt.d[k]; return r && r.$ ? inst.objs.get(r.$) : null; };
         const top = get('topOfLadderPosition'), bottom = get('bottomOfLadderPosition'), horiz = get('ladderHorizontalPosition'), node = get('ladderPlayerPositionNode');
-        if (top && bottom) this.ladders.push({ obj: o, top, bottom, horiz: horiz || o, node: node || horiz || o, tip: lt.d.hoverTip || 'Climb' });
+        if (top && bottom) moon.ladders.push({ obj: o, top, bottom, horiz: horiz || o, node: node || horiz || o, tip: lt.d.hoverTip || 'Climb' });
       }
     }
     ents.sort((a, b) => a.id - b.id);
-    this.entrance = ents[0] || null; this.fireExit = ents[1] || null;
+    moon.entrance = ents[0] || null; moon.fireExit = ents[1] || null;
     for (const e of ents) {
-      const isFire = e !== this.entrance;
-      this.interactables.push({ obj: e.obj, radius: 1.8, reach: 3.0, area: 'moon', label: () => this.game.dungeon.placed.length ? (isFire ? '[E] Enter (fire exit)' : '[E] Enter facility') : 'Facility is sealed', action: () => { if (this.game.dungeon.placed.length) { this.playEntranceDoor(true); this.game.enterFacility(isFire); } } });
+      const isFire = e !== moon.entrance;
+      this.interactables.push({ obj: e.obj, radius: 1.8, reach: 3.0, area: moon.key, label: () => this.game.dungeon.placed.length ? (isFire ? '[E] Enter (fire exit)' : '[E] Enter facility') : 'Facility is sealed', action: () => { if (this.game.dungeon.placed.length) { this.playEntranceDoor(true); this.game.enterFacility(isFire); } } });
     }
     // the main entrance's visible double doors have their own animator
     const vis = by('OutsideEntranceVisualDoorsContainer')[0];
-    if (vis) { const ac = vis.userData.node.comps.find(c => c.t === 'Animator'); if (ac && ac.controller) { this.anims.entrance = new Animator(vis, ac.controller); this.anims.entrance.load(); } }
-    this.outsideNodes = [];
-    for (const o of by('OutsideAIPoints')) o.children.forEach(c => this.outsideNodes.push(this.worldPosOf(c)));
-    if (!this.outsideNodes.length) { this.moon.root.traverse(o => { if (/OutsideAINode/.test(o.name)) this.outsideNodes.push(this.worldPosOf(o)); }); }
-    this.moon.root.traverse(o => { if (o.isLight) { o.userData.baseIntensity = o.intensity; this.moonLights.push(o); } });
-    for (const l of this.moonLights) {
+    if (vis) { const ac = vis.userData.node.comps.find(c => c.t === 'Animator'); if (ac && ac.controller) { moon.entranceAnim = new Animator(vis, ac.controller); moon.entranceAnim.load(); } }
+    for (const o of by('OutsideAIPoints')) o.children.forEach(c => moon.outsideNodes.push(this.worldPosOf(c)));
+    if (!moon.outsideNodes.length) { inst.root.traverse(o => { if (/OutsideAINode/.test(o.name)) moon.outsideNodes.push(this.worldPosOf(o)); }); }
+    inst.root.traverse(o => { if (o.isLight) { o.userData.baseIntensity = o.intensity; moon.lights.push(o); } });
+    for (const l of moon.lights) {
       if (l.isPointLight || l.isSpotLight) { l.intensity = Math.min(l.userData.baseIntensity, 60) * 0.03; l.distance = Math.max(l.distance, 14); l.decay = 2; l.castShadow = false; }
       else if (l.isDirectionalLight) { l.visible = false; }
     }
-    for (const ld of this.ladders) {
+    for (const ld of moon.ladders) {
       const top = this.worldPosOf(ld.top), bottom = this.worldPosOf(ld.bottom);
       const mid = top.clone().add(bottom).multiplyScalar(0.5);
       ld.topPos = top; ld.bottomPos = bottom; ld.height = Math.abs(top.y - bottom.y);
       const hp = this.worldPosOf(ld.node);
       ld.lineX = hp.x; ld.lineZ = hp.z;
-      this.interactables.push({ pos: mid, radius: 0.9, reach: 2.4, segment: () => [ld.bottomPos, ld.topPos], label: () => '[E] Climb ladder', action: () => this.game.player.startLadder(ld), area: 'moon' });
+      this.interactables.push({ pos: mid, radius: 0.9, reach: 2.4, segment: () => [ld.bottomPos, ld.topPos], label: () => '[E] Climb ladder', action: () => this.game.player.startLadder(ld), area: moon.key });
     }
   }
 
@@ -399,6 +424,7 @@ export class World {
 
   update(dt) {
     for (const a of Object.values(this.anims)) if (a) a.update(dt);
+    for (const moon of Object.values(this.moons)) if (moon.entranceAnim) moon.entranceAnim.update(dt);
     if (this.shipState === 'landing') {
       this.shipT += dt;
       if (this.shipT >= (this.shipClipLen || 9) - 0.05) { this.setShipState('landed'); this.game.onShipLanded(); }
@@ -438,7 +464,7 @@ export class World {
   }
 
   playEntranceDoor(open) {
-    const a = this.anims.entrance; if (!a || !a.ready) return;
+    const a = this.activeMoon.entranceAnim; if (!a || !a.ready) return;
     const name = a.find(open ? [/Open/] : [/Shut|Close/]); if (name) a.play(name, { once: true, loop: false, fade: 0 });
     if (!open) return;
     clearTimeout(this._entT); this._entT = setTimeout(() => this.playEntranceDoor(false), 2500);

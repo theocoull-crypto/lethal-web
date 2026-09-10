@@ -61,7 +61,8 @@ export class DebugMenu {
     this._row('', this._btn('Land now', () => { if (g.world.shipState === 'orbit') g.world.pullLever(); this._skipShip(); }),
       this._btn('Leave now', () => { if (g.world.shipState === 'landed') g.world.pullLever(); this._skipShip(); }),
       this._btn('Skip cutscene', () => this._skipShip()),
-      this._btn('Route: moon', () => { g.world.destination = 'moon'; this.log('route moon'); }),
+      this._btn('Route: Experimentation', () => { g.world.destination = 'moon'; this.log('route Experimentation'); }),
+      this._btn('Route: Assurance', () => { g.world.destination = 'assurance'; this.log('route Assurance'); }),
       this._btn('Route: company', () => { g.world.destination = 'company'; this.log('route company'); }));
     const time = document.createElement('input'); time.type = 'range'; time.min = 0; time.max = 1; time.step = 0.01; time.className = 'drange';
     const timeLbl = document.createElement('span'); timeLbl.className = 'dval';
@@ -118,7 +119,7 @@ export class DebugMenu {
 
   _wire(on) {
     this.wire = on; const g = this.game;
-    const pairs = [[g.world.shipCollider, g.world.shipObj], [g.world.moonCollider, g.world.moonRoot], [g.world.companyCollider, g.world.companyRoot], [g.dungeon.collider, g.dungeon.root]];
+    const pairs = [[g.world.shipCollider, g.world.shipObj], ...Object.values(g.world.moons).map(m => [m.collider, m.root]), [g.world.companyCollider, g.world.companyRoot], [g.dungeon.collider, g.dungeon.root]];
     for (const [c, parent] of pairs) {
       if (!c || !c.mesh) continue;
       if (on && !c.mesh.parent) (parent || g.scene).add(c.mesh);

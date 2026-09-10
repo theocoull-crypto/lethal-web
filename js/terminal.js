@@ -5,6 +5,7 @@ const $ = id => document.getElementById(id);
 const COMMANDS = ['help', 'moons', 'store', 'buy', 'route', 'scan', 'quota', 'clear', 'exit', 'view', 'confirm', 'deny'];
 const MOONS = [
   { key: 'moon', label: '41-Experimentation', names: ['experimentation', '41-experimentation', '41'] },
+  { key: 'assurance', label: '220-Assurance', names: ['assurance', '220-assurance', '220'] },
   { key: 'company', label: 'The Company building', names: ['company', 'the company building', 'company building', 'the company'] },
 ];
 
@@ -137,8 +138,9 @@ ____________________________
 
 * The Company building   //   Buying at ${Math.round(g.world.buyingRate() * 100)}%${g.world.destination === 'company' ? '   (current route)' : ''}
 
-* 41-Experimentation   ${this.weather()}${g.world.destination === 'moon' ? '   (current route)' : ''}
-(other moons are not available in this demo)
+* 41-Experimentation   ${this.weather('moon')}${g.world.destination === 'moon' ? '   (current route)' : ''}
+
+* 220-Assurance        ${this.weather('assurance')}${g.world.destination === 'assurance' ? '   (current route)' : ''}
 `);
       case 'store': return this.print(`Welcome to the Company store.
 Use words BUY to buy an item.
@@ -158,7 +160,7 @@ Your credits: $${g.credits}
       case 'route': {
         const hit = best(rest, MOONS);
         if (!rest) return this.print('Route where? Type MOONS to see the list.\n');
-        if (!hit) return this.print('Only 41-Experimentation and the Company building are available in this demo.\n');
+        if (!hit) return this.print('That moon is not in the autopilot catalogue. Type MOONS to see available routes.\n');
         return this.askRoute(hit.cand);
       }
       case 'scan': {
@@ -200,15 +202,19 @@ Please CONFIRM or DENY.
     if (g.world.destination === moon.key) return this.print(`The autopilot is already routed to ${moon.label}.\nPull the lever to land.\n`);
     this.pending = { kind: 'route', moon };
     if (moon.key === 'company') this.print(`The cost to route to ${moon.label} is $0. The Company is buying at ${Math.round(g.world.buyingRate() * 100)}%.\nPlease CONFIRM or DENY.\n`);
-    else this.print(`The cost to route to ${moon.label} is $0. It is currently ${this.weather().replace(/[()]/g, '')}.\nPlease CONFIRM or DENY.\n`);
+    else this.print(`The cost to route to ${moon.label} is $0. It is currently ${this.weather(moon.key).replace(/[()]/g, '')}.\nPlease CONFIRM or DENY.\n`);
   }
 
   doRoute(moon) {
     const g = this.game;
     if (!g.world.inOrbit) return this.print('You can only route the autopilot while in orbit.\n');
     g.world.destination = moon.key;
+    const c = g.items.sfx('notify'); if (c) g.sound.play(c, { vol: 0.45 });
     this.print(`The autopilot is now routed to ${moon.label}.\nPull the lever to land.\n`);
   }
 
-  weather() { const f = this.game.world.dayFrac; return f > 0.72 ? '(Night)' : '(Foggy)'; }
+  weather(moon = this.game.world.destination) {
+    if (this.game.world.dayFrac > 0.72) return '(Night)';
+    return moon === 'assurance' ? '(Clear)' : '(Foggy)';
+  }
 }

@@ -69,7 +69,7 @@ export class Items {
     for (let i = 0; i < list.length; i++) {
       const it = await this.makeTool(list[i].tool, list[i].name); if (!it) continue;
       g.scene.add(it.obj);
-      this.placeOnFloor(it, base.clone().add(new THREE.Vector3((i % 3) * 0.9, 0.3, Math.floor(i / 3) * 0.9)), [g.world.moonCollider], Math.random() * 6.28);
+      this.placeOnFloor(it, base.clone().add(new THREE.Vector3((i % 3) * 0.9, 0.3, Math.floor(i / 3) * 0.9)), [g.world.levelCollider], Math.random() * 6.28);
       it.area = 'outside'; it.onShip = false;
       this.world.push(it);
     }
@@ -77,7 +77,8 @@ export class Items {
   }
 
   async load() {
-    this.catalog = this.game.dungeon.catalog;
+    const catalogs = Object.values(this.game.dungeon.catalogs);
+    this.setCatalog(this.game.dungeon.catalog);
     const sys = await this.lib.manifest('scenes/systems.json').catch(() => null);
     const shipMan = await this.lib.manifest('scenes/ship.json').catch(() => null);
     const nodesAll = [].concat(sys ? sys.nodes : [], shipMan ? shipMan.nodes : []);
@@ -87,26 +88,36 @@ export class Items {
         const d = c.d, id = x => x && x.$;
         if (c.cls === 'StartOfRound') {
           for (const s of (d.footstepSurfaces || [])) this.footsteps[(s.surfaceTag || '').toLowerCase()] = (s.clips || []).map(id).filter(Boolean);
-          Object.assign(this.sfxTable, { damage: id(d.damageSFX), fallDamage: id(d.fallDamageSFX), landSoft: id(d.playerHitGroundSoft), landHard: id(d.playerHitGroundHard), jump: id(d.playerJumpSFX), death: id(d.playerFallDeath), grab: id(d.playerGrabSFX), space: id(d.suckedIntoSpaceSFX), fired: id(d.firedVoiceSFX), depart: id(d.shipDepartSFX), arrive: id(d.shipArriveSFX), alarm: id(d.alarmSFX), zeroDays: id(d.zeroDaysLeftAlertSFX), doorMetal: id(d.shutDoorMetal), intro: id(d.shipIntroSpeechSFX) });
+          Object.assign(this.sfxTable, { damage: id(d.damageSFX), fallDamage: id(d.fallDamageSFX), landSoft: id(d.playerHitGroundSoft), landHard: id(d.playerHitGroundHard), jump: id(d.playerJumpSFX), death: id(d.playerFallDeath), grab: id(d.playerGrabSFX), space: id(d.suckedIntoSpaceSFX), fired: id(d.firedVoiceSFX), depart: id(d.shipDepartSFX), arrive: id(d.shipArriveSFX), alarm: id(d.alarmSFX), zeroDays: id(d.zeroDaysLeftAlertSFX), doorMetal: id(d.shutDoorMetal), intro: id(d.shipIntroSpeechSFX), systemAlert: id(d.HUDSystemAlertSFX), allDead: id(d.allPlayersDeadAudio) });
         }
         if (c.cls === 'Terminal') Object.assign(this.sfxTable, { enterTerminal: id(d.enterTerminalSFX), exitTerminal: id(d.leaveTerminalSFX), key: pickClip(d.keyboardClips), purchase: id(d.syncedAudios ? d.syncedAudios[0] : null) });
         if (c.cls === 'ItemDropship') Object.assign(this.sfxTable, { deliver: id(d.shipLandAudio || d.shipAudio) });
-        if (c.cls === 'HUDManager') Object.assign(this.sfxTable, { scan: id(d.scanSFX), alert: pickClip(d.warningSFX), notify: id(d.globalNotificationSFX), results: pickClip(d.endStatsMusic), addScrap: id(d.addToScrapTotalSFX), finishScrap: id(d.finishAddingToTotalSFX), tips: pickClip(d.tipsSFX), newQuota: id(d.newProfitQuotaSFX), reachedQuota: id(d.reachedQuotaSFX), oneDay: id(d.OneDayToMeetQuotaSFX), critical: id(d.criticalInjury) });
+        if (c.cls === 'HUDManager') Object.assign(this.sfxTable, { scan: id(d.scanSFX), alert: pickClip(d.warningSFX), notify: id(d.globalNotificationSFX), results: pickClip(d.endStatsMusic), addScrap: id(d.addToScrapTotalSFX), finishScrap: id(d.finishAddingToTotalSFX), tips: pickClip(d.tipsSFX), newQuota: id(d.newProfitQuotaSFX), reachedQuota: id(d.reachedQuotaSFX), oneDay: id(d.OneDayToMeetQuotaSFX), critical: id(d.criticalInjury), uiSelect: id(d.levelIncreaseSFX), uiBack: id(d.levelDecreaseSFX), daysLeft: id(d.profitQuotaDaysLeftCalmSFX), collectedScrap: id(d.displayCollectedScrapSFX) });
         if (c.cls === 'SoundManager') Object.assign(this.sfxTable, { heartbeat: pickClip(d.heartbeatClips), steelOpen: pickClip(d.steelDoorOpenSFX), steelClose: pickClip(d.steelDoorCloseSFX) });
         if (c.cls === 'TimeOfDay') this.sfxTable.timeCues = (d.timeOfDayCues || []).map(id);
       }
     }
-    const amb = this.catalog.level.ambienceData;
-    if (amb) { this.ambience.cues.inside = (amb.insideAmbience || []).map(x => x && x.$).filter(Boolean); this.ambience.cues.outside = (amb.outsideAmbience || []).map(x => x && x.$).filter(Boolean); this.ambience.cues.ship = (amb.shipAmbience || []).map(x => x && x.$).filter(Boolean); }
     // preload manifests
-    this.defs = this.catalog.scrap.filter(s => s.prefab);
-    await Promise.all(this.defs.map(s => this.lib.manifest('prefabs/' + s.prefab).catch(() => null)));
+    const allScrap = catalogs.flatMap(c => c.scrap).filter(s => s.prefab);
+    await Promise.all([...new Set(allScrap.map(s => s.prefab))].map(f => this.lib.manifest('prefabs/' + f).catch(() => null)));
     this.toolDefs = {};
-    for (const [k, v] of Object.entries(this.catalog.tools)) if (!k.endsWith('_item') && v) { this.toolDefs[k] = { name: k, prefab: v, item: this.catalog.tools[k + '_item'] || {} }; await this.lib.manifest('prefabs/' + v).catch(() => null); }
+    for (const catalog of catalogs) for (const [k, v] of Object.entries(catalog.tools)) if (!k.endsWith('_item') && v) { this.toolDefs[k] = { name: k, prefab: v, item: catalog.tools[k + '_item'] || {} }; await this.lib.manifest('prefabs/' + v).catch(() => null); }
     // flashlight click clips from the prefab
     for (const key of ['BBFlashlight', 'FlashlightItem']) {
-      const fl = this.catalog.tools[key] ? await this.lib.manifest('prefabs/' + this.catalog.tools[key]).catch(() => null) : null;
+      const fl = this.toolDefs[key] ? await this.lib.manifest('prefabs/' + this.toolDefs[key].prefab).catch(() => null) : null;
       if (fl) for (const n of fl.nodes) for (const c of n.comps) if (c.t === 'MB' && c.cls === 'FlashlightItem' && c.d) { const cl = (c.d.flashlightClips || []).map(x => x && x.$).filter(Boolean); if (cl.length && !this.sfxTable.flashOn) { this.sfxTable.flashOn = cl[0]; this.sfxTable.flashOff = cl[1] || cl[0]; } }
+    }
+  }
+
+  setCatalog(catalog) {
+    this.catalog = catalog;
+    this.defs = catalog.scrap.filter(s => s.prefab);
+    this.ambience.cues = { inside: [], outside: [], ship: [] };
+    const amb = catalog.level.ambienceData;
+    if (amb) {
+      this.ambience.cues.inside = (amb.insideAmbience || []).map(x => x && x.$).filter(Boolean);
+      this.ambience.cues.outside = (amb.outsideAmbience || []).map(x => x && x.$).filter(Boolean);
+      this.ambience.cues.ship = (amb.shipAmbience || []).map(x => x && x.$).filter(Boolean);
     }
   }
 
@@ -284,7 +295,11 @@ export class Items {
       else { g.scene.add(it.obj); this.placeOnFloor(it, pos, [g.world.levelCollider, g.world.shipCollider].filter(Boolean), g.player.yaw); it.onShip = false; it.area = g.world.atCompany ? 'company' : 'outside'; it.onCounter = g.world.atCompany && g.world.onCounter(it.obj.getWorldPosition(new THREE.Vector3())); }
     }
     this.world.push(it);
-    if (it.onShip && it.value) { const c = this.sfx('addScrap'); }
+    if (it.onShip && it.value) {
+      const c = this.sfx('addScrap'); if (c) g.sound.play(c, { vol: 0.55 });
+      clearTimeout(this._scrapFinishTimer);
+      this._scrapFinishTimer = setTimeout(() => { const done = this.sfx('finishScrap'); if (done) g.sound.play(done, { vol: 0.5 }); }, 650);
+    }
   }
 
   useHeld() {
