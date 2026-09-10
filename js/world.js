@@ -232,6 +232,13 @@ export class World {
     }
     ents.sort((a, b) => a.id - b.id);
     this.entrance = ents[0] || null; this.fireExit = ents[1] || null;
+    for (const e of ents) {
+      const isFire = e !== this.entrance;
+      this.interactables.push({ obj: e.obj, radius: 1.8, label: () => this.game.dungeon.placed.length ? (isFire ? '[E] Enter (fire exit)' : '[E] Enter facility') : 'Facility is sealed', action: () => { if (this.game.dungeon.placed.length) { this.playEntranceDoor(true); this.game.enterFacility(isFire); } } });
+    }
+    // the main entrance's visible double doors have their own animator
+    const vis = by('OutsideEntranceVisualDoorsContainer')[0];
+    if (vis) { const ac = vis.userData.node.comps.find(c => c.t === 'Animator'); if (ac && ac.controller) { this.anims.entrance = new Animator(vis, ac.controller); this.anims.entrance.load(); } }
     this.outsideNodes = [];
     for (const o of by('OutsideAIPoints')) o.children.forEach(c => this.outsideNodes.push(this.worldPosOf(c)));
     if (!this.outsideNodes.length) { this.moon.root.traverse(o => { if (/OutsideAINode/.test(o.name)) this.outsideNodes.push(this.worldPosOf(o)); }); }
@@ -313,6 +320,13 @@ export class World {
     this.hemi.intensity = orbit ? 0.3 : this.game.inside ? 0.14 : 0.65 * (1 - night * 0.85) + 0.06;
     this.hemi.color.copy(new THREE.Color(0x9a8c84).lerp(new THREE.Color(0x202838), night));
     this.ambient.intensity = orbit ? 0.2 : this.game.inside ? 0.1 : 0.35 * (1 - night * 0.8) + 0.04;
+  }
+
+  playEntranceDoor(open) {
+    const a = this.anims.entrance; if (!a || !a.ready) return;
+    const name = a.find(open ? [/Open/] : [/Shut|Close/]); if (name) a.play(name, { once: true, loop: false, fade: 0 });
+    if (!open) return;
+    clearTimeout(this._entT); this._entT = setTimeout(() => this.playEntranceDoor(false), 2500);
   }
 
   setFocus(p) { this.sunTarget.position.copy(p); this.sunTarget.updateMatrixWorld(); }

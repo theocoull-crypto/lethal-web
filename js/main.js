@@ -10,6 +10,7 @@ import { Items } from './items.js';
 import { Enemies } from './enemies.js';
 import { LightPool } from './lights.js';
 import { Terminal } from './terminal.js';
+import { Settings } from './settings.js';
 
 const $ = id => document.getElementById(id);
 const PIXEL_HEIGHT = 520;
@@ -39,6 +40,7 @@ class Game {
     this.flashlightOn = false;
     this.scanT = 0; this.scanTargets = [];
     this.pixelFilter = true;
+    this.lightGain = 1; this.shadowLamps = 0; this.shadowsOn = true; this.paused = false;
     this._resize();
     addEventListener('resize', () => this._resize());
     window.G = this;
@@ -86,6 +88,7 @@ class Game {
     this._refreshLightSources();
     this._setupFlashlight();
     this.terminal = new Terminal(this);
+    this.settings = new Settings(this);
     fill.style.width = '100%';
     $('loading').classList.add('hidden'); $('menu').classList.remove('hidden');
     $('btn-play').onclick = () => this.startGame();
@@ -139,7 +142,7 @@ class Game {
     this.hud.show(true);
     this.sound.resume();
     this.state = 'play';
-    this.player.lock();
+    this._suppressSettings = true; this.player.lock();
     this.world.startLoop('shipAmb', this.world.clips.shipAmb, { vol: 0.35 });
     this.world.startLoop('thruster', this.world.clips.thruster, { vol: 0.25 });
     this.hud.showTip('Pull the lever by the door to land on 41-Experimentation.\nUse the terminal to buy gear and check the quota.', 8);
@@ -155,7 +158,7 @@ class Game {
     if (code === 'KeyE') { this.interact(); this.enemies.onMash(); }
     if (code === 'KeyG') this.items.dropHeld();
     if (code === 'KeyF') this.toggleFlashlight();
-    if (code === 'KeyP') this.togglePixelFilter();
+    if (code === 'KeyP') { this.settings.v.pixel = !this.settings.v.pixel; this.settings.apply(); this.settings.save(); }
     if (code === 'Digit1') this.items.select(0); if (code === 'Digit2') this.items.select(1); if (code === 'Digit3') this.items.select(2); if (code === 'Digit4') this.items.select(3);
   }
   onMouse(button, down) {
@@ -164,7 +167,14 @@ class Game {
     if (button === 2) this.scan();
   }
   onWheel(dir) { if (this.state === 'play' && !(this.terminal && this.terminal.open)) this.items.select((this.items.active + (dir > 0 ? 1 : 3)) % 4); }
-  onLockChange(locked) { if (!locked && this.state === 'play' && !(this.terminal && this.terminal.open)) { this.hud.showTip('Click to resume', 3); } }
+  onLockChange(locked) {
+    if (!locked && this.state === 'play' && !(this.terminal && this.terminal.open) && this.settings && !this.settings.open && !this._suppressSettings) this.settings.show();
+    this._suppressSettings = false;
+  }
+  backToMenu() {
+    this.state = 'menu'; this.hud.show(false); document.exitPointerLock();
+    $('menu').classList.remove('hidden');
+  }
   onJump() { }
   onLand(v) { const clip = this.footClip(); if (clip) this.sound.play(clip, { vol: Math.min(1, 0.5 + -v * 0.03), pitch: 0.9 }); }
   onFootstep() {
@@ -224,7 +234,7 @@ class Game {
     this.scanTargets = this.items.scannables(this.camera.position, 60).concat(this.enemies.scannables(this.camera.position, 60), this.dungeon.scannables(this.camera.position, 80));
   }
 
-  openTerminal() { this.terminal.show(); }
+  openTerminal() { this._suppressSettings = true; this.terminal.show(); }
   showManual() { this.hud.showTip('WELCOME TO THE COMPANY\n1. Land on the moon (lever).\n2. Find the facility entrance.\n3. Collect scrap, bring it to the ship.\n4. Be back before midnight.\n5. Do not die. Cost of replacement is high.', 10); }
 
   // ---------- day flow ----------
@@ -269,7 +279,7 @@ class Game {
     if (playerDead) lines.push('\nA new employee has been hired to replace you.');
     $('results-text').textContent = lines.join('\n');
     $('results').classList.remove('hidden');
-    document.exitPointerLock();
+    this._suppressSettings = true; document.exitPointerLock();
     this.fired = fired;
     this.enemies.clearAll();
     this.dungeon.clear();
@@ -317,7 +327,7 @@ class Game {
 
   activeColliders() {
     const list = [];
-    if (this.inside) { if (this.dungeon.collider) list.push(this.dungeon.collider); }
+    if (this.inside) { if (this.dungeon.collider) list.push(this.dungeon.collider); for (const d of this.dungeon.doors) if (d.collider && !d.open) list.push(d.collider); }
     else { list.push(this.world.shipCollider, ...this.world.doorColliders); if (!this.world.inOrbit) list.push(this.world.moonCollider); }
     return list;
   }
@@ -334,6 +344,8 @@ class Game {
 
   tick(dt) {
     const p = this.player;
+    if (this.paused) { this.hud.update(dt); return; }
+    if (this.lightPool) this.lightPool.gain = this.lightGain;
     if (this.state === 'play' || this.state === 'menu' || this.state === 'results') {
       this.world.update(dt);
       if (this.state === 'play') {

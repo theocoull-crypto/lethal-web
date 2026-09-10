@@ -44,7 +44,7 @@
     <div class="menu-sub">41-EXPERIMENTATION &middot; DEMO BUILD</div>
     <div class="menu-desc">
       You are a contracted worker for the Company. Land on the moon, get inside the facility, bring scrap back to the ship before midnight and meet the profit quota. Do not get killed.<br><br>
-      <b>WASD</b> move &middot; <b>Shift</b> sprint &middot; <b>Ctrl</b> crouch &middot; <b>Space</b> jump &middot; <b>E</b> interact / grab &middot; <b>G</b> drop &middot; <b>1-4</b> / wheel slots &middot; <b>RMB</b> scan &middot; <b>LMB</b> use item &middot; <b>F</b> flashlight
+      <b>WASD</b> move &middot; <b>Shift</b> sprint &middot; <b>Ctrl</b> crouch &middot; <b>Space</b> jump &middot; <b>E</b> interact / grab &middot; <b>G</b> drop &middot; <b>1-4</b> / wheel slots &middot; <b>RMB</b> scan &middot; <b>LMB</b> use item &middot; <b>F</b> flashlight &middot; <b>Esc</b> settings
     </div>
     <button id="btn-play" class="menu-btn">&gt; Start job</button>
     <div id="menu-status"></div>
@@ -53,6 +53,14 @@
 </div>
 
 <div id="grain"></div>
+<div id="settings" class="hidden">
+  <div class="settings-inner">
+    <div class="settings-title">SETTINGS</div>
+    <div id="settings-rows"></div>
+    <div class="settings-btns"><button id="btn-settings-close" class="menu-btn">&gt; Resume</button><button id="btn-settings-reset" class="menu-btn">&gt; Defaults</button><button id="btn-settings-menu" class="menu-btn">&gt; Quit to menu</button></div>
+    <div class="menu-foot">Esc opens and closes this menu.</div>
+  </div>
+</div>
 <div id="terminal" class="hidden">
   <div class="term-screen">
     <pre id="term-out"></pre>

@@ -206,7 +206,7 @@ export class AssetLib {
               const mat = this.material(mid);
               if (mat.visible === false) continue;
               const m = new THREE.Mesh(g, mat);
-              m.castShadow = !!c.shadows && !c.sb; m.receiveShadow = true;
+              m.castShadow = !!c.shadows; m.receiveShadow = true;
               m.userData.nodeId = n.id; m.userData.layer = n.layer; m.userData.tag = n.tag;
               m.name = n.name;
               if (c.sb) { staticRoot.add(m); m.userData.static = true; }

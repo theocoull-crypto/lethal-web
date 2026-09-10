@@ -5,9 +5,13 @@ export class LightPool {
   constructor(scene, count = 10) {
     this.scene = scene;
     this.pool = [];
-    for (let i = 0; i < count; i++) { const l = new THREE.PointLight(0xffffff, 0, 10, 2); l.visible = false; scene.add(l); this.pool.push(l); }
+    for (let i = 0; i < count; i++) { const l = new THREE.PointLight(0xffffff, 0, 10, 1.6); l.visible = false; l.shadow.mapSize.set(512, 512); l.shadow.bias = -0.004; l.shadow.camera.near = 0.3; scene.add(l); this.pool.push(l); }
     this.sources = [];   // {pos, color, intensity, distance, enabled}
+    this.shadowCount = 0;
+    this.gain = 1;
   }
+
+  setShadowCount(n) { this.shadowCount = n; this.pool.forEach((l, i) => { l.castShadow = i < n; }); }
 
   setSources(list) { this.sources = list; }
 
@@ -17,7 +21,7 @@ export class LightPool {
     for (let i = 0; i < this.pool.length; i++) {
       const l = this.pool[i], s = active[i];
       if (!s) { l.visible = false; l.intensity = 0; continue; }
-      l.visible = true; l.position.copy(s.pos); l.color.copy(s.color); l.intensity = s.intensity; l.distance = s.distance; l.decay = 2;
+      l.visible = true; l.position.copy(s.pos); l.color.copy(s.color); l.intensity = s.intensity * this.gain; l.distance = s.distance; l.decay = 1.6;
     }
   }
 }

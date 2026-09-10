@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { Collider, collisionEntries } from './collision.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { Animator } from './anim.js';
 
 const V = (o, mirror = true) => new THREE.Vector3(mirror ? -o.x : o.x, o.y, o.z);
 
@@ -294,8 +295,10 @@ export class Dungeon {
           // one side spawns the door: the side with higher priority, or the tile placed first
           const other = d.connected; const od = other.doorways.find(x => x.connected === t);
           const mine = d.def.priority > (od ? od.def.priority : -1) || (d.def.priority === (od ? od.def.priority : -1) && t.index <= other.index && d.def.connectors.length);
-          if (mine && d.def.connectors.length) await this._spawnDoorPart(d, this._pickPart(d.def.connectorWeights, d.def.connectors), t, true);
-          else if (mine && !d.def.connectors.length && od && od.def.connectors.length) await this._spawnDoorPart(od, od.def.connectors[0], other, true);
+          // demo: the terminal-controlled blast doors (BigDoorSpawn) are left out, hallway connections stay open
+          const pick = (dd) => { const ids = dd.def.connectors, ws = dd.def.connectorWeights; const keep = ids.map((id, i) => [id, ws[i]]).filter(([id]) => !this._isBigDoor(id)); return keep.length ? this._pickPart(keep.map(x => x[1]), keep.map(x => x[0])) : null; };
+          if (mine && d.def.connectors.length) { const id = pick(d); if (id) await this._spawnDoorPart(d, id, t, true); }
+          else if (mine && !d.def.connectors.length && od && od.def.connectors.length) { const id = pick(od); if (id) await this._spawnDoorPart(od, id, other, true); }
         } else if (d.def.blockers.length) {
           await this._spawnDoorPart(d, this._pickPart(d.def.blockerWeights, d.def.blockers), t, false);
         }
@@ -324,7 +327,7 @@ export class Dungeon {
     for (const t of this.placed) {
       const e = await collisionEntries(lib, t.inst, { exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) });
       for (const x of e) entries.push(x);
-      for (const ex of (t.extraInst || [])) { const e2 = await collisionEntries(lib, ex, { exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) }); for (const x of e2) entries.push(x); }
+      for (const ex of (t.extraInst || [])) { const e2 = await collisionEntries(lib, ex, { exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) || n.comps.some(c => c.t === 'MB' && c.cls === 'DoorLock') }); for (const x of e2) entries.push(x); }
     }
     this.collider = new Collider('dungeon').build(entries, null);
     for (const t of this.placed) this._mergeStatic(t);
@@ -373,6 +376,8 @@ export class Dungeon {
     }
     t.mergedCount = count;
   }
+
+  _isBigDoor(aid) { const f = this.catalog.doorParts.find(f => f.endsWith('__' + aid + '.json')); return !!f && /BigDoor/.test(f); }
 
   _pickPart(weights, ids) {
     let total = 0; for (const w of weights) total += Math.max(0, w);
@@ -434,23 +439,40 @@ export class Dungeon {
   }
 
   _setupDoor(inst, name) {
-    // BigDoor: two sliding panels (BigDoorLeft/Right) + AnimatedObjectTrigger with open/close audio; SteelDoor: hinge door
+    // SteelDoorMapModel: DoorMesh has an Animator (Door1Open / Door1Close) and a DoorSound audio source; the trigger box sits on DoorMesh/Cube
     const root = inst.root;
-    const left = root.getObjectByName('BigDoorLeft'), right = root.getObjectByName('BigDoorRight');
-    const steel = root.getObjectByName('SteelDoor') || root.getObjectByName('DoorMesh');
-    let clipsOpen = [], clipsClose = [];
-    inst.manifest.nodes.forEach(n => n.comps.forEach(c => { if (c.t === 'MB' && c.d && c.cls === 'AnimatedObjectTrigger') { clipsOpen = (c.d.boolTrueAudios || []).map(x => x && x.$).filter(Boolean); clipsClose = (c.d.boolFalseAudios || []).map(x => x && x.$).filter(Boolean); } }));
-    const door = { inst, root, open: false, t: 0, left, right, steel, clipsOpen, clipsClose, pos: root.getWorldPosition(new THREE.Vector3()),
-      leftRest: left ? left.position.clone() : null, rightRest: right ? right.position.clone() : null, steelRest: steel ? steel.quaternion.clone() : null,
-      collider: null };
-    // door panels collide: use separate small colliders so opening lets you through
+    const mesh = root.getObjectByName('DoorMesh');
+    if (!mesh) return;
+    const ac = mesh.userData.node.comps.find(c => c.t === 'Animator');
+    const anim = ac && ac.controller ? new Animator(mesh, ac.controller) : null;
+    if (anim) anim.load();
+    let clipOpen = null, clipClose = null;
+    const snd = root.getObjectByName('DoorSound');
+    if (snd) { const a = snd.userData.node.comps.find(c => c.t === 'Audio'); if (a) clipOpen = clipClose = a.clip; }
+    inst.manifest.nodes.forEach(n => n.comps.forEach(c => { if (c.t === 'MB' && c.d && c.cls === 'AnimatedObjectTrigger') { const o = (c.d.boolTrueAudios || []).map(x => x && x.$).filter(Boolean), cl = (c.d.boolFalseAudios || []).map(x => x && x.$).filter(Boolean); if (o[0]) clipOpen = o[0]; if (cl[0]) clipClose = cl[0]; } }));
+    const door = { inst, root, mesh, anim, open: false, clipOpen, clipClose, pos: mesh.getWorldPosition(new THREE.Vector3()), collider: null };
+    // the door leaf gets its own collider that follows the swing (the merged dungeon collider skips DoorLock boxes)
+    const trig = mesh.children.find(c => c.userData.node && c.userData.node.comps.some(x => x.t === 'MB' && x.cls === 'DoorLock'));
+    if (trig) {
+      const n = trig.userData.node; const box = n.comps.find(c => c.t === 'Box' && !c.trigger);
+      if (box) {
+        const g = new THREE.BoxGeometry(1, 1, 1);
+        const local = new THREE.Matrix4().compose(new THREE.Vector3(box.c[0], box.c[1], box.c[2]), new THREE.Quaternion(), new THREE.Vector3(box.s[0] * 1.2, box.s[1], box.s[2]));
+        const m = new THREE.Matrix4().multiplyMatrices(new THREE.Matrix4().copy(mesh.matrixWorld).invert(), trig.matrixWorld).multiply(local);
+        door.collider = new Collider('steeldoor').build([{ geometry: g, matrix: m }], mesh);
+      }
+    }
     this.doors.push(door);
-    this.interactables.push({ pos: door.pos.clone().add(new THREE.Vector3(0, 1.5, 0)), radius: 1.4, label: () => door.open ? '[E] Close door' : '[E] Open door', action: () => this.toggleDoor(door) });
+    // interaction point = the door leaf's trigger box (the DoorMesh pivot sits on the hinge)
+    const ipos = trig ? trig.getWorldPosition(new THREE.Vector3()) : door.pos.clone().add(new THREE.Vector3(0, 1.3, 0));
+    door.ipos = ipos;
+    this.interactables.push({ pos: ipos, radius: 1.5, label: () => door.open ? '[E] Close door' : '[E] Use door', action: () => this.toggleDoor(door) });
   }
 
   toggleDoor(door) {
     door.open = !door.open;
-    const clip = door.open ? door.clipsOpen[0] : door.clipsClose[0];
+    if (door.anim && door.anim.ready) { const n = door.anim.find(door.open ? [/Open/] : [/Close/]); if (n) door.anim.play(n, { once: true, loop: false, fade: 0.05 }); }
+    const clip = door.open ? door.clipOpen : door.clipClose;
     if (clip) this.game.sound.play(clip, { pos: door.pos, vol: 0.8, min: 2, max: 30 });
     this.game.enemies.onNoise(door.pos, 0.6);
   }
@@ -502,20 +524,11 @@ export class Dungeon {
   scannables(from, range) { return []; }
 
   update(dt) {
-    for (const d of this.doors) {
-      const target = d.open ? 1 : 0; d.t += (target - d.t) * Math.min(1, dt * 3);
-      if (d.left && d.leftRest) d.left.position.x = d.leftRest.x - 1.55 * d.t;
-      if (d.right && d.rightRest) d.right.position.x = d.rightRest.x + 1.55 * d.t;
-      if (d.steel && d.steelRest) d.steel.quaternion.copy(d.steelRest).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), d.t * 1.7));
-    }
+    for (const d of this.doors) if (d.anim && d.anim.ready) d.anim.update(dt);
   }
 
   /** door panels as dynamic collision: treat closed doors as thin boxes */
-  doorBlocks(p) {
-    // returns true if p is inside a closed door slab
-    for (const d of this.doors) { if (d.t < 0.6 && d.pos.distanceTo(p) < 1.0) return d; }
-    return null;
-  }
+  doorBlocks(p) { return null; }
 
   clear() {
     for (const t of this.placed) { if (t.obj) this.root.remove(t.obj); for (const ex of (t.extraInst || [])) this.root.remove(ex.root); }
