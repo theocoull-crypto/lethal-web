@@ -70,6 +70,14 @@
 </div>
 <div id="results" class="hidden"><div class="results-inner"><pre id="results-text"></pre><button id="btn-continue" class="menu-btn">&gt; Continue</button></div></div>
 
+<script>
+  // if the game code itself fails to load (syntax error, missing file), say so on the menu instead of leaving a dead button
+  window.addEventListener('error', function (e) {
+    var el = document.getElementById('menu-status'); var m = document.getElementById('menu'); var l = document.getElementById('loading');
+    if (!window.G) { if (l) l.classList.add('hidden'); if (m) m.classList.remove('hidden'); }
+    if (el && !el.textContent) el.textContent = 'The game code failed to load: ' + (e.message || 'unknown error') + (e.filename ? ' (' + e.filename.split('/').pop() + ':' + e.lineno + ')' : '') + '. Press F5. If it persists, tell Theo.';
+  });
+</script>
 <script type="module" src="js/main.js"></script>
 </body>
 </html>
