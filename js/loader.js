@@ -116,7 +116,7 @@ export class AssetLib {
     if (d.alphaTest) { mat.alphaTest = d.cutoff || 0.5; mat.transparent = false; }
     if (d.doubleSided || d.cull === 0) mat.side = THREE.DoubleSide;
     if (/testTrigger|Trigger/i.test(name) && d.surfaceType === 1) { mat.visible = false; }
-    if (name === 'HangarShipHull') { mat.color.setRGB(0.42, 0.5, 0.44, THREE.SRGBColorSpace); mat.roughness = 0.75; mat.metalness = 0.25; }
+    if (name === 'HangarShipHull') { mat.color.setRGB(0.8, 0.8, 0.78, THREE.SRGBColorSpace); mat.roughness = 0.7; mat.metalness = 0.3; }
     if (/HDRP\/Decal/.test(shader)) { mat.visible = false; }   // projected decals (puddles, grime) are not supported
     return mat;
   }

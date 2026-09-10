@@ -36,6 +36,14 @@ try:
 except Exception as e:
     print('  !! logo export failed', e)
 pk.flush()
+# HULL_DESAT: the hull texture is a saturated green flat colour; the game's HDRP lighting mutes it, our renderer does not
+try:
+    from PIL import Image, ImageEnhance
+    hp = os.path.join(ASSETS, 'tex', 'b8_778.png')
+    if os.path.exists(hp) and not os.path.exists(hp + '.muted'):
+        im = Image.open(hp).convert('RGB'); im = ImageEnhance.Brightness(ImageEnhance.Color(im).enhance(0.45)).enhance(0.8); im.save(hp); open(hp + '.muted', 'w').write('1')
+except Exception as e:
+    print('  !! hull desaturate failed', e)
 n = 0
 for f in glob.glob(os.path.join(ASSETS, '**', '*.json'), recursive=True):
     s = open(f, encoding='utf-8').read()
