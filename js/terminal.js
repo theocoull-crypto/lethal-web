@@ -1,6 +1,5 @@
 // The ship terminal: a text console with the commands the demo supports (help, store, buy, moons, route, scan, quota, exit).
-// Like the real terminal you only need the first letters of a word ("mo", "sto", "rou exp", or just "exp"); typos are
-// corrected to the closest keyword, and a ghost suggestion shows the completion (Tab or → accepts it).
+// Partial words and typos are silently matched to the closest command, moon or item ("the com" -> The Company building).
 const $ = id => document.getElementById(id);
 
 const COMMANDS = ['help', 'moons', 'store', 'buy', 'route', 'scan', 'quota', 'clear', 'exit', 'view', 'confirm', 'deny'];
@@ -48,7 +47,7 @@ function best(input, cands) {
 export class Terminal {
   constructor(game) {
     this.game = game;
-    this.el = $('terminal'); this.out = $('term-out'); this.input = $('term-input'); this.ghost = $('term-ghost');
+    this.el = $('terminal'); this.out = $('term-out'); this.input = $('term-input');
     this.open = false;
     this.pending = null;   // {kind:'buy'|'route', ...} awaiting confirm
     this.store = [
@@ -57,11 +56,9 @@ export class Terminal {
     ];
     this.input.addEventListener('keydown', e => {
       e.stopPropagation();
-      if (e.key === 'Enter') { const v = this.input.value; this.input.value = ''; this.updateGhost(); this.run(v); }
-      else if (e.key === 'Escape') this.hide();
-      else if (e.key === 'Tab' || (e.key === 'ArrowRight' && this.input.selectionStart === this.input.value.length)) { if (this.accept()) e.preventDefault(); }
+      if (e.key === 'Enter') { const v = this.input.value; this.input.value = ''; this.run(v); }
+      if (e.key === 'Escape') this.hide();
     });
-    this.input.addEventListener('input', () => this.updateGhost());
   }
 
   show() {
@@ -85,53 +82,11 @@ export class Terminal {
                    Courtesy of the Company
 
 Type "Help" for a list of commands.
-Only the first letters of a word are needed (MO, STO, ROU EXP, or just EXP).
 `;
   }
 
   print(t) { this.out.textContent += t + '\n'; this.out.scrollTop = this.out.scrollHeight; }
   clear() { this.out.textContent = ''; }
-
-  // ---------- autocomplete ----------
-  // the completion for what is typed so far: {text: full line, tail: the part not typed yet}
-  suggestion() {
-    const raw = this.input.value; const line = raw.toLowerCase();
-    if (!line.trim() || line !== line.trimStart()) return null;
-    const words = line.split(/\s+/);
-    const complete = (typed, cands, addSpace) => {
-      let hit = null;
-      for (const c of cands) for (const name of c.names || [c]) if (name.startsWith(typed) && name !== typed && (!hit || name.length < hit.length)) hit = name;
-      if (!hit) return null;
-      const tail = hit.slice(typed.length) + (addSpace ? ' ' : '');
-      return { text: raw + tail, tail };
-    };
-    if (this.pending) return complete(words[0], ['confirm', 'deny'], false);
-    if (words.length === 1) {
-      const w = words[0];
-      // top level: commands, then moon names and store items (they work without ROUTE / BUY, like the real terminal)
-      return complete(w, [...COMMANDS.map(c => [c]), ...MOONS.map(m => [m.names[0]]), ...this.store.map(s => [s.names[0]])].map(n => ({ names: n })), ['route', 'buy'].includes(w));
-    }
-    const cmd = best(words[0], COMMANDS.map(c => ({ names: [c] })));
-    const arg = words.slice(1).join(' ');
-    if (cmd && cmd.cand.names[0] === 'route') return complete(arg, MOONS.map(m => ({ names: [m.names[0], m.names[1]] })), false);
-    if (cmd && cmd.cand.names[0] === 'buy') return complete(arg, this.store.map(s => ({ names: [s.names[0]] })), false);
-    return null;
-  }
-
-  updateGhost() {
-    if (!this.ghost) return;
-    const s = this.suggestion();
-    this.ghost.innerHTML = '';
-    if (!s) return;
-    const typed = document.createElement('span'); typed.className = 'typed'; typed.textContent = this.input.value;
-    const tail = document.createElement('span'); tail.className = 'tail'; tail.textContent = s.tail;
-    this.ghost.appendChild(typed); this.ghost.appendChild(tail);
-  }
-
-  accept() {
-    const s = this.suggestion(); if (!s) return false;
-    this.input.value = s.text; this.updateGhost(); return true;
-  }
 
   // ---------- commands ----------
   run(line) {
@@ -155,7 +110,6 @@ Only the first letters of a word are needed (MO, STO, ROU EXP, or just EXP).
     if (itemHit && itemHit.score < cmdScore) return this.askBuy(itemHit.cand, 1);
     if (!cmdHit) return this.print(`[Unknown command. Type HELP]\n`);
     const cmd = cmdHit.cand.names[0];
-    if (cmdHit.score >= 2) this.print(`(${cmd.toUpperCase()})`);   // show what a typo was corrected to
     switch (cmd) {
       case 'help': return this.print(`>MOONS
 To see the list of moons the autopilot can route to.
@@ -174,14 +128,11 @@ Current profit quota and deadline.
 
 >ROUTE [moon]
 To route the autopilot to a moon or to the Company building (sell your scrap there).
-You can also just type the moon's name.
 
 >CLEAR   >EXIT
-
-Only the first letters of a word are needed, e.g. "sto", "rou exp", "bu fla".
 `);
       case 'moons': return this.print(`Welcome to the exomoons catalogue.
-To route the autopilot to a moon, type its name (or ROUTE [name]).
+To route the autopilot to a moon, use the word ROUTE.
 ____________________________
 
 * The Company building   //   Buying at ${Math.round(g.world.buyingRate() * 100)}%${g.world.destination === 'company' ? '   (current route)' : ''}
@@ -190,7 +141,7 @@ ____________________________
 (other moons are not available in this demo)
 `);
       case 'store': return this.print(`Welcome to the Company store.
-Use words BUY to buy an item, or just type its name.
+Use words BUY to buy an item.
 ____________________________
 
 ${this.store.map(s => `* ${s.name}  //  Price: $${s.price}`).join('\n')}
