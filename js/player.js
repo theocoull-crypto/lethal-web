@@ -55,7 +55,10 @@ export class Player {
   get eyeHeight() { return this.height + this.eyeOffset; }
   get eye() { return _v.copy(this.pos).add(new THREE.Vector3(0, this.eyeHeight, 0)); }
 
-  teleport(p, yaw) { this.pos.copy(p); this.vel.set(0, 0, 0); if (yaw != null) this.yaw = yaw; this.fallSpeed = 0; }
+  teleport(p, yaw) { this.pos.copy(p); this.vel.set(0, 0, 0); if (yaw != null) this.yaw = yaw; this.fallSpeed = 0; this.resyncAttach(); }
+
+  // re-snapshot the attached object's pose: call after teleporting or after the ship was moved while the player was not updating
+  resyncAttach() { if (this.attached) { this.attached.updateMatrixWorld(); this.lastAttachedMatrix.copy(this.attached.matrixWorld); } }
 
   forward(out) { return out.set(-Math.sin(this.yaw), 0, -Math.cos(this.yaw)); }
   right(out) { return out.set(Math.cos(this.yaw), 0, -Math.sin(this.yaw)); }
@@ -151,8 +154,8 @@ export class Player {
     // gravity / jump
     if (this.onGround && wantJump && !this.crouching && this.jumpCooldown <= 0) { this.vel.y = 9.5; this.onGround = false; this.jumpCooldown = 0.35; this.game.onJump(); }
     this.jumpCooldown = (this.jumpCooldown || 0) - dt;
-    if (this.riding) { this.vel.y = 0; }   // riding the ship through a cutscene: no gravity, no fall damage
-    else { this.vel.y -= 30 * dt; if (this.vel.y < -55) this.vel.y = -55; }
+    this.vel.y -= 30 * dt;
+    if (this.vel.y < -55) this.vel.y = -55;
     // follow moving platform (ship)
     if (this.attached) {
       this.attached.updateMatrixWorld();
@@ -212,7 +215,7 @@ export class Player {
     this.onGround = grounded;
     this.groundCollider = grounded ? groundCollider : null;
     if (grounded) { this.airTime = 0; } else this.airTime += dt;
-    if (grounded && !wasGround && landedSpeed < -16) {
+    if (grounded && !wasGround && landedSpeed < -16 && !this.riding) {
       const dmg = Math.min(100, Math.round((-landedSpeed - 16) * 6));
       if (dmg > 0) this.damage(dmg, 'fall');
       this.game.onLand(landedSpeed);

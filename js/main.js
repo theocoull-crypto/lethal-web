@@ -163,9 +163,10 @@ class Game {
   }
 
   spawnPlayerInShip() {
-    const p = this.world.shipObj.localToWorld(new THREE.Vector3(4.0, 1.4, -9.0));
-    this.player.teleport(p, -Math.PI * 0.5);
-    this.player.attachTo(this.world.shipObj);
+    const ship = this.world.shipObj; ship.updateMatrixWorld(true);
+    const p = ship.localToWorld(new THREE.Vector3(4.0, 1.4, -9.0));
+    this.player.attachTo(ship);
+    this.player.teleport(p, -Math.PI * 0.5);   // teleport re-snapshots the ship pose so the follow delta starts from here
   }
 
   startMenuMusic() {
