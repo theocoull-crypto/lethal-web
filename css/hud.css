@@ -52,7 +52,11 @@ body.nofilter #grain { display: none; }
 .term-screen { width: min(860px, 92vw); height: min(560px, 80vh); background: #061a0c; border: 3px solid #1e3d22; box-shadow: 0 0 40px rgba(60,255,120,.15), inset 0 0 60px rgba(0,0,0,.6); padding: 18px 22px; display: flex; flex-direction: column; color: #7dff9a; font-size: 17px; text-shadow: 0 0 6px rgba(125,255,154,.45); }
 #term-out { flex: 1; margin: 0; overflow-y: auto; white-space: pre-wrap; font: inherit; }
 .term-line { display: flex; gap: 8px; align-items: center; border-top: 1px solid #1e3d22; padding-top: 8px; }
-#term-input { flex: 1; background: transparent; border: none; outline: none; color: inherit; font: inherit; text-shadow: inherit; caret-color: #7dff9a; }
+.term-inwrap { flex: 1; position: relative; }
+#term-input { width: 100%; box-sizing: border-box; background: transparent; border: none; outline: none; color: inherit; font: inherit; text-shadow: inherit; caret-color: #7dff9a; padding: 0; position: relative; }
+#term-ghost { position: absolute; inset: 0; pointer-events: none; white-space: pre; overflow: hidden; font: inherit; }
+#term-ghost .typed { visibility: hidden; }
+#term-ghost .tail { color: #2f7a40; text-shadow: none; }
 .term-hint { font-size: 12px; color: #3f8a52; margin-top: 4px; }
 
 body.nograin #grain { display: none; }
