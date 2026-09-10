@@ -450,7 +450,7 @@ export class Dungeon {
     const spot = { pos: p.clone().add(new THREE.Vector3(0, 0.1, 0)), yaw: Math.atan2(-f.x, -f.z) };
     if (isFire) { this.fireExitInside = spot; this.fireExits.push(spot); } else this.entranceInside = spot;
     const doorPos = root.getWorldPosition(new THREE.Vector3());
-    this.interactables.push({ pos: doorPos.clone().add(new THREE.Vector3(0, 1.2, 0)), radius: 1.6, label: () => isFire ? '[E] Exit (fire exit)' : '[E] Exit facility', action: () => this.game.exitFacility(isFire) });
+    this.interactables.push({ pos: doorPos.clone().add(new THREE.Vector3(0, 1.2, 0)), radius: 1.6, reach: 3.0, label: () => isFire ? '[E] Exit (fire exit)' : '[E] Exit facility', action: () => this.game.exitFacility(isFire) });
   }
 
   _setupDoor(inst, name) {
@@ -481,7 +481,7 @@ export class Dungeon {
     // interaction point = the door leaf's trigger box (the DoorMesh pivot sits on the hinge)
     const ipos = trig ? trig.getWorldPosition(new THREE.Vector3()) : door.pos.clone().add(new THREE.Vector3(0, 1.3, 0));
     door.ipos = ipos;
-    this.interactables.push({ pos: ipos, radius: 1.5, label: () => door.open ? '[E] Close door' : '[E] Use door', action: () => this.toggleDoor(door) });
+    this.interactables.push({ pos: ipos, radius: 1.3, reach: 2.6, label: () => door.open ? '[E] Close door' : '[E] Use door', action: () => this.toggleDoor(door) });
   }
 
   toggleDoor(door) {

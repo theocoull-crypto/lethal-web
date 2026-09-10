@@ -117,11 +117,11 @@ export class World {
     this.lampMaterials = new Set();
     this.ship.root.traverse(o => { if (o.isMesh && o.material && o.material.emissive && o.material.emissiveIntensity > 0.05) { o.material.userData.baseEmissive = o.material.emissiveIntensity; this.lampMaterials.add(o.material); } });
     // interactables
-    if (this.lever) this.interactables.push({ obj: this.lever, radius: 1.5, label: () => this.shipState === 'orbit' ? '[E] Pull lever : land ship' : this.shipState === 'landed' ? '[E] Pull lever : leave moon' : '', action: () => this.pullLever() });
-    if (this.lightSwitch) this.interactables.push({ obj: this.lightSwitch, radius: 1.0, label: () => '[E] Switch lights', action: () => this.toggleLights() });
-    if (this.terminal) this.interactables.push({ obj: this.terminal, radius: 1.6, label: () => '[E] Use terminal', action: () => this.game.openTerminal() });
+    if (this.lever) this.interactables.push({ obj: this.lever, radius: 1.5, reach: 2.5, label: () => this.shipState === 'orbit' ? '[E] Pull lever : land ship' : this.shipState === 'landed' ? '[E] Pull lever : leave moon' : '', action: () => this.pullLever() });
+    if (this.lightSwitch) this.interactables.push({ obj: this.lightSwitch, radius: 1.0, reach: 2.2, label: () => '[E] Switch lights', action: () => this.toggleLights() });
+    if (this.terminal) this.interactables.push({ obj: this.terminal, radius: 1.6, reach: 2.5, label: () => '[E] Use terminal', action: () => this.game.openTerminal() });
     if (this.clipboard) this.interactables.push({ obj: this.clipboard, radius: 1.0, label: () => '[E] Read clipboard', action: () => this.game.showManual() });
-    if (this.btnOpen) this.interactables.push({ obj: this.btnOpen, radius: 0.5, label: () => this.doorsOpen ? 'Open door' : '[E] Open door', action: () => this.pressDoorButton(true) });
+    if (this.btnOpen) this.interactables.push({ obj: this.btnOpen, radius: 0.5, reach: 2.2, label: () => this.doorsOpen ? 'Open door' : '[E] Open door', action: () => this.pressDoorButton(true) });
     // ladders on the ship (they move with it, so their world positions are read when used)
     for (const [id, o] of this.ship.objs) {
       const n = o.userData.node;
@@ -132,7 +132,7 @@ export class World {
       if (!top || !bottom) continue;
       const ld = { obj: o, top, bottom, node, tip: 'Climb' };
       const refresh = () => { ld.topPos = this.worldPosOf(top); ld.bottomPos = this.worldPosOf(bottom); const hp = this.worldPosOf(node); ld.lineX = hp.x; ld.lineZ = hp.z; ld.height = Math.abs(ld.topPos.y - ld.bottomPos.y); };
-      this.interactables.push({ obj: o, radius: 1.6, label: () => '[E] Climb ladder', action: () => { refresh(); this.game.player.startLadder(ld); } });
+      this.interactables.push({ obj: o, radius: 0.9, reach: 2.4, segment: () => [this.worldPosOf(bottom), this.worldPosOf(top)], label: () => '[E] Climb ladder', action: () => { refresh(); this.game.player.startLadder(ld); } });
     }
     // item charger
     const chargeTrig = [...this.ship.objs.values()].find(o => o.userData.node.comps.some(c => c.t === 'MB' && c.cls === 'ItemCharger'));
@@ -140,7 +140,7 @@ export class World {
       const cs = by('ChargeStation');
       const ac = cs ? cs.userData.node.comps.find(c => c.t === 'Animator') : null;
       const zap = chargeTrig.userData.node.comps.find(c => c.t === 'Audio');
-      this.interactables.push({ obj: chargeTrig, radius: 1.0, label: () => '[E] Charge item', action: () => {
+      this.interactables.push({ obj: chargeTrig, radius: 1.0, reach: 2.2, label: () => '[E] Charge item', action: () => {
         if (this.game.items.chargeHeld()) {
           if (this.anims.charger && this.anims.charger.ready) this.anims.charger.play(this.anims.charger.names()[0], { once: true, loop: false, fade: 0 });
           if (zap && zap.clip) this.game.sound.play(zap.clip, { pos: this.worldPosOf(chargeTrig), vol: 0.8 });
@@ -148,7 +148,7 @@ export class World {
       } });
       if (cs && ac && ac.controller) { this.anims.charger = new Animator(cs, ac.controller); this.anims.charger.load(); }
     }
-    if (this.btnClose) this.interactables.push({ obj: this.btnClose, radius: 0.5, label: () => !this.doorsOpen ? 'Close door' : '[E] Close door', action: () => this.pressDoorButton(false) });
+    if (this.btnClose) this.interactables.push({ obj: this.btnClose, radius: 0.5, reach: 2.2, label: () => !this.doorsOpen ? 'Close door' : '[E] Close door', action: () => this.pressDoorButton(false) });
   }
 
   async _setupShipAnimators() {
@@ -260,7 +260,7 @@ export class World {
     this.entrance = ents[0] || null; this.fireExit = ents[1] || null;
     for (const e of ents) {
       const isFire = e !== this.entrance;
-      this.interactables.push({ obj: e.obj, radius: 1.8, label: () => this.game.dungeon.placed.length ? (isFire ? '[E] Enter (fire exit)' : '[E] Enter facility') : 'Facility is sealed', action: () => { if (this.game.dungeon.placed.length) { this.playEntranceDoor(true); this.game.enterFacility(isFire); } } });
+      this.interactables.push({ obj: e.obj, radius: 1.8, reach: 3.0, label: () => this.game.dungeon.placed.length ? (isFire ? '[E] Enter (fire exit)' : '[E] Enter facility') : 'Facility is sealed', action: () => { if (this.game.dungeon.placed.length) { this.playEntranceDoor(true); this.game.enterFacility(isFire); } } });
     }
     // the main entrance's visible double doors have their own animator
     const vis = by('OutsideEntranceVisualDoorsContainer')[0];
@@ -279,7 +279,7 @@ export class World {
       ld.topPos = top; ld.bottomPos = bottom; ld.height = Math.abs(top.y - bottom.y);
       const hp = this.worldPosOf(ld.node);
       ld.lineX = hp.x; ld.lineZ = hp.z;
-      this.interactables.push({ pos: mid, radius: Math.max(1.2, ld.height * 0.5), label: () => '[E] Climb ladder', action: () => this.game.player.startLadder(ld), area: 'outside' });
+      this.interactables.push({ pos: mid, radius: 0.9, reach: 2.4, segment: () => [ld.bottomPos, ld.topPos], label: () => '[E] Climb ladder', action: () => this.game.player.startLadder(ld), area: 'outside' });
     }
   }
 

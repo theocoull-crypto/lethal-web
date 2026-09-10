@@ -258,8 +258,15 @@ class Game {
     const eye = this.camera.position, dir = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion);
     let best = null, bestD = 1e9;
     const consider = (pos, radius, entry) => {
-      const to = pos.clone().sub(eye); const d = to.length();
-      if (d > 4.5 + radius) return;
+      const reach = entry.reach != null ? entry.reach : 4.0;
+      let p = pos;
+      if (entry.segment) {
+        // ladders: measure to the closest point of the ladder line, not its middle
+        const [a, b] = entry.segment(); const ab = b.clone().sub(a); const t = THREE.MathUtils.clamp(eye.clone().sub(a).dot(ab) / Math.max(1e-6, ab.lengthSq()), 0, 1);
+        p = a.clone().addScaledVector(ab, t);
+      }
+      const to = p.clone().sub(eye); const d = to.length();
+      if (d > reach + radius * 0.5) return;
       const along = to.dot(dir); if (along < 0) return;
       const perp = Math.sqrt(Math.max(0, d * d - along * along));
       if (perp < radius && d < bestD) { bestD = d; best = entry; }
