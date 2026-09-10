@@ -43,6 +43,14 @@ class Game {
     this.lightGain = 1; this.shadowLamps = 0; this.shadowsOn = true; this.paused = false;
     this._resize();
     addEventListener('resize', () => this._resize());
+    // surface errors on screen instead of a silent dead button
+    const showErr = msg => { const el = $('menu-status'); if (el) el.textContent = 'Error: ' + msg + ' (press F5 to reload; if it persists, send this text)'; };
+    addEventListener('error', e => showErr(e.message || String(e)));
+    addEventListener('unhandledrejection', e => showErr((e.reason && (e.reason.message || e.reason)) || 'promise rejection'));
+    // the start button is wired immediately; it waits for boot to finish
+    this.ready = false;
+    $('btn-play').onclick = () => { if (this.ready) this.startGame(); else $('menu-status').textContent = 'Still loading, one moment...'; };
+    addEventListener('keydown', e => { if ((e.code === 'Enter' || e.code === 'Space') && this.state === 'menu' && this.ready) this.startGame(); });
     window.G = this;
   }
 
@@ -72,6 +80,7 @@ class Game {
       $('btn-play').disabled = true; return;
     }
     this.lib.onProgress = (l, t) => { fill.style.width = Math.min(100, 100 * l / Math.max(1, t)) + '%'; };
+    try {
     this.world = new World(this);
     await this.world.load(setText);
     setText('Loading facility blueprints...');
@@ -91,11 +100,15 @@ class Game {
     this.settings = new Settings(this);
     fill.style.width = '100%';
     $('loading').classList.add('hidden'); $('menu').classList.remove('hidden');
-    $('btn-play').onclick = () => this.startGame();
     $('btn-continue').onclick = () => this.continueAfterResults();
-    this.state = 'menu';
+    this.state = 'menu'; this.ready = true;
     this.spawnPlayerInShip();
     this.loop();
+    } catch (e) {
+      console.error(e);
+      $('loading').classList.add('hidden'); $('menu').classList.remove('hidden');
+      $('menu-status').textContent = 'Failed to load: ' + (e && e.message ? e.message : e) + '. Press F5 to reload. If it keeps failing, run tools/extract.bat again.';
+    }
   }
 
   _refreshLightSources() {
@@ -138,6 +151,8 @@ class Game {
   }
 
   startGame() {
+    if (this.state === 'play') return;
+    $('menu-status').textContent = '';
     $('menu').classList.add('hidden');
     this.hud.show(true);
     this.sound.resume();
