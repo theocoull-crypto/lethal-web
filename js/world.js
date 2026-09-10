@@ -444,6 +444,8 @@ export class World {
     clearTimeout(this._entT); this._entT = setTimeout(() => this.playEntranceDoor(false), 2500);
   }
 
+  setDayFrac(f) { this.dayFrac = Math.max(0, Math.min(1, f)); this.time = this.dayFrac * DAY_SECONDS; }
+
   setFocus(p) { this.sunTarget.position.copy(p); this.sunTarget.updateMatrixWorld(); }
   clockText() { const h = Math.floor(this.hour) % 24; const m = Math.floor((this.hour % 1) * 60); return { h, m }; }
   isNight() { return this.dayFrac > 0.72; }

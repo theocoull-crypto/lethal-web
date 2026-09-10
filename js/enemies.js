@@ -140,7 +140,7 @@ export class Enemies {
       }
     }
     for (const e of this.list) {
-      if (!e.dead) { const before = e.pos.clone(); this._updateEnemy(e, dt); e.moveAmount = before.distanceTo(e.pos) / Math.max(1e-4, dt); }
+      if (!e.dead && !this.frozen) { const before = e.pos.clone(); this._updateEnemy(e, dt); e.moveAmount = before.distanceTo(e.pos) / Math.max(1e-4, dt); }
       if (e.anim && e.anim.ready) {
         if (!e.dead && e.state !== 'latched' && e.state !== 'ceiling') this.setAnim(e, e.moveAmount > 4.5 ? 'run' : e.moveAmount > 0.15 ? 'walk' : 'idle');
         e.anim.update(dt);

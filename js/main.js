@@ -11,6 +11,7 @@ import { Enemies } from './enemies.js';
 import { LightPool } from './lights.js';
 import { Terminal } from './terminal.js';
 import { Settings } from './settings.js';
+import { DebugMenu } from './debug.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const $ = id => document.getElementById(id);
@@ -110,6 +111,7 @@ class Game {
     this._setupFlashlight();
     this.terminal = new Terminal(this);
     this.settings = new Settings(this);
+    this.debug = new DebugMenu(this);
     fill.style.width = '100%';
     $('loading').classList.add('hidden'); $('menu').classList.remove('hidden');
     $('btn-continue').onclick = () => this.continueAfterResults();
@@ -209,7 +211,7 @@ class Game {
   }
   onWheel(dir) { if (this.state === 'play' && !(this.terminal && this.terminal.open)) this.items.select((this.items.active + (dir > 0 ? 1 : 3)) % 4); }
   onLockChange(locked) {
-    if (!locked && this.state === 'play' && !(this.terminal && this.terminal.open) && this.settings && !this.settings.open && !this._suppressSettings) this.settings.show();
+    if (!locked && this.state === 'play' && !(this.terminal && this.terminal.open) && this.settings && !this.settings.open && !(this.debug && this.debug.open) && !this._suppressSettings) this.settings.show();
     this._suppressSettings = false;
   }
   backToMenu() {
@@ -457,6 +459,7 @@ class Game {
       this.sound.setListener(this.camera.position, new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion), new THREE.Vector3(0, 1, 0).applyQuaternion(this.camera.quaternion));
       this.hud.update(dt);
     }
+    if (this.debug) this.debug.update(dt);
   }
 
   _updateHud(dt) {

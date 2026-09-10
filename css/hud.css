@@ -87,3 +87,19 @@ body.nograin #grain { display: none; }
 /* battery in slots */
 .slot .bat { position: absolute; left: 4px; right: 4px; bottom: 3px; height: 3px; background: #333; }
 .slot .bat i { display: block; height: 100%; background: #8fdc7a; }
+
+/* --- debug menu (F3) --- */
+#debug { position: fixed; left: 12px; top: 90px; width: min(760px, 94vw); max-height: 84vh; overflow-y: auto; background: rgba(4,6,4,.92); border: 1px solid #3f8a52; color: #cfe8d0; font-size: 12px; padding: 10px 12px; z-index: 9; }
+.dhead { display: flex; justify-content: space-between; color: #7dff9a; font-size: 14px; letter-spacing: 2px; margin-bottom: 6px; }
+.dhead span { color: #3f8a52; letter-spacing: 0; }
+.dstats { margin: 0 0 6px; font: inherit; color: #9fd4a8; white-space: pre-wrap; }
+.dtitle { color: #e8c85a; margin: 8px 0 4px; letter-spacing: 1px; font-size: 11px; }
+.drow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 3px 0; }
+.dlabel { color: #9c9578; min-width: 70px; }
+.dbtn { background: #14160f; color: #e8c85a; border: 1px solid #5a5238; font: inherit; padding: 3px 8px; cursor: pointer; }
+.dbtn:hover { background: #2a2c1a; }
+.dcheck { display: inline-flex; align-items: center; gap: 2px; margin-right: 6px; cursor: pointer; }
+.dsel { background: #14160f; color: #e8e2c8; border: 1px solid #5a5238; font: inherit; padding: 3px; min-width: 180px; }
+.drange { width: 200px; accent-color: #d9b64a; }
+.dval { color: #e8c85a; min-width: 70px; }
+.dstatus { margin-top: 8px; color: #ff9f6a; min-height: 14px; }

@@ -92,7 +92,23 @@ export class Player {
     this.camera.quaternion.setFromEuler(new THREE.Euler(this.pitch, this.yaw, 0, 'YXZ'));
   }
 
+  _updateNoclip(dt) {
+    const k = this.keys;
+    if (this.locked && this.inputEnabled) { this.yaw -= this.mouse.dx * this.lookSensitivity; this.pitch -= this.mouse.dy * this.lookSensitivity; this.pitch = Math.max(-1.5, Math.min(1.5, this.pitch)); }
+    this.mouse.dx = this.mouse.dy = 0;
+    const sp = (k.ShiftLeft ? 30 : 10) * dt;
+    const f = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion), r = new THREE.Vector3(1, 0, 0).applyQuaternion(this.camera.quaternion);
+    if (k.KeyW) this.pos.addScaledVector(f, sp); if (k.KeyS) this.pos.addScaledVector(f, -sp);
+    if (k.KeyD) this.pos.addScaledVector(r, sp); if (k.KeyA) this.pos.addScaledVector(r, -sp);
+    if (k.Space) this.pos.y += sp; if (k.ControlLeft || k.KeyC) this.pos.y -= sp;
+    this.vel.set(0, 0, 0); this.onGround = true; this.attached = null;
+    const eye = this.pos.clone(); eye.y += this.eyeHeight;
+    this.camera.position.copy(eye);
+    this.camera.quaternion.setFromEuler(new THREE.Euler(this.pitch, this.yaw, 0, 'YXZ'));
+  }
+
   update(dt, colliders) {
+    if (this.noclip) { this._updateNoclip(dt); return; }
     if (this.ladder) { this._updateLadder(dt); return; }
     const k = this.keys;
     // look
@@ -116,7 +132,7 @@ export class Player {
     this.height += (targetH - this.height) * Math.min(1, dt * 12);
     // stamina
     const weightPenalty = 1 + this.carryWeight / 105;
-    if (wantSprint && this.stamina > 0.02) { this.sprinting = true; this.stamina = Math.max(0, this.stamina - dt / 11 * weightPenalty); }
+    if (wantSprint && this.stamina > 0.02) { this.sprinting = true; if (!this.infStamina) this.stamina = Math.max(0, this.stamina - dt / 11 * weightPenalty); }
     else { this.sprinting = false; this.stamina = Math.min(1, this.stamina + dt / (move.lengthSq() > 0 ? 22 : 12)); }
     if (this.stamina <= 0.02) this.sprinting = false;
     let sp = this.speed * (this.sprinting ? this.sprintMul : 1) * (this.crouching ? this.crouchMul : 1);
@@ -226,7 +242,7 @@ export class Player {
   }
 
   damage(amount, source) {
-    if (this.dead) return;
+    if (this.dead || this.god) return;
     this.health = Math.max(0, this.health - amount);
     this.game.onDamage(amount, source);
     if (this.health <= 0) this.die(source);

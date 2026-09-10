@@ -366,7 +366,7 @@ export class Items {
     if (this.deliveryTimer > 0 && !this.game.world.inOrbit && this.game.world.shipState === 'landed' && !this.game.world.atCompany) { this.deliveryTimer -= dt; if (this.deliveryTimer <= 0 && this.deliveries.length) this._deliver(); }
     if (this.game.flashlightOn) {
       const f = this.flashlightItem();
-      if (f && f.battery != null) { f.battery = Math.max(0, f.battery - dt / (f.batterySeconds || 200)); this._batT = (this._batT || 0) + dt; if (this._batT > 1) { this._batT = 0; this.game.hud.setInventory(this.inventory.map(x => x ? { name: x.name, value: x.value, battery: x.battery } : null), this.active); } }
+      if (f && f.battery != null && !this.infBattery) { f.battery = Math.max(0, f.battery - dt / (f.batterySeconds || 200)); this._batT = (this._batT || 0) + dt; if (this._batT > 1) { this._batT = 0; this.game.hud.setInventory(this.inventory.map(x => x ? { name: x.name, value: x.value, battery: x.battery } : null), this.active); } }
     }
     if (this.swingT > 0) { this.swingT -= dt; if (this.heldObj) this.heldObj.rotation.x = Math.sin(this.swingT * 10) * 0.8; }
     // held item sway
