@@ -16,7 +16,7 @@ export function unityEulerToQuat(x, y, z) {
 const HOLD_POSES = {
   BBFlashlight: { rot: [-90, 0, 0], pos: [0.38, -0.32, -0.55] },
   FlashlightItem: { rot: [-90, 0, 0], pos: [0.38, -0.32, -0.55] },
-  WalkieTalkie: { rot: [-15, 180, 0], pos: [0.36, -0.36, -0.5] },
+  WalkieTalkie: { rot: [-90, 0, -90], pos: [0.42, -0.42, -0.65] },
 };
 
 export class Items {
