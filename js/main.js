@@ -77,7 +77,14 @@ class Game {
 
   async boot() {
     const fill = $('load-fill'), text = $('load-text');
-    const setText = t => text.textContent = t;
+    const t0 = performance.now(); let phase = 'Loading...';
+    const setText = t => { phase = t; text.textContent = t; };
+    // keep the loading screen visibly alive: elapsed time, and a hint if it takes unusually long (normal is 20-40 s)
+    const tick = setInterval(() => {
+      if (this.ready || this.state !== 'loading') { clearInterval(tick); return; }
+      const s = Math.round((performance.now() - t0) / 1000);
+      text.textContent = phase + '  (' + s + 's' + (s > 60 ? ' - this is taking too long, press F5 to reload' : '') + ')';
+    }, 1000);
     try { await this.lib.init(); }
     catch (e) {
       $('loading').classList.add('hidden'); $('menu').classList.remove('hidden');
