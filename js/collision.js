@@ -127,6 +127,7 @@ export async function collisionEntries(lib, inst, opts = {}) {
     let p = o, dead = false; while (p && p !== inst.root) { if (p.visible === false) { dead = true; break; } p = p.parent; }
     if (dead) continue;
     for (const c of n.comps) {
+      if (opts.layers && !opts.layers(n.layer)) break;
       if (c.t === 'MeshCol' && c.mesh && !c.trigger && c.enabled !== false) {
         pending.push(lib.mesh(c.mesh).then(geoms => {
           const mat = new THREE.Matrix4().multiplyMatrices(rootInv, o.matrixWorld);

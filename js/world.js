@@ -50,13 +50,19 @@ export class World {
     this.shipLandingPos.copy(shipObj.getWorldPosition(new THREE.Vector3()));
     this._setupShipParts();
     // static ship collision (ship-local), minus the animated door panels which get their own moving colliders
+    // Unity layers that the player never collides with in the game (interact triggers, placement volumes, triggers, radar, scan)
+    const NOCOLLIDE = new Set([9, 13, 14, 15, 22, 26, 29]);
+    const animDoor = shipInst.byName.get('AnimatedShipDoor')?.[0];
+    const doorBlocker = animDoor ? animDoor.children.find(c => c.name === 'Cube') : null;   // animated doorway blocker
     const doorNames = new Set(['HangarDoorLeft', 'HangarDoorRight', 'HangarDoorLeft (1)', 'HangarDoorRight (1)']);
-    const entries = await collisionEntries(lib, shipInst, { relativeTo: shipObj, exclude: n => doorNames.has(n.name) });
+    const dynamicIds = new Set([doorBlocker && doorBlocker.userData.node.id].filter(Boolean));
+    const entries = await collisionEntries(lib, shipInst, { relativeTo: shipObj, exclude: n => doorNames.has(n.name) || dynamicIds.has(n.id) || NOCOLLIDE.has(n.layer) });
     this.shipCollider = new Collider('ship').build(entries, shipObj);
     this.colliders.push(this.shipCollider);
-    for (const dn of ['HangarDoorLeft (1)', 'HangarDoorRight (1)']) {
-      const o = shipInst.byName.get(dn)?.[0]; if (!o) continue;
-      const e = await collisionEntries(lib, shipInst, { relativeTo: o, only: n => n.name === dn });
+    for (const o of [shipInst.byName.get('HangarDoorLeft (1)')?.[0], shipInst.byName.get('HangarDoorRight (1)')?.[0], doorBlocker]) {
+      if (!o) continue;
+      const id = o.userData.node.id;
+      const e = await collisionEntries(lib, shipInst, { relativeTo: o, only: n => n.id === id });
       const c = new Collider('door').build(e, o); this.doorColliders.push(c); this.colliders.push(c);
     }
     await this._setupShipAnimators();
@@ -67,7 +73,8 @@ export class World {
     this.moon = moonInst;
     this.moonRoot.add(moonInst.root);
     this.moonRoot.visible = false;
-    const mEntries = await collisionEntries(lib, moonInst, {});
+    // layer 15 = nav-mesh-only boxes (there is a slab of them floating over the landing pad), 22 = scan nodes, etc.
+    const mEntries = await collisionEntries(lib, moonInst, { exclude: n => NOCOLLIDE.has(n.layer) });
     this.moonCollider = new Collider('moon').build(mEntries, null);
     this.colliders.push(this.moonCollider);
     this._setupMoonParts();
@@ -303,9 +310,9 @@ export class World {
     if (orbit) { this.scene.fog.density = 0.0; this.scene.background.set(0x000004); this.stars.visible = true; this.planet.visible = true; }
     else { this.scene.fog.color.copy(fog); this.scene.fog.density = 0.011 + night * 0.006; this.scene.background.copy(fog); this.stars.visible = night > 0.6; this.planet.visible = false; }
     if (this.game.inside) { this.scene.fog.color.set(0x030303); this.scene.fog.density = 0.028; this.scene.background.set(0x030303); this.stars.visible = false; this.planet.visible = false; }
-    this.hemi.intensity = orbit ? 0.25 : this.game.inside ? 0.06 : 0.55 * (1 - night * 0.9) + 0.03;
+    this.hemi.intensity = orbit ? 0.3 : this.game.inside ? 0.14 : 0.65 * (1 - night * 0.85) + 0.06;
     this.hemi.color.copy(new THREE.Color(0x9a8c84).lerp(new THREE.Color(0x202838), night));
-    this.ambient.intensity = orbit ? 0.15 : this.game.inside ? 0.05 : 0.3 * (1 - night * 0.85) + 0.02;
+    this.ambient.intensity = orbit ? 0.2 : this.game.inside ? 0.1 : 0.35 * (1 - night * 0.8) + 0.04;
   }
 
   setFocus(p) { this.sunTarget.position.copy(p); this.sunTarget.updateMatrixWorld(); }

@@ -12,7 +12,8 @@ import { LightPool } from './lights.js';
 import { Terminal } from './terminal.js';
 
 const $ = id => document.getElementById(id);
-const PIXEL_HEIGHT = 520;   // the game renders its world at a low internal resolution and upscales it
+const PIXEL_HEIGHT = 520;
+const LIGHT_GAIN = 0.08, RANGE_GAIN = 1.6;   // brightness / range multipliers for the game's point lights   // the game renders its world at a low internal resolution and upscales it
 
 class Game {
   constructor() {
@@ -81,7 +82,7 @@ class Game {
     await this.enemies.load();
     this.player = new Player(this);
     this.player.radius = 0.4; this.player.standHeight = 2.5; this.player.crouchHeight = 1.5;
-    this.lightPool = new LightPool(this.scene, 10);
+    this.lightPool = new LightPool(this.scene, 14);
     this._refreshLightSources();
     this._setupFlashlight();
     this.terminal = new Terminal(this);
@@ -96,7 +97,7 @@ class Game {
 
   _refreshLightSources() {
     const src = [];
-    const add = (l, area) => { if (!l.isPointLight && !l.isSpotLight) return; src.push({ obj: l, area, pos: new THREE.Vector3(), color: l.color.clone(), intensity: l.userData.baseIntensity != null ? Math.min(l.userData.baseIntensity, 60) * 0.03 : l.intensity, distance: Math.max(l.distance || 8, 10) }); l.visible = false; };
+    const add = (l, area) => { if (!l.isPointLight && !l.isSpotLight) return; src.push({ obj: l, area, pos: new THREE.Vector3(), color: l.color.clone(), intensity: l.userData.baseIntensity != null ? Math.min(l.userData.baseIntensity, 60) * LIGHT_GAIN : l.intensity, distance: Math.max((l.distance || 8) * RANGE_GAIN, 14) }); l.visible = false; };
     for (const l of this.world.shipLights) add(l, 'ship');
     for (const l of this.world.moonLights) add(l, 'moon');
     for (const l of this.dungeon.lights) src.push({ obj: null, area: 'inside', pos: l.pos.clone(), color: l.color, intensity: l.intensity, distance: l.distance });
@@ -109,7 +110,7 @@ class Game {
     for (const s of this.lightSources) {
       if (s.area === 'inside') { s.enabled = inside; continue; }
       s.enabled = !inside && (s.area !== 'moon' || !this.world.inOrbit);
-      if (s.obj) { s.obj.getWorldPosition(s.pos); if (s.area === 'ship') s.intensity = (lit ? 1 : 0) * (s.obj.userData.baseIntensity != null ? Math.min(s.obj.userData.baseIntensity, 60) * 0.03 : 0.5); }
+      if (s.obj) { s.obj.getWorldPosition(s.pos); if (s.area === 'ship') s.intensity = (lit ? 1 : 0) * (s.obj.userData.baseIntensity != null ? Math.min(s.obj.userData.baseIntensity, 60) * LIGHT_GAIN : 0.5); }
     }
     this.lightPool.update(this.player.pos);
   }
@@ -341,9 +342,9 @@ class Game {
         if (!this.inside) {
           // ride the ship whenever we stand on it (or on its doors) or are inside its room while it moves
           const w = this.world;
+          // anywhere on the deck (room + catwalk) counts as riding the ship, whatever the terrain under it says
           const onShipGeom = p.groundCollider === w.shipCollider || w.doorColliders.includes(p.groundCollider);
-          const inRoom = w.onShipDeck(p.pos) && (w.shipState !== 'landed');
-          p.attachTo(onShipGeom || inRoom || (p.attached === w.shipObj && !p.onGround && w.onShipDeck(p.pos)) ? w.shipObj : null);
+          p.attachTo(onShipGeom || w.onShipDeck(p.pos) ? w.shipObj : null);
           if (w.inOrbit && !p.attached && !w.onShipDeck(p.pos)) p.damage(1000, 'space');
         }
         this.items.update(dt);
@@ -359,8 +360,8 @@ class Game {
       this.world.setFocus(p.pos);
       this._updateLights();
       const on = this.flashlightOn && this.items.hasFlashlight() && this.state === 'play';
-      this.flash.intensity += ((on ? 110 : 0) - this.flash.intensity) * Math.min(1, dt * 14);
-      this.nearLight.intensity = this.inside ? 0.25 : 0.0;
+      this.flash.intensity += ((on ? 140 : 0) - this.flash.intensity) * Math.min(1, dt * 14);
+      this.nearLight.intensity = this.inside ? 0.45 : 0.15;
       this.sound.setListener(this.camera.position, new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion), new THREE.Vector3(0, 1, 0).applyQuaternion(this.camera.quaternion));
       this.hud.update(dt);
     }

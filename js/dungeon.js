@@ -322,9 +322,9 @@ export class Dungeon {
     // collision
     const entries = [];
     for (const t of this.placed) {
-      const e = await collisionEntries(lib, t.inst, {});
+      const e = await collisionEntries(lib, t.inst, { exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) });
       for (const x of e) entries.push(x);
-      for (const ex of (t.extraInst || [])) { const e2 = await collisionEntries(lib, ex, {}); for (const x of e2) entries.push(x); }
+      for (const ex of (t.extraInst || [])) { const e2 = await collisionEntries(lib, ex, { exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) }); for (const x of e2) entries.push(x); }
     }
     this.collider = new Collider('dungeon').build(entries, null);
     for (const t of this.placed) this._mergeStatic(t);
@@ -479,7 +479,7 @@ export class Dungeon {
       if (o.isPointLight || o.isSpotLight) {
         let p = o, vis = true; while (p && p !== this.root) { if (p.visible === false) { vis = false; break; } p = p.parent; }
         if (!vis) return;
-        this.lights.push({ pos: o.getWorldPosition(new THREE.Vector3()), color: o.color.clone(), intensity: Math.min(o.userData.unity?.intensity || 20, 120) * 0.02, distance: Math.max(o.distance || 8, 9), obj: o });
+        this.lights.push({ pos: o.getWorldPosition(new THREE.Vector3()), color: o.color.clone(), intensity: Math.min(o.userData.unity?.intensity || 20, 120) * 0.05, distance: Math.max((o.distance || 8) * 1.6, 13), obj: o });
         o.visible = false;
       }
     });
