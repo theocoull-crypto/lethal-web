@@ -80,7 +80,7 @@ export class Enemies {
 
   setCatalog(catalog) { this.catalog = catalog; }
 
-  beginDay() { this.clearAll(); this.spawnTimer = 40 + Math.random() * 40; this.outsideTimer = 20; this.insidePower = 0; this.outsidePower = 0; }
+  beginDay() { const diff = this.game && this.game.difficulty ? this.game.difficulty() : 1; this.clearAll(); this.spawnTimer = (40 + Math.random() * 40) / diff; this.outsideTimer = 20 / diff; this.insidePower = 0; this.outsidePower = 0; }
   clearAll() {
     for (const e of this.list) this._remove(e); this.list = [];
     for (const w of this.webs) w.mesh.parent && w.mesh.parent.remove(w.mesh); this.webs = [];
@@ -295,9 +295,10 @@ export class Enemies {
     for (const n of this.noises) n.t += dt;
     this.noises = this.noises.filter(n => n.t < 6);
     // spawning: inside enemies from vents, chance rises through the day
+    const diff = g.difficulty ? g.difficulty() : 1;   // harder moons: enemies come sooner
     this.spawnTimer -= dt;
     if (this.spawnTimer <= 0 && g.dungeon.vents.length) {
-      this.spawnTimer = 55 + Math.random() * 50;
+      this.spawnTimer = (55 + Math.random() * 50) / diff;
       const chance = 0.25 + w.dayFrac * 0.65;
       if (Math.random() < chance && this.insidePower < this.catalog.level.maxEnemyPowerCount) {
         const def = this.pickWeighted(this.catalog.enemies.inside, this.catalog.level.maxEnemyPowerCount - this.insidePower);
@@ -306,7 +307,7 @@ export class Enemies {
     }
     this.outsideTimer -= dt;
     if (this.outsideTimer <= 0 && w.outsideNodes.length) {
-      this.outsideTimer = 40 + Math.random() * 40;
+      this.outsideTimer = (40 + Math.random() * 40) / diff;
       const night = w.dayFrac > 0.62;
       const list = night ? this.catalog.enemies.outside : this.catalog.enemies.daytime;
       const budget = night ? this.catalog.level.maxOutsideEnemyPowerCount : this.catalog.level.maxDaytimeEnemyPowerCount;

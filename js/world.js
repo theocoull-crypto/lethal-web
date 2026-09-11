@@ -9,7 +9,7 @@ const START_HOUR = 8, END_HOUR = 24;
 // Unity "Environment" root of the ship scene (mirrored X); the ship's animation clips are relative to it
 const ENVIRONMENT_POS = new THREE.Vector3(17.4, 7.6, -16.5);
 const SHIP_LANDED_LOCAL = new THREE.Vector3(-18.71032, -7.326942, 8.971304);
-const MOON_DEFS = [
+export const MOON_DEFS = [
   { key: 'moon', asset: 'experimentation', name: '41-EXPERIMENTATION', catalog: 'experimentation' },
   { key: 'assurance', asset: 'assurance', name: '220-ASSURANCE', catalog: 'assurance' },
   { key: 'titan', asset: 'titan', name: '8-TITAN', catalog: 'titan', fogDay: 0x272b31, fogDusk: 0x15171c, sunDay: 0x9aa4b4, hemiSky: 0x5b6470, fogScale: 3.4, sunScale: 0.5, forceFlow: 'SlaughterhouseFlow', sizeMul: 2.2 },

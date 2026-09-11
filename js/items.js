@@ -174,7 +174,8 @@ export class Items {
     this.clearWorldScrap();
     const lvl = this.catalog.level, d = this.game.dungeon;
     if (!d.scrapSpawns.length) return;
-    const count = lvl.minScrap + Math.floor(Math.random() * (lvl.maxScrap - lvl.minScrap + 1));
+    const diff = this.game.difficulty ? this.game.difficulty() : 1;   // harder moons carry more scrap
+    const count = Math.round((lvl.minScrap + Math.floor(Math.random() * (lvl.maxScrap - lvl.minScrap + 1))) * diff);
     const total = this.defs.reduce((a, s) => a + s.rarity, 0);
     const pick = () => { let r = Math.random() * total; for (const s of this.defs) { r -= s.rarity; if (r <= 0) return s; } return this.defs[0]; };
     const colliders = [d.collider];

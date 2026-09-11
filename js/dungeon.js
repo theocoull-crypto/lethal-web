@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { Collider, collisionEntries } from './collision.js';
 import { buildSkinned } from './loader.js';
+import { MOON_DEFS } from './world.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Animator } from './anim.js';
 
@@ -43,6 +44,12 @@ export class Dungeon {
     const get = (file, what) => fetch(file).then(r => { if (!r.ok) throw new Error(what + ' assets are missing; run tools\extract.bat again.'); return r.json(); });
     const [experimentation, assurance, titan] = await Promise.all([get('assets/catalog.json', 'Experimentation'), get('assets/catalog_assurance.json', 'Assurance'), get('assets/catalog_titan.json', 'Titan')]);
     this.catalogs = { experimentation, assurance, titan };
+    // every other moon in MOON_DEFS (mod moons are optional: skipped when their catalog was never packed)
+    for (const m of MOON_DEFS) {
+      if (this.catalogs[m.catalog]) continue;
+      try { this.catalogs[m.catalog] = await get(`assets/catalog_${m.catalog}.json`, m.name); }
+      catch (e) { if (!m.optional) throw e; }
+    }
     await Promise.all(Object.values(this.catalogs).map(c => this._primeCatalog(c)));
     this.catalog = experimentation;
   }

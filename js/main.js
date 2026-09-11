@@ -207,6 +207,12 @@ class Game {
     this.camera.layers.enable(1);
   }
 
+  /** how hard the current moon is, from its risk letter: scales scrap counts up and enemy spawn timers down */
+  difficulty() {
+    const r = String((this.items && this.items.catalog && this.items.catalog.level && this.items.catalog.level.riskLevel) || 'D').toUpperCase();
+    return { 'D': 1.0, 'C': 1.15, 'B': 1.3, 'A': 1.5, 'S': 1.75, 'S+': 2.0, 'S++': 2.2 }[r] || (r.startsWith('S') ? 1.9 : 1.0);
+  }
+
   spawnPlayerInShip() {
     const ship = this.world.shipObj; ship.updateMatrixWorld(true);
     const p = ship.localToWorld(new THREE.Vector3(4.0, 1.4, -9.0));
@@ -571,7 +577,14 @@ The ship will leave without you.`);
         this.decor.update(dt);
         this._updateHud(dt);
         this._updateScan(dt);
-        if (!this.inside && !p.dead && !this.world.inOrbit && !this.world.atCompany && !p.attached) { for (const z of (this.world.activeMoon.killZones || [])) if (z.containsPoint(p.pos)) { p.damage(1000, 'drowning'); break; } }
+        // deep water: two seconds under and you drown (the moon's KillTrigger volumes)
+        if (!this.inside && !p.dead && !this.world.inOrbit && !this.world.atCompany && !p.attached) {
+          let inWater = false;
+          for (const z of (this.world.activeMoon.killZones || [])) if (z.containsPoint(p.pos)) { inWater = true; break; }
+          if (inWater) { this.waterT = (this.waterT || 0) + dt; if (this.waterT > 2) { this.waterT = 0; p.damage(1000, 'drowning'); } }
+          else this.waterT = 0;
+          if (this.hud && this.hud.setUnderwater) this.hud.setUnderwater(inWater ? Math.min(1, this.waterT / 2) : 0);
+        } else this.waterT = 0;
         this._updateSpectate();
       }
       this.dungeon.root.visible = this.inside;

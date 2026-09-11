@@ -15,6 +15,10 @@ export class HUD {
     this.scan = $('scan'); this.scanTags = [];
     this.spectate = $('spectate');
     this.vignette = $('vignette');
+    // deep water overlay (drown timer): a blue wash that darkens over the two seconds
+    this.underwater = document.createElement('div'); this.underwater.id = 'underwater';
+    Object.assign(this.underwater.style, { position: 'fixed', inset: '0', pointerEvents: 'none', background: 'radial-gradient(ellipse at center, rgba(30,80,110,0.35) 0%, rgba(8,30,50,0.85) 100%)', opacity: '0', transition: 'opacity 0.15s', zIndex: '5' });
+    document.body.appendChild(this.underwater);
   }
 
   show(v) { this.el.classList.toggle('hidden', !v); }
@@ -72,6 +76,8 @@ export class HUD {
   }
 
   flashDamage(strength = 1) { this.damageT = Math.max(this.damageT, 0.6 * strength); }
+
+  setUnderwater(t) { this.underwater.style.opacity = t <= 0 ? '0' : String(0.45 + 0.55 * t); }
 
   setHealth(h) { this.vignette.style.background = `radial-gradient(ellipse at center, rgba(0,0,0,0) ${45 + h * 0.15}%, rgba(${h < 40 ? 90 : 0},0,0,${0.55 + (100 - h) * 0.004}) 100%)`; }
 
