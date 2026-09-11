@@ -12,6 +12,7 @@ import { LightPool } from './lights.js';
 import { Terminal } from './terminal.js';
 import { Settings } from './settings.js';
 import { DebugMenu } from './debug.js';
+import { Decor } from './decor.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -135,6 +136,8 @@ class Game {
     setText('Loading company property...');
     this.items = new Items(this);
     await this.items.load();
+    this.decor = new Decor(this);
+    await this.decor.load();
     this.enemies = new Enemies(this);
     await this.enemies.load();
     this.player = new Player(this);
@@ -154,6 +157,7 @@ class Game {
     this.state = 'menu'; this.ready = true;
     this.startMenuMusic();
     this.spawnPlayerInShip();
+    this.decor.restore();
     this.loop();
     } catch (e) {
       console.error(e);
@@ -259,6 +263,8 @@ class Game {
     if (!down) return;
     if (this.terminal && this.terminal.open) return;
     if (this.state !== 'play') return;
+    if (code === 'KeyB') { this.decor.toggle(); return; }
+    if (code === 'KeyR' && this.decor.carry) { this.decor.rotate(1); return; }
     if (code === 'KeyE') { this.interact(); this.enemies.onMash(); }
     if (code === 'KeyG') this.items.dropHeld();
     if (code === 'KeyF') this.toggleFlashlight();
@@ -267,11 +273,12 @@ class Game {
   }
   onMouse(button, down) {
     if (this.state !== 'play' || !down || (this.terminal && this.terminal.open)) return;
-    if (button === 0) this.items.useHeld();
+    if (button === 0) { if (this.decor.carry) return this.decor.place(); this.items.useHeld(); }
     if (button === 2) this.scan();
   }
-  onWheel(dir) { if (this.state === 'play' && !(this.terminal && this.terminal.open)) this.items.select((this.items.active + (dir > 0 ? 1 : 3)) % 4); }
+  onWheel(dir) { if (this.state !== 'play' || (this.terminal && this.terminal.open)) return; if (this.decor.carry) return this.decor.rotate(dir > 0 ? 1 : -1); this.items.select((this.items.active + (dir > 0 ? 1 : 3)) % 4); }
   onLockChange(locked) {
+    if (!locked && this.decor && this.decor.carry) this.decor.cancel();
     if (!locked && this.state === 'play' && !(this.terminal && this.terminal.open) && this.settings && !this.settings.open && !(this.debug && this.debug.open) && !this._suppressSettings) this.settings.show();
     this._suppressSettings = false;
   }
@@ -507,7 +514,7 @@ The ship will leave without you.`);
   activeColliders() {
     const list = [];
     if (this.inside) { if (this.dungeon.collider) list.push(this.dungeon.collider); for (const d of this.dungeon.doors) if (d.collider && !d.open) list.push(d.collider); }
-    else { list.push(this.world.shipCollider, ...this.world.doorColliders); if (!this.world.inOrbit && this.world.levelCollider) list.push(this.world.levelCollider); }
+    else { list.push(this.world.shipCollider, ...this.world.doorColliders, ...this.decor.colliders()); if (!this.world.inOrbit && this.world.levelCollider) list.push(this.world.levelCollider); }
     if (this.inside) list.push(...this.dungeon.dynamicColliders);
     return list;
   }
@@ -551,6 +558,7 @@ The ship will leave without you.`);
         this.items.update(dt);
         this.enemies.update(dt);
         this.dungeon.update(dt);
+        this.decor.update(dt);
         this._updateHud(dt);
         this._updateScan(dt);
         if (!this.inside && !p.dead && !this.world.inOrbit && !this.world.atCompany && !p.attached) { for (const z of (this.world.activeMoon.killZones || [])) if (z.containsPoint(p.pos)) { p.damage(1000, 'drowning'); break; } }

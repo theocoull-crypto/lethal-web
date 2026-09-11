@@ -80,6 +80,9 @@ export class Terminal {
     this.game.player.lock();
   }
 
+  /** tools plus the ship decor (furniture) once it is loaded */
+  allStore() { return this.store.concat(this.game.decor ? this.game.decor.storeList() : []); }
+
   banner() {
     return `Welcome to the FORTUNE-9 OS
                    Courtesy of the Company
@@ -106,7 +109,7 @@ Type "Help" for a list of commands.
     }
     const cmdHit = best(first, COMMANDS.map(c => ({ names: [c] })));
     const moonHit = best(words.join(' '), MOONS);
-    const itemHit = best(words.join(' '), this.store);
+    const itemHit = best(words.join(' '), this.allStore());
     // a bare moon or item name beats a weak command match ("exp" -> Experimentation, "fla" -> Flashlight, "com" -> Company)
     const cmdScore = cmdHit ? cmdHit.score : 9;
     if (moonHit && moonHit.score < cmdScore) return this.askRoute(moonHit.cand);
@@ -152,12 +155,15 @@ ____________________________
 
 ${this.store.map(s => `* ${s.name}  //  Price: $${s.price}`).join('\n')}
 
+Ship decor (arrives on the ship; press B to move it around):
+${(g.decor ? g.decor.storeList() : []).map(s => `* ${s.name}  //  Price: $${s.price}`).join('\n')}
+
 Your credits: $${g.credits}
 `);
       case 'buy': {
         const qty = Math.max(1, parseInt(words[words.length - 1]) || 1);
         const name = rest.replace(/\s*\d+$/, '');
-        const hit = best(name, this.store);
+        const hit = best(name, this.allStore());
         if (!hit) return this.print(name ? `[Item not found in this demo's store. Try STORE]\n` : 'Buy what? Type STORE to see the items.\n');
         return this.askBuy(hit.cand, qty);
       }
@@ -195,6 +201,10 @@ Please CONFIRM or DENY.
     const g = this.game;
     g.credits -= p.total;
     const c = g.items.sfx('purchase'); if (c) g.sound.play(c, { vol: 0.6 });
+    if (p.item.decor) {
+      for (let i = 0; i < p.qty; i++) g.decor.buy(p.item.decor);
+      return this.print(`Ordered ${p.qty} ${p.item.name}${p.qty > 1 ? 's' : ''}. Your new balance is $${g.credits}.\nIt has been placed on the ship. Look at it and press B to move it.\n`);
+    }
     for (let i = 0; i < p.qty; i++) g.items.queueDelivery(p.item.tool, p.item.name);
     const where = g.world.inOrbit ? 'It will be delivered next to the ship shortly after you land.' : 'The dropship is on its way.';
     this.print(`Ordered ${p.qty} ${p.item.name}${p.qty > 1 ? 's' : ''}. Your new balance is $${g.credits}.\n${where}\n`);

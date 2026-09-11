@@ -26,6 +26,11 @@ item, RMB scan, F flashlight.
 * The terminal works: `help`, `store`, `buy`, `moons`, `route`, `scan`, `quota`. Partial words are fine ("rou exp",
   "the com", "fla"). The store has three items - flashlight, walkie-talkie and shovel - delivered next to the ship
   after landing. The shovel swings with the left mouse button and kills monsters in the same number of hits as the game.
+* Ship decor: the store also sells the game's furniture (toilet, shower, table, romantic table, television, record
+  player, disco ball, goldfish, plushie, jack-o-lantern, welcome mat, paintings, sofa, fridge, microwave, electric
+  chair, dog house). Bought pieces appear on the ship; look at one and press **B** to pick it up, move the mouse to
+  carry it, **R** or the wheel to rotate, left click or **B** to put it down. Pieces collide, ride the ship, and their
+  layout is remembered in the browser.
 * The Company building: `route company` at the terminal, land, put scrap on the counter, ring the bell. Scrap is
   bought at the game's rate (30% three days out, 100% on the last day) and only sold scrap counts toward the quota.
 * Ladders on the moon and the ship can be climbed. Dying makes the ship leave without you.
