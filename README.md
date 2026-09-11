@@ -19,6 +19,14 @@ This is a fan project in the same spirit as open-source engine reimplementations
 Controls: WASD move, Shift sprint, Ctrl crouch, Space jump, E interact/grab, G drop, 1-4 or wheel to select, LMB use
 item, RMB scan, F flashlight.
 
+### Playing from another device (a Chromebook, a laptop, a phone)
+
+The assets stay on the PC that owns the game; other devices just stream them from it. Run `START-LAN.bat` instead of
+`START.bat` - it listens on every network interface and prints the addresses to open on the other device
+(`http://<this PC's IP>:8220`). Same Wi-Fi works directly; from anywhere else, Tailscale on both devices does it
+(use the `100.x.x.x` address it prints). Allow Python through the Windows firewall when asked. Do not put `assets/`
+in a public repository or on a public host: it is the game's content, extracted from your copy.
+
 ## What is in the demo
 
 * The ship runs on its own animation clips from the game: landing and take-off sequences, the sliding doors and their

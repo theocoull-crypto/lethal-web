@@ -20,7 +20,7 @@ export class Settings {
       ['lightGain', 'Light strength', 'range', 0.3, 3.0, 0.1],
       ['shadows', 'Shadows', 'select', ['Off', 'Sun + flashlight', 'Sun + flashlight + 2 lamps', 'Sun + flashlight + 4 lamps']],
       ['fov', 'Field of view', 'range', 60, 105, 1],
-      ['sensitivity', 'Mouse sensitivity', 'range', 0.2, 3.0, 0.05],
+      ['sensitivity', 'Mouse sensitivity', 'range', 0.05, 5.0, 0.05],
       ['volume', 'Volume', 'range', 0, 1, 0.05],
       ['pixel', 'Pixel filter (P)', 'check'],
       ['pixelSize', 'Pixel size', 'select', ['Fine (520 lines)', 'Game (440 lines)', 'Strong (360 lines)', 'Chunky (280 lines)']],

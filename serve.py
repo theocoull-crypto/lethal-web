@@ -61,8 +61,27 @@ class TS(socketserver.ThreadingMixIn, http.server.HTTPServer):
 if __name__ == '__main__':
     if not os.path.exists(os.path.join(ROOT, 'assets', 'materials.json')):
         print('No extracted assets found. Run tools\\extract.bat first (needs your own Lethal Company install).')
-    httpd = TS(('127.0.0.1', PORT), H)
+    # --lan: listen on every interface so another device (a Chromebook on the same Wi-Fi, or over Tailscale) can play;
+    # the assets never leave your machine - the other device just streams them from here
+    lan = '--lan' in sys.argv
+    httpd = TS(('0.0.0.0' if lan else '127.0.0.1', PORT), H)
     print(f'LETHAL WEB  ->  http://localhost:{PORT}')
+    if lan:
+        import socket
+        addrs = set()
+        try:
+            for info in socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET):
+                addrs.add(info[4][0])
+        except Exception:
+            pass
+        try:
+            probe = socket.socket(socket.AF_INET, socket.SOCK_DGRAM); probe.connect(('8.8.8.8', 80)); addrs.add(probe.getsockname()[0]); probe.close()
+        except Exception:
+            pass
+        for a in sorted(addrs):
+            if not a.startswith('127.'):
+                print(f'  other devices ->  http://{a}:{PORT}   ({"Tailscale" if a.startswith("100.") else "this network"})')
+        print('  (allow python through the Windows firewall if the other device cannot connect)')
     if '--no-browser' not in sys.argv:
         threading.Timer(0.8, lambda: webbrowser.open(f'http://localhost:{PORT}')).start()
     httpd.serve_forever()
