@@ -15,15 +15,17 @@ The bundled private build does not require Lethal Company to be installed.
 
 On Windows, run `START.bat` and open http://localhost:8220 in Chrome.
 
-On a Chromebook, enable the Linux development environment, open Terminal, and run:
+On a Chromebook, enable the Linux development environment, sign in to GitHub, open this private repository, choose
+**Code -> Download ZIP**, and extract it in Downloads. Then open Terminal and run:
 
 ```sh
-git clone https://github.com/theocoull-crypto/lethal-web.git
-cd lethal-web
+cd /mnt/chromeos/MyFiles/Downloads/lethal-web-master
 python3 serve.py 8220 --no-browser
 ```
 
-Then open http://localhost:8220 in Chrome. GitHub will ask you to authenticate because the repository is private.
+Then open http://localhost:8220 in Chrome. If the extracted folder has a different name, use that name in the `cd`
+command. A command-line `git clone https://github.com/theocoull-crypto/lethal-web.git` also works after GitHub
+authentication has been configured in the Linux environment.
 
 To rebuild the extracted game files later, run `python tools/extract.py` on a Windows PC that owns Lethal Company.
 It finds the Steam installation, downloads the official [AssetRipper](https://github.com/AssetRipper/AssetRipper)
