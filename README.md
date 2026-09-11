@@ -94,8 +94,13 @@ network interface and prints the addresses to open on the other device
 
 * The company ship in orbit; route to **41-Experimentation**, **220-Assurance** or **8-Titan** at the terminal and pull
   the lever to land (the real moon geometry, sky and ambience). Each moon uses its own scrap table, enemy list and spawn
-  budgets. All routes are free here. Moons whose ground is a Unity terrain heightmap (March, Vow, Rend, Dine...) are not
-  supported yet: the extractor only exports meshes.
+  budgets. All routes are free here. Unity terrain heightmaps are exported too (one grid mesh per terrain, with its
+  splat layers blended by the alphamaps in a custom material), so terrain moons work.
+* Mod moons: a LethalLevelLoader moon can be packed like a mod interior. **127 Eve-M** (RosiePies, Thunderstore) is
+  wired in: `python tools/load_mod_bundle.py <evescene.lethalbundle> <evestandalone.lethalbundle>` then
+  `set AR_PREFIX=eve && python tools/pack_mod_moon.py eve "Eve1Level (Generated Assets)" EveLevel` packs its scene,
+  both terrains and a catalog whose scrap and enemy tables are matched by name to the game's own (the mod references
+  vanilla content it cannot ship; its custom items are skipped). The moon only appears when its assets are present.
 * Interiors: the **facility** and the **mineshaft** with its elevator - ride it down to the tunnels and caves, call it
   back from either landing. Experimentation and Assurance roll the interior with the game's own odds (mineshaft ~1% and
   ~12%). Titan is buried in dark fog with snow underfoot and always uses the **Slaughterhouse** interior from Nikki's

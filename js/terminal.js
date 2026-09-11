@@ -8,6 +8,7 @@ const MOONS = [
   { key: 'moon', label: '41-Experimentation', names: ['experimentation', '41-experimentation', '41'] },
   { key: 'assurance', label: '220-Assurance', names: ['assurance', '220-assurance', '220'] },
   { key: 'titan', label: '8-Titan', names: ['titan', '8-titan', '8'] },
+  { key: 'eve', label: '127-Eve-M', names: ['eve', '127-eve', '127-eve-m', 'eve-m', '127'] },
   { key: 'company', label: 'The Company building', names: ['company', 'the company building', 'company building', 'the company'] },
 ];
 
@@ -158,7 +159,7 @@ ____________________________
 * 220-Assurance        ${this.weather('assurance')}${g.world.destination === 'assurance' ? '   (current route)' : ''}
 
 * 8-Titan              ${this.weather('titan')}${g.world.destination === 'titan' ? '   (current route)' : ''}
-`);
+${g.world.moons.eve ? `\n* 127-Eve-M            ${this.weather('eve')}${g.world.destination === 'eve' ? '   (current route)' : ''}\n` : ''}`);
       case 'store': return this.print(`Welcome to the Company store.
 Use words BUY to buy an item.
 ____________________________
@@ -250,6 +251,7 @@ The Company's engineers have extended the ship on both sides.
   askRoute(moon) {
     const g = this.game;
     if (!g.world.inOrbit) return this.print('You can only route the autopilot while in orbit.\n');
+    if (moon.key !== 'company' && !g.world.moons[moon.key]) return this.print(`${moon.label} is not installed in this build (its assets have not been extracted).\n`);
     if (g.world.destination === moon.key) return this.print(`The autopilot is already routed to ${moon.label}.\nPull the lever to land.\n`);
     this.pending = { kind: 'route', moon };
     if (moon.key === 'company') this.print(`The cost to route to ${moon.label} is $0. The Company is buying at ${Math.round(g.world.buyingRate() * 100)}%.\nPlease CONFIRM or DENY.\n`);
@@ -266,6 +268,6 @@ The Company's engineers have extended the ship on both sides.
 
   weather(moon = this.game.world.destination) {
     if (this.game.world.dayFrac > 0.72) return '(Night)';
-    return moon === 'assurance' ? '(Clear)' : moon === 'titan' ? '(Snowy)' : '(Foggy)';
+    return moon === 'assurance' || moon === 'eve' ? '(Clear)' : moon === 'titan' ? '(Snowy)' : '(Foggy)';
   }
 }

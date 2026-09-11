@@ -70,6 +70,44 @@ def write_pb_glb(d, path):
     return True
 
 
+def write_terrain_glb(heights, res, sx, sy, sz, path):
+    """A Unity terrain heightmap as one indexed grid mesh (X mirrored like every other mesh, smooth normals).
+    uv = (x index, z index) / (res - 1), matching the splat alphamaps."""
+    import numpy as np
+    from pygltflib import GLTF2, Scene, Node, Mesh, Primitive, Attributes, Accessor, BufferView, Buffer
+    h = np.array(heights, dtype=np.float32).reshape(res, res) / 32766.0 * sy      # [z][x]
+    xi = np.arange(res, dtype=np.float32) * sx; zi = np.arange(res, dtype=np.float32) * sz
+    X, Z = np.meshgrid(xi, zi)                                                    # [z][x]
+    pos = np.stack([-X, h, Z], axis=-1).reshape(-1, 3).astype(np.float32)
+    dx = np.zeros_like(h); dz = np.zeros_like(h)
+    dx[:, 1:-1] = (h[:, 2:] - h[:, :-2]) / (2 * sx); dx[:, 0] = (h[:, 1] - h[:, 0]) / sx; dx[:, -1] = (h[:, -1] - h[:, -2]) / sx
+    dz[1:-1, :] = (h[2:, :] - h[:-2, :]) / (2 * sz); dz[0, :] = (h[1, :] - h[0, :]) / sz; dz[-1, :] = (h[-1, :] - h[-2, :]) / sz
+    n = np.stack([dx, np.ones_like(h), -dz], axis=-1)   # unity normal (-dx, 1, -dz), x mirrored
+    n = n / np.linalg.norm(n, axis=-1, keepdims=True)
+    nor = n.reshape(-1, 3).astype(np.float32)
+    U, Vv = np.meshgrid(np.arange(res, dtype=np.float32) / (res - 1), np.arange(res, dtype=np.float32) / (res - 1))
+    uv = np.stack([U, Vv], axis=-1).reshape(-1, 2).astype(np.float32)
+    i = np.arange(res - 1); j = np.arange(res - 1)
+    J, I = np.meshgrid(j, i, indexing='ij')
+    a = (J * res + I).ravel(); b = a + 1; c = a + res; d = c + 1
+    tri = np.stack([np.stack([a, b, c], -1), np.stack([b, d, c], -1)], 1).reshape(-1, 3)
+    tri = tri.astype(np.uint32).ravel()                    # with X mirrored this order already faces up (checked against a downward ray)
+    blob = bytearray(); views = []; accs = []
+    def add_view(arr, target):
+        off = len(blob); data = arr.tobytes(); blob.extend(data)
+        while len(blob) % 4: blob.append(0)
+        views.append(BufferView(buffer=0, byteOffset=off, byteLength=len(data), target=target)); return len(views) - 1
+    vp = add_view(pos, 34962); vn = add_view(nor, 34962); vt = add_view(uv, 34962); vi = add_view(tri, 34963)
+    accs.append(Accessor(bufferView=vp, componentType=5126, count=len(pos), type='VEC3', min=pos.min(0).tolist(), max=pos.max(0).tolist()))
+    accs.append(Accessor(bufferView=vn, componentType=5126, count=len(nor), type='VEC3'))
+    accs.append(Accessor(bufferView=vt, componentType=5126, count=len(uv), type='VEC2'))
+    accs.append(Accessor(bufferView=vi, componentType=5125, count=len(tri), type='SCALAR'))
+    mesh = Mesh(primitives=[Primitive(attributes=Attributes(POSITION=0, NORMAL=1, TEXCOORD_0=2), indices=3)])
+    g = GLTF2(scene=0, scenes=[Scene(nodes=[0])], nodes=[Node(name='terrain', mesh=0)], meshes=[mesh], accessors=accs, bufferViews=views, buffers=[Buffer(byteLength=len(blob))])
+    g.set_binary_blob(bytes(blob)); g.save(path)
+    return True
+
+
 class Packer:
     def __init__(self, ar):
         self.ar = ar
@@ -176,6 +214,55 @@ class Packer:
         self.materials[aid] = m
         return m
 
+    # ---------- terrain ----------
+    def terrain(self, data_aid):
+        """Unity Terrain: heightmap -> assets/meshes/terrain_<aid>.glb; splat layers + alphamaps -> a 'Terrain' material entry."""
+        if not data_aid:
+            return None
+        tid = 'terrain_' + data_aid
+        if 'terrain:' + tid in self.materials and os.path.exists(os.path.join(ASSETS, 'meshes', tid + '.glb')):
+            return tid
+        key, pid = self.kp(data_aid)
+        td = self.ar.json(key, pid)
+        hm = td.get('m_Heightmap') or {}
+        heights = hm.get('m_Heights') or []
+        res = int(hm.get('m_Resolution') or 0)
+        sc = hm.get('m_Scale') or {}
+        if not heights or res * res != len(heights):
+            print('   !! terrain without a usable heightmap', data_aid); return None
+        sx, sy, sz = float(sc.get('m_X', 1)), float(sc.get('m_Y', 1)), float(sc.get('m_Z', 1))
+        dst = os.path.join(ASSETS, 'meshes', tid + '.glb')
+        if not os.path.exists(dst):
+            write_terrain_glb(heights, res, sx, sy, sz, dst)
+        sd = td.get('m_SplatDatabase') or {}
+        layers = []
+        for lref in sd.get('m_TerrainLayers') or []:
+            r = self.ar.resolve(key, lref)
+            if not r:
+                continue
+            lj = self.ar.json(*r)
+            dref = self.ar.resolve(r[0], lj.get('m_DiffuseTexture'))
+            if not dref or self.ar.cls(*dref) != 'Texture2D':
+                layers.append(None); continue
+            taid = self.ar.aid(*dref)
+            self.textures[taid] = (dref[0], dref[1], 'color')
+            ts, to = lj.get('m_TileSize') or {}, lj.get('m_TileOffset') or {}
+            rm = lj.get('m_DiffuseRemapMax') or {}
+            layers.append({'name': lj.get('m_Name'), 'map': taid, 'tile': [float(ts.get('m_X', 1)), float(ts.get('m_Y', 1))], 'offset': [float(to.get('m_X', 0)), float(to.get('m_Y', 0))],
+                           'tint': [float(rm.get('m_X', 1)), float(rm.get('m_Y', 1)), float(rm.get('m_Z', 1))]})
+        alphas = []
+        for aref in sd.get('m_AlphaTextures') or []:
+            r = self.ar.resolve(key, aref)
+            if not r or self.ar.cls(*r) != 'Texture2D':
+                continue
+            taid = self.ar.aid(*r)
+            self.textures[taid] = (r[0], r[1], 'color')
+            alphas.append(taid)
+        self.materials['terrain:' + tid] = {'name': 'terrain ' + (td.get('m_Name') or ''), 'shader': 'Terrain', 'size': [(res - 1) * sx, (res - 1) * sz], 'height': sy, 'res': res,
+                                            'layers': layers, 'alphas': alphas, 'color': [1, 1, 1, 1]}
+        print('   terrain', td.get('m_Name'), res, 'x', res, 'layers', len(layers), 'alphamaps', len(alphas))
+        return tid
+
     # ---------- nodes ----------
     def convert_node(self, n, key_of_node):
         """Mirror X: pos (-x,y,z), quat (x,-y,-z,w), scale unchanged."""
@@ -199,6 +286,13 @@ class Packer:
                 out['mesh'] = pbid
         for c in n['comps']:
             t = c['t']
+            if t == 'Terrain':
+                tid = self.terrain(c.get('data'))
+                if tid:
+                    out['mesh'] = tid
+                    out['comps'].append({'t': 'MR', 'mats': ['terrain:' + tid], 'sb': None, 'shadows': 1, 'lm': 65535})
+                    out['comps'].append({'t': 'MeshCol', 'mesh': tid, 'convex': False, 'trigger': False, 'enabled': True})
+                continue
             if t == 'MR':
                 if not c['enabled']:
                     continue

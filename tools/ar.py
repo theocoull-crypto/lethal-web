@@ -170,7 +170,8 @@ class AR:
         except Exception:
             return None
         for name, k in self.by_name.items():
-            if isinstance(k, tuple) and k[0] == () and name.startswith('level'):
+            # the game's 'levelN' collections, or a mod scene bundle's 'buildplayer-<scene>' collection
+            if isinstance(k, tuple) and (name.startswith('level') or (name.startswith('buildplayer-') and not name.endswith('.sharedassets'))):
                 cc = self.coll(k)
                 if sum(1 for v in cc.assets.values() if v[0] == 'GameObject') == n:
                     return k

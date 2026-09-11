@@ -90,7 +90,9 @@ def walk(ar, hkey, hpid, keep_mb=None):
                 node['comps'].append({'t': 'Animator', 'controller': pp(ar, ck, cj.get('m_Controller')), 'avatar': pp(ar, ck, cj.get('m_Avatar')), 'applyRoot': bool(cj.get('m_ApplyRootMotion'))})
             elif cls == 'LODGroup':
                 node['comps'].append({'t': 'LOD', 'lods': [{'h': l.get('screenRelativeHeight'), 'r': [pp(ar, ck, r['renderer']) for r in l.get('renderers', [])]} for l in cj.get('m_LODs', [])]})
-            elif cls in ('ParticleSystem', 'ParticleSystemRenderer', 'Camera', 'Rigidbody', 'NavMeshObstacle', 'OffMeshLink', 'OcclusionArea', 'LineRenderer', 'SpriteRenderer', 'CharacterController', 'Canvas', 'CanvasRenderer', 'ReflectionProbe', 'Terrain', 'TerrainCollider', 'WindZone', 'Animation', 'DecalProjector', 'TrailRenderer', 'Cloth', 'Halo', 'LensFlare', 'AudioListener', 'AudioReverbZone', 'NavMeshAgent', 'PlayableDirector', 'VideoPlayer', 'BillboardRenderer'):
+            elif cls == 'Terrain':
+                node['comps'].append({'t': 'Terrain', 'data': pp(ar, ck, cj.get('m_TerrainData')), 'enabled': bool(cj.get('m_Enabled', 1))})
+            elif cls in ('ParticleSystem', 'ParticleSystemRenderer', 'Camera', 'Rigidbody', 'NavMeshObstacle', 'OffMeshLink', 'OcclusionArea', 'LineRenderer', 'SpriteRenderer', 'CharacterController', 'Canvas', 'CanvasRenderer', 'ReflectionProbe', 'TerrainCollider', 'WindZone', 'Animation', 'DecalProjector', 'TrailRenderer', 'Cloth', 'Halo', 'LensFlare', 'AudioListener', 'AudioReverbZone', 'NavMeshAgent', 'PlayableDirector', 'VideoPlayer', 'BillboardRenderer'):
                 node['comps'].append({'t': cls})
             else:
                 node['comps'].append({'t': cls})

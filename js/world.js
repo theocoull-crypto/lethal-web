@@ -13,6 +13,8 @@ const MOON_DEFS = [
   { key: 'moon', asset: 'experimentation', name: '41-EXPERIMENTATION', catalog: 'experimentation' },
   { key: 'assurance', asset: 'assurance', name: '220-ASSURANCE', catalog: 'assurance' },
   { key: 'titan', asset: 'titan', name: '8-TITAN', catalog: 'titan', fogDay: 0x272b31, fogDusk: 0x15171c, sunDay: 0x9aa4b4, hemiSky: 0x5b6470, fogScale: 3.4, sunScale: 0.5, forceFlow: 'SlaughterhouseFlow', sizeMul: 2.2 },
+  // 127 Eve-M: RosiePies' forest moon (Thunderstore), packed with tools/pack_mod_moon.py; skipped when its assets are missing
+  { key: 'eve', asset: 'eve', name: '127-EVE-M', catalog: 'eve', fogDay: 0xb9c6b3, fogDusk: 0x3b4150, sunDay: 0xfff1d6, hemiSky: 0x9cc0e0, fogScale: 0.55, sunScale: 1.15, sizeMul: 1.4, optional: true },
 ];
 
 export class World {
@@ -99,7 +101,9 @@ export class World {
 
     for (const moon of Object.values(this.moons)) {
       progress && progress(`Loading ${moon.name}...`);
-      const moonMan = await lib.manifest(`scenes/${moon.asset}.json`);
+      let moonMan;
+      try { moonMan = await lib.manifest(`scenes/${moon.asset}.json`); }
+      catch (e) { if (moon.optional) { console.warn('moon assets missing, skipping', moon.key); delete this.moons[moon.key]; continue; } throw e; }
       const moonInst = await lib.instantiate(moonMan, { lights: true, staticRoot: moon.root });
       moon.inst = moonInst;
       moon.root.add(moonInst.root);
