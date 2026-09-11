@@ -316,6 +316,7 @@ export class World {
     if (s === 'landing') {
       this.levelRoot.visible = true;
       this.startLoop('turbulence', this.clips.turbulence, { vol: 0.9 });
+      this.setDoors(true);   // doors open for the descent: you watch the moon come up instead of staring at a wall
       if (a && a.has('HangarShipLandB')) { const act = a.play('HangarShipLandB', { once: true, loop: false, fade: 0.2 }); this.shipClipLen = a.clips.get('HangarShipLandB').data.length; }
       else this.shipClipLen = 9;
     }
@@ -467,7 +468,9 @@ export class World {
     this.sun.intensity = (orbit ? 2.0 : (1.4 * Math.max(0, elev) + 0.15) * (1 - night * 0.97)) * (moon && moon.sunScale ? moon.sunScale : 1);
     const fogDay = new THREE.Color(moon && moon.fogDay ? moon.fogDay : 0x5e5048), fogDusk = new THREE.Color(moon && moon.fogDusk ? moon.fogDusk : 0x3f2b24), fogNight = new THREE.Color(0x07080b);
     const fog = fogDay.clone().lerp(fogDusk, dusk).lerp(fogNight, night);
-    const fogScale = moon && moon.fogScale ? moon.fogScale : 1;
+    let fogScale = moon && moon.fogScale ? moon.fogScale : 1;
+    if (this.shipState === 'landing') { const k = THREE.MathUtils.smoothstep(this.shipT / (this.shipClipLen || 9), 0.55, 0.95); fogScale = THREE.MathUtils.lerp(Math.min(0.35, fogScale), fogScale, k); }
+    else if (this.shipState === 'leaving') { const k = THREE.MathUtils.smoothstep(this.shipT / (this.shipClipLen || 8), 0.1, 0.6); fogScale = THREE.MathUtils.lerp(fogScale, Math.min(0.35, fogScale), k); }
     if (orbit) { this.scene.fog.density = 0.0; this.scene.background.set(0x000004); this.stars.visible = true; this.planet.visible = true; }
     else { this.scene.fog.color.copy(fog); this.scene.fog.density = (0.011 + night * 0.006) * fogScale; this.scene.background.copy(fog); this.stars.visible = night > 0.6; this.planet.visible = false; }
     if (this.hemi) this.hemi.color.set(moon && moon.hemiSky ? moon.hemiSky : 0x8a7e78);
