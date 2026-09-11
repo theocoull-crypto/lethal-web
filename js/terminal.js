@@ -1,8 +1,9 @@
 // The ship terminal: a text console with the commands the demo supports (help, store, buy, moons, route, scan, quota, exit).
 // Partial words and typos are silently matched to the closest command, moon or item ("the com" -> The Company building).
+import { encode, decode, capture, restore, describe } from './savecode.js';
 const $ = id => document.getElementById(id);
 
-const COMMANDS = ['help', 'moons', 'store', 'buy', 'route', 'scan', 'quota', 'clear', 'exit', 'view', 'confirm', 'deny'];
+const COMMANDS = ['help', 'moons', 'store', 'buy', 'route', 'scan', 'quota', 'save', 'load', 'clear', 'exit', 'view', 'confirm', 'deny'];
 const MOONS = [
   { key: 'moon', label: '41-Experimentation', names: ['experimentation', '41-experimentation', '41'] },
   { key: 'assurance', label: '220-Assurance', names: ['assurance', '220-assurance', '220'] },
@@ -138,6 +139,12 @@ Current profit quota and deadline.
 >ROUTE [moon]
 To route the autopilot to a moon or to the Company building (sell your scrap there).
 
+>SAVE
+Prints a save code: one number that holds your credits, quota, upgrades, furniture and tools.
+
+>LOAD [code]
+Restores a run from a save code.
+
 >CLEAR   >EXIT
 `);
       case 'moons': return this.print(`Welcome to the exomoons catalogue.
@@ -185,6 +192,22 @@ Your credits: $${g.credits}
         return this.print(`There are ${left.length} objects outside the ship, totalling at an approximate value of $${left.reduce((a, i) => a + i.value, 0)}.\n`);
       }
       case 'quota': return this.print(`Profit quota: $${g.quotaFulfilled} / $${g.quota}\nScrap on ship: $${g.items.scrapValueOnShip()}\nDays until deadline: ${g.daysLeft}\nCompany buying rate: ${Math.round(g.world.buyingRate() * 100)}%\nCredits: $${g.credits}\n`);
+      case 'save': {
+        const code = encode(capture(g));
+        return this.print(`SAVE CODE
+${code}
+
+Write it down. LOAD <code> at any terminal brings back: ${describe(capture(g))}.
+`);
+      }
+      case 'load': {
+        const st = decode(rest);
+        if (!rest) return this.print('Load what? Type LOAD followed by a save code.\n');
+        if (!st) return this.print('That is not a valid save code (check the digits).\n');
+        restore(g, st).then(notes => this.print(`Save code accepted: ${describe(st)}.
+${notes.length ? notes.join(', ') + '.\n' : ''}`));
+        return;
+      }
       case 'clear': return this.clear();
       case 'exit': return this.hide();
       case 'view': return this.print('The ship monitor is not available in this build.\n');

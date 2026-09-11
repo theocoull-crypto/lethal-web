@@ -1,4 +1,5 @@
 // In-game settings (Esc): brightness, light gain, shadows, FOV, sensitivity, volume, pixel filter, grain. Saved in localStorage.
+import { encode, decode, capture, restore, describe } from './savecode.js';
 const $ = id => document.getElementById(id);
 const DEFAULTS = { exposure: 1.15, lightGain: 1.0, shadows: 1, fov: 75, sensitivity: 1.0, volume: 0.9, pixel: true, pixelSize: 2, grain: true, bloom: true, grade: true };
 
@@ -41,6 +42,7 @@ export class Settings {
       input.addEventListener('input', () => { this.v[key] = type === 'check' ? input.checked : parseFloat(input.value); show(); this.apply(); this.save(); });
       row.appendChild(input); row.appendChild(val); box.appendChild(row); show();
     }
+    this._buildSaveRows(box);
     $('btn-settings-close').onclick = () => this.hide();
     $('btn-settings-reset').onclick = () => { this.v = Object.assign({}, DEFAULTS); this.save(); this._build(); this.apply(); };
     $('btn-settings-menu').onclick = () => { this.hide(); this.game.backToMenu(); };
@@ -70,9 +72,35 @@ export class Settings {
     if (this._lastShadows !== g.shadowsOn) { g.scene.traverse(o => { if (o.isMesh && o.material) o.material.needsUpdate = true; }); this._lastShadows = g.shadowsOn; }
   }
 
+  /** save code rows: the code for the current run (copy it), and a field to load one */
+  _buildSaveRows(box) {
+    const mk = (label, placeholder, readonly) => {
+      const row = document.createElement('div'); row.className = 'srow';
+      const lab = document.createElement('label'); lab.textContent = label;
+      const input = document.createElement('input'); input.type = 'text'; input.spellcheck = false; input.autocomplete = 'off'; input.placeholder = placeholder; if (readonly) input.readOnly = true;
+      input.addEventListener('keydown', e => e.stopPropagation());
+      const btn = document.createElement('button'); btn.className = 'dbtn';
+      row.appendChild(lab); row.appendChild(input); row.appendChild(btn); box.appendChild(row);
+      return { row, input, btn };
+    };
+    const save = mk('Save code', '', true); save.btn.textContent = 'Copy';
+    save.input.addEventListener('focus', () => save.input.select());
+    save.btn.onclick = () => { save.input.select(); try { navigator.clipboard.writeText(save.input.value); } catch (e) { document.execCommand('copy'); } save.btn.textContent = 'Copied'; setTimeout(() => { save.btn.textContent = 'Copy'; }, 1200); };
+    const load = mk('Load code', 'paste a save code', false); load.btn.textContent = 'Load';
+    const note = document.createElement('div'); note.className = 'menu-foot'; note.textContent = 'The code holds credits, quota, upgrades, furniture and tools. Nothing else is saved.'; box.appendChild(note);
+    load.btn.onclick = () => {
+      const st = decode(load.input.value);
+      if (!st) { note.textContent = 'That is not a valid save code.'; return; }
+      note.textContent = 'Loading...';
+      restore(this.game, st).then(notes => { note.textContent = 'Loaded: ' + describe(st) + '.'; save.input.value = encode(capture(this.game)); load.input.value = ''; });
+    };
+    this.saveInput = save.input; this.saveNote = note;
+  }
+
   show() {
     if (this.open) return;
     this.open = true; this.el.classList.remove('hidden');
+    if (this.saveInput && this.game.state === 'play') { try { this.saveInput.value = encode(capture(this.game)); } catch (e) { this.saveInput.value = ''; } }
     document.exitPointerLock();
     this.game.player.keys = {};
     this.game.paused = true;

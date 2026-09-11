@@ -118,6 +118,8 @@ button, input, select { font-family: inherit; }
 .srow input[type=range] { width: 100%; accent-color: var(--lc-orange); }
 .srow input[type=checkbox] { width: 17px; height: 17px; accent-color: var(--lc-orange); }
 .srow select { width: 100%; padding: 5px; border: 1px solid #74402b; background: #120d0a; color: var(--lc-paper); }
+.srow input[type=text] { width: 100%; padding: 5px 6px; border: 1px solid #74402b; background: #120d0a; color: var(--lc-paper); font: inherit; font-family: ui-monospace, Consolas, monospace; letter-spacing: .5px; }
+.srow .dbtn { justify-self: end; }
 .sval { color: var(--lc-orange); font-size: 12px; text-align: right; }
 .settings-btns { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 17px; }
 .settings-btns .menu-btn { min-width: auto; padding: 7px 12px; font-size: 15px; }

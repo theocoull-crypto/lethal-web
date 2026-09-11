@@ -43,6 +43,10 @@ item, RMB scan, F flashlight.
   `python tools/load_mod_bundle.py <newship>` then `python tools/pack_wider_ship.py`) replace the vanilla hull, and the
   props its plugin relocates (ladders, charge station, magnet, machinery, lamps, door panel) move the same way. The
   upgrade is remembered in the browser. Nothing from the mod is in this repository; download it yourself.
+* Save codes: `save` at the terminal (or the Esc menu) prints one number that holds everything that matters -
+  credits, quota progress, days left, the day count, the ship upgrade, how many of each furniture piece and tool you
+  own - with two check digits on the end. `load <code>` brings it all back; furniture returns to free deck spots.
+  Nothing is written anywhere: the code is the save. Positions, the current moon and the time of day are not in it.
 * The Company building: `route company` at the terminal, land, put scrap on the counter, ring the bell. Scrap is
   bought at the game's rate (30% three days out, 100% on the last day) and only sold scrap counts toward the quota.
 * Ladders on the moon and the ship can be climbed. Dying makes the ship leave without you.
