@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>LETHAL WEB</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #020302;
+    }
+
+    #game {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #020302;
+    }
+
+    #fallback {
+      position: fixed;
+      right: 10px;
+      bottom: 10px;
+      z-index: 2;
+      padding: 7px 10px;
+      border: 1px solid #716b4d;
+      color: #e8dfb0;
+      background: rgba(8, 10, 7, .88);
+      font: 12px monospace;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <iframe
+    id="game"
+    src="https://theocoull-crypto.github.io/lethal-web/?embed=1"
+    title="LETHAL WEB"
+    allow="autoplay; fullscreen; gamepad"
+    allowfullscreen></iframe>
+
+  <a id="fallback" href="https://theocoull-crypto.github.io/lethal-web/" target="_blank">OPEN DIRECTLY</a>
+</body>
+</html>

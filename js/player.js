@@ -21,6 +21,10 @@ export class Player {
     this.carryWeight = 0;
     this.fallSpeed = 0; this.airTime = 0;
     this.keys = {}; this.mouse = { dx: 0, dy: 0 };
+    // Google Apps Script serves pages inside a sandbox that does not grant Pointer Lock.
+    // The hosted game adds ?embed=1 there, so keep controls usable with ordinary mouse
+    // movement and the arrow keys while leaving normal browser play unchanged.
+    this.embedded = new URLSearchParams(location.search).get('embed') === '1';
     this.bob = 0; this.bobAmp = 0;
     this.stepTimer = 0;
     this.locked = false;
@@ -38,19 +42,27 @@ export class Player {
     addEventListener('keydown', e => {
       if (e.code === 'Tab' || e.code === 'F5' || e.code === 'F12') return;
       this.keys[e.code] = true;
-      if (this.locked && this.inputEnabled) { this.game.onKey(e.code, true); if (['Space', 'KeyE', 'KeyG', 'KeyF', 'KeyQ'].includes(e.code)) e.preventDefault(); }
+      if (this.embedded && e.code === 'Escape' && this.game.state === 'play' && this.game.settings) { this.game.settings.toggle(); e.preventDefault(); return; }
+      if (this.locked && this.inputEnabled) { this.game.onKey(e.code, true); if (['Space', 'KeyE', 'KeyG', 'KeyF', 'KeyQ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault(); }
     });
     addEventListener('keyup', e => { this.keys[e.code] = false; this.game.onKey(e.code, false); });
     addEventListener('blur', () => { this.keys = {}; });
-    addEventListener('mousemove', e => { if (this.locked) { this.mouse.dx += e.movementX; this.mouse.dy += e.movementY; } });
+    addEventListener('mousemove', e => { if (this.locked && (this.embedded || document.pointerLockElement === c)) { this.mouse.dx += e.movementX; this.mouse.dy += e.movementY; } });
     addEventListener('mousedown', e => { if (this.locked && this.inputEnabled) this.game.onMouse(e.button, true); });
     addEventListener('mouseup', e => { if (this.locked) this.game.onMouse(e.button, false); });
     addEventListener('wheel', e => { if (this.locked) this.game.onWheel(Math.sign(e.deltaY)); }, { passive: true });
-    document.addEventListener('pointerlockchange', () => { this.locked = document.pointerLockElement === c; this.game.onLockChange(this.locked); });
-    c.addEventListener('click', () => { if (!this.locked && this.game.wantsLock) { try { const r = c.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch (e) { } } });
+    document.addEventListener('pointerlockchange', () => { if (this.embedded) return; this.locked = document.pointerLockElement === c; this.game.onLockChange(this.locked); });
+    c.addEventListener('click', () => {
+      if (this.embedded) { c.focus(); return; }
+      if (!this.locked && this.game.wantsLock) { try { const r = c.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch (e) { } }
+    });
   }
 
-  lock() { this.game.wantsLock = true; try { const r = this.game.renderer.domElement.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch (e) { } }
+  lock() {
+    this.game.wantsLock = true;
+    if (this.embedded) { this.locked = true; this.game.renderer.domElement.focus(); this.game.onLockChange(true); return; }
+    try { const r = this.game.renderer.domElement.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch (e) { }
+  }
 
   get eyeHeight() { return this.height + this.eyeOffset; }
   get eye() { return _v.copy(this.pos).add(new THREE.Vector3(0, this.eyeHeight, 0)); }
@@ -118,6 +130,11 @@ export class Player {
     if (this.locked && this.inputEnabled) {
       this.yaw -= this.mouse.dx * this.lookSensitivity;
       this.pitch -= this.mouse.dy * this.lookSensitivity;
+      if (this.embedded) {
+        const keyLook = 1.8 * dt;
+        if (k.ArrowLeft) this.yaw += keyLook; if (k.ArrowRight) this.yaw -= keyLook;
+        if (k.ArrowUp) this.pitch += keyLook; if (k.ArrowDown) this.pitch -= keyLook;
+      }
       this.pitch = Math.max(-1.5, Math.min(1.5, this.pitch));
     }
     this.mouse.dx = this.mouse.dy = 0;

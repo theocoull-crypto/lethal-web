@@ -4,18 +4,18 @@ A three-moon, single-player "demo" of Lethal Company that runs in a browser (thr
 assets** - the ship, 41-Experimentation, 220-Assurance, 8-Titan, the Company building, the facility and mineshaft
 tiles, scrap, hazards and monsters.
 
-**Private personal build. Do not make this repository public.** Lethal Company and its assets belong to Zeekerss.
-This private copy includes the already-converted runtime files in `./assets` so the owner's Chromebook can run it
-without installing the Windows game. `tools/extract.py` remains available for rebuilding those files from an owned
-Steam installation.
+**Unofficial, noncommercial fan build.** Lethal Company and its assets belong to Zeekerss; this project is not
+affiliated with or endorsed by the developer. This copy includes already-converted runtime files in `./assets` so it
+can run on a Chromebook without installing the Windows game. `tools/extract.py` remains available for rebuilding
+those files from an owned Steam installation.
 
 ## Play
 
-The bundled private build does not require Lethal Company to be installed.
+The bundled web build does not require Lethal Company to be installed.
 
 On Windows, run `START.bat` and open http://localhost:8220 in Chrome.
 
-On a Chromebook, enable the Linux development environment, sign in to GitHub, open this private repository, choose
+On a Chromebook, enable the Linux development environment, open this repository, choose
 **Code -> Download ZIP**, and extract it in Downloads. Then open Terminal and run:
 
 ```sh
@@ -26,6 +26,16 @@ python3 serve.py 8220 --no-browser
 Then open http://localhost:8220 in Chrome. If the extracted folder has a different name, use that name in the `cd`
 command. A command-line `git clone https://github.com/theocoull-crypto/lethal-web.git` also works after GitHub
 authentication has been configured in the Linux environment.
+
+### Public web and Google Apps Script
+
+The current build is published at https://theocoull-crypto.github.io/lethal-web/.
+
+To make a Google Apps Script web app that loads it, create a script project, copy
+`google-apps-script/Code.gs` and `google-apps-script/Index.html` into matching files, then choose **Deploy -> New
+deployment -> Web app**. The wrapper loads the GitHub Pages build full-screen. Google sandboxes Apps Script pages,
+so embedded mode also supports the arrow keys for looking around; **Open directly** launches the normal pointer-lock
+version.
 
 To rebuild the extracted game files later, run `python tools/extract.py` on a Windows PC that owns Lethal Company.
 It finds the Steam installation, downloads the official [AssetRipper](https://github.com/AssetRipper/AssetRipper)
@@ -39,8 +49,7 @@ item, RMB scan, F flashlight.
 To stream the installed copy without cloning it, run `START-LAN.bat` instead of `START.bat` - it listens on every
 network interface and prints the addresses to open on the other device
 (`http://<this PC's IP>:8220`). Same Wi-Fi works directly; from anywhere else, Tailscale on both devices does it
-(use the `100.x.x.x` address it prints). Allow Python through the Windows firewall when asked. Keep this repository
-private and do not put `assets/` on a public host: it is game content extracted from the owner's copy.
+(use the `100.x.x.x` address it prints). Allow Python through the Windows firewall when asked.
 
 ## What is in the demo
 
@@ -65,7 +74,7 @@ private and do not put `assets/` on a public host: it is game content extracted 
   floor, catwalk, posters and inner-wall beams (packed from the mod's `newship` bundle with
   `python tools/load_mod_bundle.py <newship>` then `python tools/pack_wider_ship.py`) replace the vanilla hull, and the
   props its plugin relocates (ladders, charge station, magnet, machinery, lamps, door panel) move the same way. The
-  upgrade is remembered in the browser. The converted runtime files used by this private build are bundled in
+  upgrade is remembered in the browser. The converted runtime files used by this web build are bundled in
   `assets/`.
 * Save codes: `save` at the terminal (or the Esc menu) prints one number that holds everything that matters -
   credits, quota progress, days left, the day count, the ship upgrade, how many of each furniture piece and tool you
@@ -91,7 +100,7 @@ private and do not put `assets/` on a public host: it is game content extracted 
   `set AR_PREFIX=sh && python tools/pack_mod_interior.py catalog_slaughterhouse.json catalog_titan.json` packs its
   DunGen flow, tiles and doorway parts into the moon's catalog, and `python tools/load_game.py` puts the game back.
   The mod's own scripts (custom events, hazards) do not come across; its rooms, doors, lights, vents and scrap spawns
-  do. The converted runtime files used by this private build are bundled in `assets/`.
+  do. The converted runtime files used by this web build are bundled in `assets/`.
 * Post-processing: light bloom and a cold colour grade (both toggles in Settings), darker facility ambience so lamps and
   the flashlight carry the scene.
 * The facility is generated every day from the game's own DunGen tile set (`Level1Flow`): real doorway sockets, tile
