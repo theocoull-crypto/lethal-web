@@ -156,6 +156,8 @@ class Game {
     $('btn-menu-settings').onclick = () => { this.settings.show(); };
     $('btn-menu-controls').onclick = () => { $('menu-controls').classList.toggle('hidden'); };
     this.state = 'menu'; this.ready = true;
+    // a restart from the Esc menu reloads the page and jumps straight back into a new run
+    try { if (sessionStorage.getItem('lethalweb.autostart')) { sessionStorage.removeItem('lethalweb.autostart'); this.startGame(); } } catch (e) { }
     this.startMenuMusic();
     this.shipmods = new WiderShip(this); this.shipmods.load(); await this.shipmods.apply();
     this.spawnPlayerInShip();
@@ -284,6 +286,12 @@ class Game {
     if (!locked && this.state === 'play' && !(this.terminal && this.terminal.open) && this.settings && !this.settings.open && !(this.debug && this.debug.open) && !this._suppressSettings) this.settings.show();
     this._suppressSettings = false;
   }
+  /** start over: wipe the saved furniture layout and ship upgrade, reload, and begin a new run */
+  restartRun() {
+    try { localStorage.removeItem('lethalweb.decor'); localStorage.removeItem('lethalweb.ship'); sessionStorage.setItem('lethalweb.autostart', '1'); } catch (e) { }
+    location.reload();
+  }
+
   backToMenu() {
     this.state = 'menu'; this.hud.show(false); document.exitPointerLock();
     $('menu').classList.remove('hidden');

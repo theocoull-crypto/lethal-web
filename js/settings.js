@@ -46,6 +46,12 @@ export class Settings {
     $('btn-settings-close').onclick = () => this.hide();
     $('btn-settings-reset').onclick = () => { this.v = Object.assign({}, DEFAULTS); this.save(); this._build(); this.apply(); };
     $('btn-settings-menu').onclick = () => { this.hide(); this.game.backToMenu(); };
+    // restart: a fresh run (credits, quota, furniture and the ship upgrade all reset) - asks once
+    const rb = $('btn-settings-restart'); let armed = null;
+    rb.onclick = () => {
+      if (armed) { clearTimeout(armed); armed = null; rb.textContent = '> Restarting...'; this.game.restartRun(); return; }
+      rb.textContent = '> Really restart? Click again'; armed = setTimeout(() => { armed = null; rb.textContent = '> Restart run'; }, 4000);
+    };
   }
 
   save() { try { localStorage.setItem('lethalweb.settings', JSON.stringify(this.v)); } catch (e) { } }
