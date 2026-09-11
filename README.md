@@ -1,7 +1,7 @@
 # LETHAL WEB
 
 A three-moon, single-player "demo" of Lethal Company that runs in a browser (three.js), built from the **real game's own
-assets** - the ship, 41-Experimentation, 220-Assurance, 61-March, the Company building, the facility and mineshaft
+assets** - the ship, 41-Experimentation, 220-Assurance, 8-Titan, the Company building, the facility and mineshaft
 tiles, scrap, hazards and monsters - pulled straight out of *your* Steam install at extraction time.
 
 **No game content is in this repository.** Lethal Company belongs to Zeekerss. You need to own the game on Steam;
@@ -32,12 +32,13 @@ item, RMB scan, F flashlight.
 * The game's low-resolution "pixel" look is reproduced (internal render at 520 lines, nearest-neighbour upscale, grain).
   Press **P** to toggle it.
 
-* The company ship in orbit; route to **41-Experimentation**, **220-Assurance** or **61-March** at the terminal and pull
+* The company ship in orbit; route to **41-Experimentation**, **220-Assurance** or **8-Titan** at the terminal and pull
   the lever to land (the real moon geometry, sky and ambience). Each moon uses its own scrap table, enemy list and spawn
-  budgets. March is flooded: deep water drowns you, like the game.
-* Two interiors, rolled with the game's own odds per moon: the **facility** (March gets the three-exit variant) and the
-  **mineshaft** (Assurance ~12%, Experimentation ~1%) with its elevator - ride it down to the tunnels and caves, call it
-  back from either landing. The F3 debug menu can force an interior.
+  budgets. All routes are free here. Moons whose ground is a Unity terrain heightmap (March, Vow, Rend, Dine...) are not
+  supported yet: the extractor only exports meshes.
+* Two interiors, rolled with the game's own odds per moon: the **facility** and the **mineshaft** (Titan ~24%,
+  Assurance ~12%, Experimentation ~1%) with its elevator - ride it down to the tunnels and caves, call it back from
+  either landing. The F3 debug menu can force an interior.
 * Post-processing: light bloom and a cold colour grade (both toggles in Settings), darker facility ambience so lamps and
   the flashlight carry the scene.
 * The facility is generated every day from the game's own DunGen tile set (`Level1Flow`): real doorway sockets, tile

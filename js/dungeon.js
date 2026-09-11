@@ -40,8 +40,8 @@ export class Dungeon {
 
   async load() {
     const get = (file, what) => fetch(file).then(r => { if (!r.ok) throw new Error(what + ' assets are missing; run tools\extract.bat again.'); return r.json(); });
-    const [experimentation, assurance, march] = await Promise.all([get('assets/catalog.json', 'Experimentation'), get('assets/catalog_assurance.json', 'Assurance'), get('assets/catalog_march.json', 'March')]);
-    this.catalogs = { experimentation, assurance, march };
+    const [experimentation, assurance, titan] = await Promise.all([get('assets/catalog.json', 'Experimentation'), get('assets/catalog_assurance.json', 'Assurance'), get('assets/catalog_titan.json', 'Titan')]);
+    this.catalogs = { experimentation, assurance, titan };
     await Promise.all(Object.values(this.catalogs).map(c => this._primeCatalog(c)));
     this.catalog = experimentation;
   }

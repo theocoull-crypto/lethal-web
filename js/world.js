@@ -12,7 +12,7 @@ const SHIP_LANDED_LOCAL = new THREE.Vector3(-18.71032, -7.326942, 8.971304);
 const MOON_DEFS = [
   { key: 'moon', asset: 'experimentation', name: '41-EXPERIMENTATION', catalog: 'experimentation' },
   { key: 'assurance', asset: 'assurance', name: '220-ASSURANCE', catalog: 'assurance' },
-  { key: 'march', asset: 'march', name: '61-MARCH', catalog: 'march' },
+  { key: 'titan', asset: 'titan', name: '8-TITAN', catalog: 'titan', fogDay: 0x8e9299, fogDusk: 0x4a4550, sunDay: 0xe8ecf4, hemiSky: 0xb8c0cc, fogScale: 0.75 },
 ];
 
 export class World {
@@ -39,7 +39,7 @@ export class World {
     this.ladders = [];
     this.anims = {};
     this.shipLandingPos = new THREE.Vector3();
-    this.destination = 'moon';      // moon | assurance | march | company
+    this.destination = 'moon';      // moon | assurance | titan | company
     this.companyRoot = new THREE.Group(); this.companyRoot.name = 'CompanyRoot'; this.scene.add(this.companyRoot);
     this.company = null; this.companyCollider = null; this.companyLights = [];
     this.desk = null;
@@ -461,13 +461,16 @@ export class World {
     const night = THREE.MathUtils.smoothstep(f, 0.7, 0.9);
     const az = -0.8 + f * 2.6;
     this.sun.position.set(Math.cos(az) * 120, Math.max(0.03, elev) * 150, Math.sin(az) * 120).add(this.sunTarget.position);
-    const dayCol = new THREE.Color(0xffe2c0), duskCol = new THREE.Color(0xd06a3a), nightCol = new THREE.Color(0x1a2038);
+    const moon = this.atCompany ? null : this.activeMoon;
+    const dayCol = new THREE.Color(moon && moon.sunDay ? moon.sunDay : 0xffe2c0), duskCol = new THREE.Color(0xd06a3a), nightCol = new THREE.Color(0x1a2038);
     this.sun.color.copy(dayCol.clone().lerp(duskCol, dusk).lerp(nightCol, night));
     this.sun.intensity = orbit ? 2.0 : (1.4 * Math.max(0, elev) + 0.15) * (1 - night * 0.97);
-    const fogDay = new THREE.Color(0x5e5048), fogDusk = new THREE.Color(0x3f2b24), fogNight = new THREE.Color(0x07080b);
+    const fogDay = new THREE.Color(moon && moon.fogDay ? moon.fogDay : 0x5e5048), fogDusk = new THREE.Color(moon && moon.fogDusk ? moon.fogDusk : 0x3f2b24), fogNight = new THREE.Color(0x07080b);
     const fog = fogDay.clone().lerp(fogDusk, dusk).lerp(fogNight, night);
+    const fogScale = moon && moon.fogScale ? moon.fogScale : 1;
     if (orbit) { this.scene.fog.density = 0.0; this.scene.background.set(0x000004); this.stars.visible = true; this.planet.visible = true; }
-    else { this.scene.fog.color.copy(fog); this.scene.fog.density = 0.011 + night * 0.006; this.scene.background.copy(fog); this.stars.visible = night > 0.6; this.planet.visible = false; }
+    else { this.scene.fog.color.copy(fog); this.scene.fog.density = (0.011 + night * 0.006) * fogScale; this.scene.background.copy(fog); this.stars.visible = night > 0.6; this.planet.visible = false; }
+    if (this.hemi) this.hemi.color.set(moon && moon.hemiSky ? moon.hemiSky : 0x8a7e78);
     if (this.game.inside) { this.scene.fog.color.set(0x030303); this.scene.fog.density = 0.028; this.scene.background.set(0x030303); this.stars.visible = false; this.planet.visible = false; }
     this.hemi.intensity = orbit ? 0.3 : this.game.inside ? 0.14 : 0.65 * (1 - night * 0.85) + 0.06;
     this.hemi.color.copy(new THREE.Color(0x9a8c84).lerp(new THREE.Color(0x202838), night));

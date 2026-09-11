@@ -119,6 +119,7 @@ export class AssetLib {
     if (name === 'HangarShipHull') { mat.color.setRGB(0.8, 0.8, 0.78, THREE.SRGBColorSpace); mat.roughness = 0.7; mat.metalness = 0.3; }
     if (/^(MarchWater|CaveWater|Water_mat)/.test(name)) { mat.color.setRGB(0.09, 0.16, 0.17, THREE.SRGBColorSpace); mat.transparent = true; mat.opacity = 0.78; mat.roughness = 0.12; mat.metalness = 0.0; mat.envMapIntensity = 0.9; mat.depthWrite = false; mat.side = THREE.DoubleSide; }
     if (/HDRP\/Decal/.test(shader)) { mat.visible = false; }   // projected decals (puddles, grime) are not supported
+    if (/LayeredLit/.test(shader) && !mat.map) { mat.color.setRGB(0.82, 0.84, 0.86, THREE.SRGBColorSpace); mat.roughness = 0.95; mat.metalness = 0; }   // splat-blended terrain: no layer blending here, read it as packed snow
     return mat;
   }
 

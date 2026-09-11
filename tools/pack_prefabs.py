@@ -21,6 +21,7 @@ LEVELS = {
     'experimentation': (34533, 'catalog.json'),
     'assurance': (34526, 'catalog_assurance.json'),
     'march': (34541, 'catalog_march.json'),
+    'titan': (34567, 'catalog_titan.json'),
 }
 level_key = (sys.argv[1].lower() if len(sys.argv) > 1 else 'experimentation')
 if level_key == 'moon':

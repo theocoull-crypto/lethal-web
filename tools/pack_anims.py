@@ -88,7 +88,7 @@ def kp(aid):
 
 
 index = {}
-files = glob.glob(os.path.join(ASSETS, 'prefabs', '*.json')) + [os.path.join(ASSETS, 'scenes', 'ship.json'), os.path.join(ASSETS, 'scenes', 'player.json'), os.path.join(ASSETS, 'scenes', 'company.json'), os.path.join(ASSETS, 'scenes', 'experimentation.json'), os.path.join(ASSETS, 'scenes', 'assurance.json'), os.path.join(ASSETS, 'scenes', 'march.json')]
+files = glob.glob(os.path.join(ASSETS, 'prefabs', '*.json')) + [os.path.join(ASSETS, 'scenes', 'ship.json'), os.path.join(ASSETS, 'scenes', 'player.json'), os.path.join(ASSETS, 'scenes', 'company.json'), os.path.join(ASSETS, 'scenes', 'experimentation.json'), os.path.join(ASSETS, 'scenes', 'assurance.json'), os.path.join(ASSETS, 'scenes', 'march.json'), os.path.join(ASSETS, 'scenes', 'titan.json')]
 for f in files:
     m = json.load(open(f, encoding='utf-8'))
     for n in m['nodes']:

@@ -130,9 +130,27 @@ class AR:
             return (key, pid)
         c = self.coll(key)
         dep = c.deps.get(fid)
+        if dep is None and fid == 1 and c.name.endswith('(Generated Assets)'):
+            dep = self._scene_dep(key)
+            if dep is not None:
+                c.deps[fid] = dep
         if dep is None:
             return None
         return (dep, pid)
+
+    def _scene_dep(self, key):
+        """Some '(Generated Assets)' scene collections come with an empty dependency table; their objects live in the
+        'levelN' collection with exactly the same number of GameObjects as the scene hierarchy lists."""
+        try:
+            n = len(self.json(key, 1).get('GameObjects') or [])
+        except Exception:
+            return None
+        for name, k in self.by_name.items():
+            if isinstance(k, tuple) and k[0] == () and name.startswith('level'):
+                cc = self.coll(k)
+                if sum(1 for v in cc.assets.values() if v[0] == 'GameObject') == n:
+                    return k
+        return None
 
     def cls(self, key, pid):
         return self.coll(key).assets.get(pid, ('?', '?'))[0]
