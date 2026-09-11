@@ -119,6 +119,9 @@ export class AssetLib {
     if (name === 'HangarShipHull') { mat.color.setRGB(0.8, 0.8, 0.78, THREE.SRGBColorSpace); mat.roughness = 0.7; mat.metalness = 0.3; }
     if (/^(MarchWater|CaveWater|Water_mat)/.test(name)) { mat.color.setRGB(0.09, 0.16, 0.17, THREE.SRGBColorSpace); mat.transparent = true; mat.opacity = 0.78; mat.roughness = 0.12; mat.metalness = 0.0; mat.envMapIntensity = 0.9; mat.depthWrite = false; mat.side = THREE.DoubleSide; }
     if (/HDRP\/Decal/.test(shader)) { mat.visible = false; }   // projected decals (puddles, grime) are not supported
+    if (name === 'metal_06_M_Inst') {   // the Slaughterhouse stair metal is a near-flat grey; use its own diamond-plate texture so the steps read
+      try { mat.map = this.texture('shg0_-5612978485270795831', 'color', [2, 2], [0, 0]); mat.normalMap = this.texture('shg0_3054774846283771768', 'normal', [2, 2], [0, 0]); mat.normalScale.set(0.8, 0.8); mat.roughness = 0.55; mat.metalness = 0.35; } catch (e) { }
+    }
     if (/LayeredLit/.test(shader)) {   // splat-blended terrain: its base map is a placeholder and the real layers are not blended here, so lay the moon's tiled snow over it
       try { mat.map = this.texture('b18_20', 'color', [90, 90], [0, 0]); mat.normalMap = this.texture('b19_460', 'normal', [90, 90], [0, 0]); mat.normalScale.set(0.6, 0.6); mat.maskMap = null; mat.roughnessMap = null; mat.metalnessMap = null; mat.aoMap = null; } catch (e) { }
       mat.color.setRGB(0.9, 0.92, 0.95, THREE.SRGBColorSpace); mat.roughness = 0.95; mat.metalness = 0;

@@ -174,7 +174,7 @@ class Game {
 
   _updateLights() {
     const inside = this.inside, lit = this.world.lightsOn;
-    if (this.world.hemi) { this.world.hemi.intensity = inside ? 0.3 : 0.6; this.world.ambient.intensity = inside ? 0.16 : 0.35; }
+    if (this.world.hemi) { this.world.hemi.intensity = inside ? 0.09 : 0.6; this.world.ambient.intensity = inside ? 0.045 : 0.35; }   // inside: only the lamps and your flashlight really light things
     for (const s of this.lightSources) {
       if (s.area === 'inside') { s.enabled = inside; continue; }
       s.enabled = !inside && (s.area === 'ship' || (!this.world.inOrbit && s.area === this.world.destination));
@@ -564,7 +564,7 @@ The ship will leave without you.`);
       if (this.flashlightOn && this.items.flashlightBattery() <= 0) this.flashlightOn = false;
       const on = this.flashlightOn && this.items.hasFlashlight() && this.state === 'play';
       this.flash.intensity += ((on ? 105 : 0) - this.flash.intensity) * Math.min(1, dt * 14);
-      this.nearLight.intensity = this.inside ? 0.3 : 0.1;
+      this.nearLight.intensity = this.inside ? 0.06 : 0.1;
       this.sound.setListener(this.camera.position, new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion), new THREE.Vector3(0, 1, 0).applyQuaternion(this.camera.quaternion));
       this.hud.update(dt);
     }

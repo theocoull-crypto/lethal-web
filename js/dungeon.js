@@ -288,6 +288,7 @@ export class Dungeon {
       this.root.add(inst.root);
       inst.root.updateMatrixWorld(true);
       t.obj = inst.root; t.inst = inst;
+      this._collectHazards(inst);
       // doorway scene objects
       for (const d of t.doorways) {
         const on = d.used ? d.def.connScene : d.def.blockScene, off = d.used ? d.def.blockScene : d.def.connScene;
@@ -461,6 +462,10 @@ export class Dungeon {
   }
 
   async _spawnSynced(s, tile) {
+    const sname = s.name || '';
+    // one main entrance, and no more fire exits than the flow's budget allows (some mod tiles carry spare spawners)
+    if (/^EntranceTeleportA/.test(sname) && this.entranceInside) return;
+    if (/^EntranceTeleportB/.test(sname)) { const g = (this.flow.GlobalProps || []).find(x => x.ID === 1231); const cap = g ? g.Count.Max : 99; if (this.fireExits.length >= cap) return; }
     const file = this.catalog.doorParts.find(f => f.endsWith('__' + s.prefab + '.json'));
     if (!file) return;
     const man = await this.prefab(file); if (!man) return;
@@ -480,6 +485,7 @@ export class Dungeon {
     }
     if (/^LungApparatus/.test(name)) this.game.items.registerApparatus(inst);
     if (/^MineshaftElevator/.test(name)) await this._setupElevator(inst);
+    this._collectHazards(inst);
     if (/^EntranceTeleportA/.test(name)) this._setupEntrance(inst, false);
     if (/^EntranceTeleportB/.test(name)) this._setupEntrance(inst, true);
   }
@@ -585,6 +591,31 @@ export class Dungeon {
   update(dt) {
     for (const d of this.doors) if (d.anim && d.anim.ready) d.anim.update(dt);
     this._updateElevator(dt);
+    // kill volumes: shaft pits, grinders, crushing doors
+    const p = this.game.player;
+    if (this.game.inside && !p.dead) {
+      for (const z of (this.killZones || [])) if (z.containsPoint(p.pos)) { p.damage(1000, 'fall'); break; }
+      if (!p.dead) for (const h of (this.hazardZones || [])) { let q = h.obj, on = true; while (q && q !== this.root) { if (q.visible === false) { on = false; break; } q = q.parent; } if (on && (h.box.containsPoint(p.pos) || h.box.containsPoint(p.eye))) { p.damage(1000, h.cause); break; } }
+    }
+  }
+
+  /** trigger boxes that hurt: the mod's DamageTrigger components and anything named KillTrigger */
+  _collectHazards(inst) {
+    this.hazardZones = this.hazardZones || [];
+    for (const [id, o] of inst.objs) {
+      const n = o.userData.node; if (!n) continue;
+      const dmg = n.comps.find(c => c.t === 'MB' && /(^|\.)DamageTrigger$/.test(c.cls || ''));
+      const isKill = /KillTrigger/.test(n.name);
+      if (!dmg && !isKill) continue;
+      // the mod arms door-crush triggers only while a door moves; without its scripts only the always-on ones (grinders, pits) count
+      if (dmg && !isKill && !(dmg.d && (dmg.d.continuousDamage || dmg.d.continuousRaycastDamage))) continue;
+      const box = n.comps.find(c => c.t === 'Box'); if (!box) continue;
+      o.updateMatrixWorld(true);
+      const pts = []; const c = box.c, s = box.s;
+      for (let i = 0; i < 8; i++) pts.push(o.localToWorld(new THREE.Vector3(c[0] + (i & 1 ? 0.5 : -0.5) * s[0], c[1] + (i & 2 ? 0.5 : -0.5) * s[1], c[2] + (i & 4 ? 0.5 : -0.5) * s[2])));
+      const cause = isKill ? 'fall' : (/grind/i.test(inst.root.name + ' ' + n.name) ? 'grinder' : 'crushed');
+      this.hazardZones.push({ obj: o, box: new THREE.Box3().setFromPoints(pts), cause });
+    }
   }
 
   // ---------- mineshaft elevator ----------
