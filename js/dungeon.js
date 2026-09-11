@@ -7,6 +7,15 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Animator } from './anim.js';
 
 const V = (o, mirror = true) => new THREE.Vector3(mirror ? -o.x : o.x, o.y, o.z);
+/** swap two corners of every triangle of a non-indexed geometry (after baking a mirroring matrix) */
+export function flipWinding(g) {
+  for (const name of Object.keys(g.attributes)) {
+    const at = g.attributes[name]; const a = at.array, n = at.itemSize;
+    for (let t = 0; t + 3 * n <= a.length; t += 3 * n) for (let k = 0; k < n; k++) { const i1 = t + n + k, i2 = t + 2 * n + k; const tmp = a[i1]; a[i1] = a[i2]; a[i2] = tmp; }
+    at.needsUpdate = true;
+  }
+  return g;
+}
 
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
@@ -103,7 +112,10 @@ export class Dungeon {
         if (c.cls === 'Doorway') {
           const m = worldOf(n); const pos = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3();
           m.decompose(pos, q, s);
-          const fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(q); fwd.y = 0; fwd.normalize();
+          // forward straight from the matrix: the mineshaft's cave tiles sit under mirrored (negative-scale) parents, which
+          // flips the doorway's facing in a way a decomposed quaternion cannot express - the old way sent caves the wrong way
+          const fwd = new THREE.Vector3(0, 0, 1).transformDirection(m); fwd.y = 0; fwd.normalize();
+          { const zA = fwd.clone(), yA = new THREE.Vector3(0, 1, 0), xA = new THREE.Vector3().crossVectors(yA, zA).normalize(); q.setFromRotationMatrix(new THREE.Matrix4().makeBasis(xA, yA, zA)); }
           doorways.push({
             node: n, pos, q, fwd, socket: (c.d.socket || {}).n || 'NormalDoor', priority: c.d.DoorPrefabPriority || 0,
             connectors: (c.d.ConnectorPrefabWeights || []).map(w => w.GameObject && w.GameObject.$).filter(Boolean),
@@ -201,7 +213,7 @@ export class Dungeon {
   async _generateOnce(rnd) {
     const flow = this.flow = this.pickFlow(rnd);
     // the game scales the flow's lengths by the moon's factory size multiplier (Titan 2.2); mod interiors clamp it
-    const moon = this.game.world.activeMoon; let sizeMul = (moon && moon.sizeMul) || 1;
+    const moon = this.game.world.activeMoon; let sizeMul = (moon && moon.sizeMul) || (this.catalog.level && this.catalog.level.factorySizeMultiplier) || 1;
     if (this.catalog.modInterior && this.catalog.modInterior.includes(flow.name) && this.catalog.extended) { const ex = this.catalog.extended; sizeMul = Math.min(ex.dungeonSizeMax || sizeMul, Math.max(ex.dungeonSizeMin || 1, sizeMul)); }
     this.sizeMul = sizeMul;
     const L = Math.round((flow.Length.Min + Math.floor(rnd() * (flow.Length.Max - flow.Length.Min + 1))) * sizeMul);
@@ -455,7 +467,9 @@ export class Dungeon {
       g.setAttribute('uv', o.geometry.attributes.uv || new THREE.BufferAttribute(new Float32Array(o.geometry.attributes.position.count * 2), 2));
       if (o.geometry.index) g.setIndex(o.geometry.index);
       const gg = g.toNonIndexed();
-      gg.applyMatrix4(new THREE.Matrix4().multiplyMatrices(rootInv, o.matrixWorld));
+      const mm = new THREE.Matrix4().multiplyMatrices(rootInv, o.matrixWorld);
+      gg.applyMatrix4(mm);
+      if (mm.determinant() < 0) flipWinding(gg);   // mirrored objects: keep the faces pointing outward once baked
       groups.get(key).geoms.push(gg);
       o.parent.remove(o);
     }

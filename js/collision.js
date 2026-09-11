@@ -29,7 +29,13 @@ export class Collider {
       const pos = g.attributes.position;
       const clean = new THREE.BufferGeometry();
       clean.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pos.array), 3));
-      if (matrix) clean.applyMatrix4(matrix);
+      if (matrix) {
+        clean.applyMatrix4(matrix);
+        if (matrix.determinant() < 0) {   // mirrored: swap two corners so the faces still point outward (the BVH is one-sided)
+          const a = clean.attributes.position.array;
+          for (let t = 0; t + 9 <= a.length; t += 9) for (let k = 0; k < 3; k++) { const tmp = a[t + 3 + k]; a[t + 3 + k] = a[t + 6 + k]; a[t + 6 + k] = tmp; }
+        }
+      }
       geoms.push(clean);
     }
     if (!geoms.length) { this.mesh = null; return this; }
@@ -100,7 +106,7 @@ export class Collider {
     if (!this.mesh || !this.enabled) return null;
     const w2l = this.worldToLocal();
     const ray = new THREE.Ray(origin.clone().applyMatrix4(w2l), dir.clone().transformDirection(w2l).normalize());
-    const hit = this.mesh.geometry.boundsTree.raycastFirst(ray, THREE.FrontSide);
+    const hit = this.mesh.geometry.boundsTree.raycastFirst(ray, THREE.DoubleSide);   // both faces: mirrored tiles and imported meshes wind either way
     if (!hit || hit.distance > far) return null;
     const l2w = this.localToWorld();
     hit.point.applyMatrix4(l2w);
