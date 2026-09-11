@@ -190,7 +190,8 @@ class Game {
     this.flash.castShadow = true; this.flash.shadow.mapSize.set(1024, 1024); this.flash.shadow.bias = -0.002; this.flash.shadow.camera.near = 0.2;
     this.flashTarget = new THREE.Object3D();
     this.camera.add(this.flash); this.camera.add(this.flashTarget);
-    this.flash.position.set(0.25, -0.2, 0.1); this.flashTarget.position.set(0, 0, -5); this.flash.target = this.flashTarget;
+    // the beam starts just past the torch head (the held model sits at z -0.55), so the torch itself is never inside its own light
+    this.flash.position.set(0.3, -0.28, -0.85); this.flashTarget.position.set(0.05, -0.1, -8); this.flash.target = this.flashTarget;
     this.nearLight = new THREE.PointLight(0xffffff, 0.0, 6, 2); this.camera.add(this.nearLight);
     this.nearLight.layers.enable(1);
     this.heldLight = new THREE.DirectionalLight(0xffffff, 0.35); this.heldLight.position.set(0.5, 1, 1); this.camera.add(this.heldLight); this.heldLight.target = this.camera; this.heldLight.layers.set(1);
