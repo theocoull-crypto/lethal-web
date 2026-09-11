@@ -234,12 +234,19 @@ export class Dungeon {
   async _attach(prev, entries, rnd, kind, depthF, index, branchF = 0) {
     const open = prev.doorways.filter(d => !d.used);
     if (!open.length) return null;
+    // drop tiles the repeat rules forbid before weighting, otherwise a heavy one-off tile (a start room at weight 500) eats every attempt
+    const pool = [];
+    for (const e of entries) {
+      const def = await this.tileDef(e.prefab); if (!def) continue;
+      if (def.repeat === 2 && this.placed.some(p => p.def === def)) continue;   // DunGen Disallow: once per dungeon
+      if (def.repeat === 1 && prev.def === def) continue;                      // DisallowImmediate
+      pool.push(e);
+    }
+    if (!pool.length) return null;
     for (let attempt = 0; attempt < 30; attempt++) {
-      const e = this.pickWeighted(entries, rnd, kind === 'main' ? 'main' : 'branch', kind === 'main' ? depthF : branchF);
+      const e = this.pickWeighted(pool, rnd, kind === 'main' ? 'main' : 'branch', kind === 'main' ? depthF : branchF);
       const def = await this.tileDef(e.prefab);
       if (!def) continue;
-      if (def.repeat === 2 && this.placed.some(p => p.def === def) && rnd() < 0.85) continue; // DisallowImmediate/ Disallow
-      if (def.repeat === 1 && prev.def === def) continue;
       const shuffled = open.slice().sort(() => rnd() - 0.5);
       for (const pd of shuffled) {
         const cands = def.doorways.filter(d => d.socket === pd.socket);
