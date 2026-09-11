@@ -174,6 +174,29 @@ class Packer:
                 return x
             return {(t['first'] if 'first' in t else list(t.keys())[0]): (t['second'] if 'second' in t else list(t.values())[0]) for t in x}
         te, fl, co = norm(te), norm(fl), norm(co)
+        # mesh-terrain shader graphs (e.g. Wither's MeshTerrainLit): up to 8 tiled albedo layers weighted by two RGBA splatmaps
+        if isinstance(te.get('_Splatmap_0'), dict) and isinstance(te.get('_Albedo_0'), dict):
+            layers, alphas = [], []
+            for i in range(8):
+                v = te.get('_Albedo_%d' % i)
+                r = self.ar.resolve(key, v.get('m_Texture')) if isinstance(v, dict) else None
+                if not r or self.ar.cls(*r) != 'Texture2D':
+                    layers.append(None); continue
+                taid = self.ar.aid(*r); self.textures[taid] = (r[0], r[1], 'color')
+                tl = co.get('_Tiling_%d' % i) or {}; of = co.get('_Offset_%d' % i) or {}; tn = co.get('_Color_Tint_%d' % i) or {}
+                layers.append({'name': self.ar.name(*r), 'map': taid, 'tile': [float(tl.get('m_R', 1) or 1), float(tl.get('m_G', 1) or 1)], 'offset': [float(of.get('m_R', 0)), float(of.get('m_G', 0))],
+                               'tint': [float(tn.get('m_R', 1)), float(tn.get('m_G', 1)), float(tn.get('m_B', 1))]})
+            while layers and layers[-1] is None:
+                layers.pop()
+            for i in range(2):
+                v = te.get('_Splatmap_%d' % i)
+                r = self.ar.resolve(key, v.get('m_Texture')) if isinstance(v, dict) else None
+                if r and self.ar.cls(*r) == 'Texture2D':
+                    taid = self.ar.aid(*r); self.textures[taid] = (r[0], r[1], 'color'); alphas.append(taid)
+            if alphas and any(layers):
+                m = {'name': mj.get('m_Name'), 'shader': 'Terrain', 'uvTiling': True, 'flipAlphaV': False, 'size': [1, 1], 'layers': layers, 'alphas': alphas, 'color': [1, 1, 1, 1]}
+                self.materials[aid] = m
+                return m
         m = {'name': mj.get('m_Name'), 'shader': shader, 'queue': mj.get('m_CustomRenderQueue', -1), 'keywords': mj.get('m_ValidKeywords', [])}
         def tex(slot, role):
             v = te.get(slot)
@@ -258,7 +281,7 @@ class Packer:
             taid = self.ar.aid(*r)
             self.textures[taid] = (r[0], r[1], 'color')
             alphas.append(taid)
-        self.materials['terrain:' + tid] = {'name': 'terrain ' + (td.get('m_Name') or ''), 'shader': 'Terrain', 'size': [(res - 1) * sx, (res - 1) * sz], 'height': sy, 'res': res,
+        self.materials['terrain:' + tid] = {'name': 'terrain ' + (td.get('m_Name') or ''), 'shader': 'Terrain', 'uvTiling': False, 'flipAlphaV': True, 'size': [(res - 1) * sx, (res - 1) * sz], 'height': sy, 'res': res,
                                             'layers': layers, 'alphas': alphas, 'color': [1, 1, 1, 1]}
         print('   terrain', td.get('m_Name'), res, 'x', res, 'layers', len(layers), 'alphamaps', len(alphas))
         return tid

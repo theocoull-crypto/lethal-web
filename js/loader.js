@@ -79,7 +79,7 @@ export class AssetLib {
   terrainMaterial(d, id) {
     const mat = new THREE.MeshStandardMaterial({ name: d.name || 'terrain', roughness: 0.95, metalness: 0 });
     const size = d.size || [1000, 1000];
-    const layers = (d.layers || []).slice(0, 6);
+    const layers = (d.layers || []).slice(0, 8);
     const alphas = (d.alphas || []).slice(0, 2);
     const alphaTex = alphas.map(aid => { const t = this.texture(aid, 'data'); t.colorSpace = THREE.NoColorSpace; t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; return t; });
     const layTex = layers.map(l => l ? this.texture(l.map, 'color') : null);
@@ -87,27 +87,30 @@ export class AssetLib {
     mat.envMapIntensity = 0.3;
     const u = {};
     for (let i = 0; i < 2; i++) u['tAlpha' + i] = { value: alphaTex[i] || alphaTex[0] || null };
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 8; i++) {
       const l = layers[i];
       u['tLay' + i] = { value: layTex[i] || layTex.find(Boolean) || null };
-      u['uTile' + i] = { value: l ? new THREE.Vector2(size[0] / (l.tile[0] || 1), size[1] / (l.tile[1] || 1)) : new THREE.Vector2(1, 1) };
+      // Unity terrains tile by world size / tile size; mesh-terrain graphs tile the mesh UVs directly
+      u['uTile' + i] = { value: l ? (d.uvTiling ? new THREE.Vector2(l.tile[0] || 1, l.tile[1] || 1) : new THREE.Vector2(size[0] / (l.tile[0] || 1), size[1] / (l.tile[1] || 1))) : new THREE.Vector2(1, 1) };
       u['uTint' + i] = { value: l ? new THREE.Color(l.tint[0], l.tint[1], l.tint[2]) : new THREE.Color(1, 1, 1) };
     }
     const n = layers.length;
+    const flipV = d.flipAlphaV !== false;
     mat.onBeforeCompile = sh => {
       Object.assign(sh.uniforms, u);
       sh.fragmentShader = sh.fragmentShader
         .replace('#include <map_pars_fragment>', `#include <map_pars_fragment>
-uniform sampler2D tAlpha0, tAlpha1, tLay0, tLay1, tLay2, tLay3, tLay4, tLay5;
-uniform vec2 uTile0, uTile1, uTile2, uTile3, uTile4, uTile5;
-uniform vec3 uTint0, uTint1, uTint2, uTint3, uTint4, uTint5;`)
+uniform sampler2D tAlpha0, tAlpha1, tLay0, tLay1, tLay2, tLay3, tLay4, tLay5, tLay6, tLay7;
+uniform vec2 uTile0, uTile1, uTile2, uTile3, uTile4, uTile5, uTile6, uTile7;
+uniform vec3 uTint0, uTint1, uTint2, uTint3, uTint4, uTint5, uTint6, uTint7;`)
         .replace('#include <map_fragment>', `
-vec2 suv = vec2(vMapUv.x, 1.0 - vMapUv.y);
+vec2 suv = ${flipV ? 'vec2(vMapUv.x, 1.0 - vMapUv.y)' : 'vMapUv'};
 vec4 a0 = texture2D(tAlpha0, suv); vec4 a1 = texture2D(tAlpha1, suv);
-float w0 = a0.r, w1 = a0.g, w2 = a0.b, w3 = a0.a, w4 = a1.r, w5 = a1.g;
-${n <= 1 ? 'w0 = 1.0; w1 = w2 = w3 = w4 = w5 = 0.0;' : ''}
-${n <= 4 ? 'w4 = 0.0; w5 = 0.0;' : ''}
-float wsum = max(0.001, w0 + w1 + w2 + w3 + w4 + w5);
+float w0 = a0.r, w1 = a0.g, w2 = a0.b, w3 = a0.a, w4 = a1.r, w5 = a1.g, w6 = a1.b, w7 = a1.a;
+${n <= 1 ? 'w0 = 1.0; w1 = w2 = w3 = w4 = w5 = w6 = w7 = 0.0;' : ''}
+${n <= 4 ? 'w4 = 0.0; w5 = 0.0; w6 = 0.0; w7 = 0.0;' : ''}
+${n > 4 && n <= 6 ? 'w6 = 0.0; w7 = 0.0;' : ''}
+float wsum = max(0.001, w0 + w1 + w2 + w3 + w4 + w5 + w6 + w7);
 vec3 blend = vec3(0.0);
 blend += w0 * texture2D(tLay0, vMapUv * uTile0).rgb * uTint0;
 blend += w1 * texture2D(tLay1, vMapUv * uTile1).rgb * uTint1;
@@ -115,9 +118,11 @@ blend += w2 * texture2D(tLay2, vMapUv * uTile2).rgb * uTint2;
 blend += w3 * texture2D(tLay3, vMapUv * uTile3).rgb * uTint3;
 blend += w4 * texture2D(tLay4, vMapUv * uTile4).rgb * uTint4;
 blend += w5 * texture2D(tLay5, vMapUv * uTile5).rgb * uTint5;
+blend += w6 * texture2D(tLay6, vMapUv * uTile6).rgb * uTint6;
+blend += w7 * texture2D(tLay7, vMapUv * uTile7).rgb * uTint7;
 diffuseColor.rgb *= blend / wsum;`);
     };
-    mat.customProgramCacheKey = () => 'terrain' + n;
+    mat.customProgramCacheKey = () => 'terrain' + n + (flipV ? 'f' : '');
     mat.userData.terrain = true;
     return mat;
   }
@@ -152,7 +157,10 @@ diffuseColor.rgb *= blend / wsum;`);
       mat.envMapIntensity = 0.3;
       const e = d.emissive || [0, 0, 0];
       const emax = Math.max(e[0], e[1], e[2]);
-      if (emax > 0.001) {
+      // Shader Graph materials carry a default white _EmissiveColor that means nothing; only trust it with an emissive map,
+      // an HDR value, an explicit intensity switch, or the stock HDRP shaders
+      const emissiveReal = emax > 0.001 && (d.emissiveMap || emax > 1.01 || d.useEmissiveIntensity || /^HDRP\//.test(shader));
+      if (emissiveReal) {
         // HDRP emissive colors are HDR (linear). Normalise to a sane range for a non-physical renderer.
         const scale = emax > 1 ? 1 / emax : 1;
         mat.emissive.setRGB(e[0] * scale, e[1] * scale, e[2] * scale, THREE.LinearSRGBColorSpace);
