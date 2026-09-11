@@ -118,6 +118,9 @@ network interface and prints the addresses to open on the other device
   bounds, main path + branches, blockers/doors, vents, prop sets.
 * Scrap uses the real spawn table for the moon (rarity, value ranges x 0.4 like the game, weights, two-handed flags).
 * Time of day, midnight departure, profit quota with a 3-day deadline, getting fired.
+* Moon difficulty: the level's risk letter (D up to S+) multiplies how much scrap spawns and shortens the enemy
+  spawn timers, so Titan is far busier than Experimentation. Deep water (the moons' kill volumes) drowns you after
+  two seconds under, with a blue wash counting down.
 * Monsters use the game's real models, skinning and animation clips (with IK). Every monster with a web behaviour can
   spawn if it is on the moon's real spawn list: Bracken, Thumper, Hoarding bug, Snare flea, Bunker spider, Hygrodere,
   Spore lizard, Ghost girl and Nutcracker inside; Eyeless dogs and Forest keepers outside at night; Manticoils and
