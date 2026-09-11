@@ -2,30 +2,43 @@
 
 A three-moon, single-player "demo" of Lethal Company that runs in a browser (three.js), built from the **real game's own
 assets** - the ship, 41-Experimentation, 220-Assurance, 8-Titan, the Company building, the facility and mineshaft
-tiles, scrap, hazards and monsters - pulled straight out of *your* Steam install at extraction time.
+tiles, scrap, hazards and monsters.
 
-**No game content is in this repository.** Lethal Company belongs to Zeekerss. You need to own the game on Steam;
-`tools/extract.py` reads your local copy and writes the converted assets into `./assets`, which is gitignored.
-This is a fan project in the same spirit as open-source engine reimplementations that need the original data files.
+**Private personal build. Do not make this repository public.** Lethal Company and its assets belong to Zeekerss.
+This private copy includes the already-converted runtime files in `./assets` so the owner's Chromebook can run it
+without installing the Windows game. `tools/extract.py` remains available for rebuilding those files from an owned
+Steam installation.
 
 ## Play
 
-1. Install Python 3.10+ (Windows: python.org, tick "Add to PATH").
-2. `python tools/extract.py` - finds your Steam copy of Lethal Company, downloads the official
-   [AssetRipper](https://github.com/AssetRipper/AssetRipper) release, and packs everything into `assets/` (about 2 minutes, ~150 MB).
-   If your game is somewhere unusual: `python tools/extract.py "D:\Games\Lethal Company"`.
-3. `START.bat` (or `python serve.py`) and open http://localhost:8220 in Chrome.
+The bundled private build does not require Lethal Company to be installed.
+
+On Windows, run `START.bat` and open http://localhost:8220 in Chrome.
+
+On a Chromebook, enable the Linux development environment, open Terminal, and run:
+
+```sh
+git clone https://github.com/theocoull-crypto/lethal-web.git
+cd lethal-web
+python3 serve.py 8220 --no-browser
+```
+
+Then open http://localhost:8220 in Chrome. GitHub will ask you to authenticate because the repository is private.
+
+To rebuild the extracted game files later, run `python tools/extract.py` on a Windows PC that owns Lethal Company.
+It finds the Steam installation, downloads the official [AssetRipper](https://github.com/AssetRipper/AssetRipper)
+release, and replaces the converted files in `assets/`.
 
 Controls: WASD move, Shift sprint, Ctrl crouch, Space jump, E interact/grab, G drop, 1-4 or wheel to select, LMB use
 item, RMB scan, F flashlight.
 
 ### Playing from another device (a Chromebook, a laptop, a phone)
 
-The assets stay on the PC that owns the game; other devices just stream them from it. Run `START-LAN.bat` instead of
-`START.bat` - it listens on every network interface and prints the addresses to open on the other device
+To stream the installed copy without cloning it, run `START-LAN.bat` instead of `START.bat` - it listens on every
+network interface and prints the addresses to open on the other device
 (`http://<this PC's IP>:8220`). Same Wi-Fi works directly; from anywhere else, Tailscale on both devices does it
-(use the `100.x.x.x` address it prints). Allow Python through the Windows firewall when asked. Do not put `assets/`
-in a public repository or on a public host: it is the game's content, extracted from your copy.
+(use the `100.x.x.x` address it prints). Allow Python through the Windows firewall when asked. Keep this repository
+private and do not put `assets/` on a public host: it is game content extracted from the owner's copy.
 
 ## What is in the demo
 
@@ -43,14 +56,15 @@ in a public repository or on a public host: it is the game's content, extracted 
   doors open, the plushie squeaks, the pumpkin can be hit, the electric chair straps rattle, the disco ball spins with
   its lights and the goldfish swims. Every sound and animation is the game's own (the candle flames are drawn here).
 * The television plays your own videos: `python tools/pack_tv.py <video files...>` transcodes them to small clips in
-  `assets/tv/` (gitignored) with a playlist; switching the set on picks a random tape, static shows while it loads,
+  `assets/tv/` with a playlist; switching the set on picks a random tape, static shows while it loads,
   the sound comes out of the set, and the next tape starts when one ends. `serve.py` answers byte-range requests so
   the browser can stream them.
 * Ship upgrade: the store sells a **wider ship** ($400) - mborsh's Wider Ship Mod from Thunderstore. Its own hull,
   floor, catwalk, posters and inner-wall beams (packed from the mod's `newship` bundle with
   `python tools/load_mod_bundle.py <newship>` then `python tools/pack_wider_ship.py`) replace the vanilla hull, and the
   props its plugin relocates (ladders, charge station, magnet, machinery, lamps, door panel) move the same way. The
-  upgrade is remembered in the browser. Nothing from the mod is in this repository; download it yourself.
+  upgrade is remembered in the browser. The converted runtime files used by this private build are bundled in
+  `assets/`.
 * Save codes: `save` at the terminal (or the Esc menu) prints one number that holds everything that matters -
   credits, quota progress, days left, the day count, the ship upgrade, how many of each furniture piece and tool you
   own - with two check digits on the end. `load <code>` brings it all back; furniture returns to free deck spots.
@@ -75,7 +89,7 @@ in a public repository or on a public host: it is the game's content, extracted 
   `set AR_PREFIX=sh && python tools/pack_mod_interior.py catalog_slaughterhouse.json catalog_titan.json` packs its
   DunGen flow, tiles and doorway parts into the moon's catalog, and `python tools/load_game.py` puts the game back.
   The mod's own scripts (custom events, hazards) do not come across; its rooms, doors, lights, vents and scrap spawns
-  do. Nothing from the mod is in this repository either - you download it from Thunderstore yourself.
+  do. The converted runtime files used by this private build are bundled in `assets/`.
 * Post-processing: light bloom and a cold colour grade (both toggles in Settings), darker facility ambience so lamps and
   the flashlight carry the scene.
 * The facility is generated every day from the game's own DunGen tile set (`Level1Flow`): real doorway sockets, tile

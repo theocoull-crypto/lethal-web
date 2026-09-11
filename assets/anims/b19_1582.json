@@ -1,0 +1,1 @@
+{"name":"NeonLightOn","length":0.1,"rate":60,"loop":false,"tracks":{},"floats":[{"path":"Point Light","attr":"m_IsActive","keys":[[0,0],[0.1,1]],"classID":1}],"events":[{"time":0.06666667,"name":"PlayAudio1Oneshot","s":null}]}

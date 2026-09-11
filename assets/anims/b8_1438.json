@@ -1,0 +1,1 @@
+{"name":"CodeBroadcastIndicatorAnim","length":0.65,"rate":60,"loop":false,"tracks":{},"floats":[{"path":null,"attr":"m_Alpha","keys":[[0,0],[0.016666668,1],[0.6333333,1],[0.65,0]],"classID":225},{"path":"Icon","attr":"m_Enabled","keys":[[0,1],[0.41666666,0]],"classID":114}],"events":[]}

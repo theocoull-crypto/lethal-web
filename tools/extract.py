@@ -5,7 +5,7 @@ Usage:  python tools/extract.py ["C:\\Path\\To\\Lethal Company"]
 1. downloads AssetRipper (official GitHub release) into tools/AssetRipper if missing
 2. starts it headless on a local port and loads your own Lethal Company install
 3. packs the ship, 41-Experimentation, 220-Assurance, facility tiles, scrap, hazards, enemies, tools into ./assets
-Nothing from the game is committed to the repository: ./assets is gitignored.
+The private personal build may keep the converted files in ./assets for use on the owner's devices.
 """
 import os, sys, subprocess, time, urllib.request, urllib.error, zipfile, json, shutil
 

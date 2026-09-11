@@ -1,0 +1,2646 @@
+{
+ "b19_2551": {
+  "name": "HangingLight",
+  "clips": [
+   {
+    "id": "b19_1576",
+    "name": "HangingLightOn"
+   },
+   {
+    "id": "b19_1575",
+    "name": "HangingLightOff"
+   },
+   {
+    "id": "b19_1574",
+    "name": "HangingLightFlicker"
+   }
+  ],
+  "owner": "4x4BigStairTile__b8_7417.json"
+ },
+ "b19_2491": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1189",
+    "name": "BaboonIdle"
+   },
+   {
+    "id": "b19_1202",
+    "name": "BaboonWalkForward"
+   },
+   {
+    "id": "b19_1203",
+    "name": "BaboonWalkSideways"
+   },
+   {
+    "id": "b19_1204",
+    "name": "BaboonWalkSidewaysB"
+   },
+   {
+    "id": "b19_1199",
+    "name": "BaboonWalkBackwards"
+   },
+   {
+    "id": "b19_1200",
+    "name": "BaboonWalkBackwardsSideways"
+   },
+   {
+    "id": "b19_1201",
+    "name": "BaboonWalkBackwardsSidewaysB"
+   },
+   {
+    "id": "b19_1187",
+    "name": "BaboonCall"
+   },
+   {
+    "id": "b19_1191",
+    "name": "BaboonRest"
+   },
+   {
+    "id": "b19_1193",
+    "name": "BaboonSit"
+   },
+   {
+    "id": "b19_1194",
+    "name": "BaboonSitting"
+   },
+   {
+    "id": "b19_1185",
+    "name": "AggressiveDisplay"
+   },
+   {
+    "id": "b19_1192",
+    "name": "BaboonRunForwardAggressive"
+   },
+   {
+    "id": "b19_1196",
+    "name": "BaboonStab"
+   },
+   {
+    "id": "b19_1190",
+    "name": "BaboonKill"
+   },
+   {
+    "id": "b19_1197",
+    "name": "BaboonStunned"
+   },
+   {
+    "id": "b19_1188",
+    "name": "BaboonDie"
+   },
+   {
+    "id": "b19_1195",
+    "name": "BaboonSpawn"
+   },
+   {
+    "id": "b19_1198",
+    "name": "BaboonTakeDamage"
+   },
+   {
+    "id": "b19_1186",
+    "name": "BaboonArmsHold"
+   }
+  ],
+  "owner": "BaboonHawkEnemy__b19_4925.json"
+ },
+ "b19_2559": {
+  "name": "BigDoor",
+  "clips": [
+   {
+    "id": "b19_1584",
+    "name": "BigDoorOpen"
+   },
+   {
+    "id": "b19_1583",
+    "name": "BigDoorClose"
+   }
+  ],
+  "owner": "BigDoor__b19_5496.json"
+ },
+ "b19_2492": {
+  "name": "Armature",
+  "clips": [
+   {
+    "id": "b19_1205",
+    "name": "EmergeFromVent"
+   }
+  ],
+  "owner": "Blob__b19_5463.json"
+ },
+ "b19_2576": {
+  "name": "PowerBox",
+  "clips": [
+   {
+    "id": "b19_1617",
+    "name": "Open"
+   },
+   {
+    "id": "b19_1616",
+    "name": "Close"
+   },
+   {
+    "id": "b19_1619",
+    "name": "TurnOn"
+   }
+  ],
+  "owner": "BreakerBox__b19_6113.json"
+ },
+ "b19_2575": {
+  "name": "BreakerSwitch1",
+  "clips": [
+   {
+    "id": "b19_1618",
+    "name": "SwitchTurnLeft"
+   }
+  ],
+  "owner": "BreakerBox__b19_6113.json"
+ },
+ "b19_2529": {
+  "name": "CashRegisterAnim",
+  "clips": [
+   {
+    "id": "b19_1522",
+    "name": "CashRegisterOpen"
+   }
+  ],
+  "owner": "CashRegisterItem__b19_6670.json"
+ },
+ "b19_2496": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1270",
+    "name": "CaveDwellerIdle2"
+   },
+   {
+    "id": "b19_1274",
+    "name": "CaveDwellerWalk"
+   },
+   {
+    "id": "b19_1271",
+    "name": "CaveDwellerLeap"
+   },
+   {
+    "id": "b19_1272",
+    "name": "CaveDwellerLeap2"
+   },
+   {
+    "id": "b19_1269",
+    "name": "CaveDwellerEat"
+   },
+   {
+    "id": "b19_1273",
+    "name": "CaveDwellerTransform"
+   },
+   {
+    "id": "b19_1268",
+    "name": "CaveDwellerDie"
+   },
+   {
+    "id": "b19_1267",
+    "name": "CaveDwellerCooldown"
+   }
+  ],
+  "owner": "CaveDwellerEnemy__b19_6376.json"
+ },
+ "b19_2497": {
+  "name": "BabyAnimContainer",
+  "clips": [
+   {
+    "id": "b19_1264",
+    "name": "BabySit"
+   },
+   {
+    "id": "b19_1265",
+    "name": "BabySitTantrum"
+   },
+   {
+    "id": "b19_1259",
+    "name": "BabyFallOver"
+   },
+   {
+    "id": "b19_1257",
+    "name": "BabyCrawl"
+   },
+   {
+    "id": "b19_1258",
+    "name": "BabyCrawlIdle"
+   },
+   {
+    "id": "b19_1260",
+    "name": "BabyHeldByPlayer"
+   },
+   {
+    "id": "b19_1262",
+    "name": "BabyHeldByPlayerTantrum"
+   },
+   {
+    "id": "b19_1263",
+    "name": "BabyRun"
+   },
+   {
+    "id": "b19_1255",
+    "name": "BabyBite"
+   },
+   {
+    "id": "b19_1261",
+    "name": "BabyHeldByPlayerSquirm"
+   },
+   {
+    "id": "b19_1266",
+    "name": "BabyTransform"
+   },
+   {
+    "id": "b19_1256",
+    "name": "BabyCaveDwellerSpawn"
+   }
+  ],
+  "owner": "CaveDwellerEnemy__b19_6376.json"
+ },
+ "b19_2498": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1281",
+    "name": "Walk"
+   },
+   {
+    "id": "b19_1280",
+    "name": "PropelToCeiling"
+   },
+   {
+    "id": "b19_1279",
+    "name": "FallFromCeiling"
+   },
+   {
+    "id": "b19_1276",
+    "name": "ClingToPlayerHead"
+   },
+   {
+    "id": "b19_1278",
+    "name": "ExitVentCentipede"
+   },
+   {
+    "id": "b19_1277",
+    "name": "DieCentipede"
+   },
+   {
+    "id": "b19_1275",
+    "name": "CentipedeStunned"
+   }
+  ],
+  "owner": "Centipede__b19_7102.json"
+ },
+ "b19_2499": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1284",
+    "name": "ClaySurgeonWalk"
+   },
+   {
+    "id": "b19_1285",
+    "name": "ClaySurgeonWalk2"
+   },
+   {
+    "id": "b19_1282",
+    "name": "ClaySurgeonSnip"
+   },
+   {
+    "id": "b19_1283",
+    "name": "ClaySurgeonSnip2"
+   },
+   {
+    "id": "b19_1286",
+    "name": "ClaySurgeonWalkB"
+   },
+   {
+    "id": "b19_1287",
+    "name": "ClaySurgeonWalkB2"
+   }
+  ],
+  "owner": "ClaySurgeon__b19_4910.json"
+ },
+ "b19_2530": {
+  "name": "ClipboardManual",
+  "clips": [
+   {
+    "id": "b19_1523",
+    "name": "ClipboardFlip1"
+   },
+   {
+    "id": "b19_1524",
+    "name": "ClipboardFlip2"
+   },
+   {
+    "id": "b19_1525",
+    "name": "ClipboardFlip3"
+   }
+  ],
+  "owner": "ClipboardManual__b19_3816.json"
+ },
+ "b19_2531": {
+  "name": "ComedyMask",
+  "clips": [
+   {
+    "id": "b19_1548",
+    "name": "MaskEyesGlow"
+   }
+  ],
+  "owner": "ComedyMask__b19_3294.json"
+ },
+ "b19_2500": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1290",
+    "name": "CrawlSlow"
+   },
+   {
+    "id": "b19_1645",
+    "name": "CrawlerExitVent"
+   },
+   {
+    "id": "b19_1289",
+    "name": "CrawlChase"
+   },
+   {
+    "id": "b19_1288",
+    "name": "Attack"
+   },
+   {
+    "id": "b19_1294",
+    "name": "HurtCrawler"
+   },
+   {
+    "id": "b19_1292",
+    "name": "CrawlerEatPlayer"
+   },
+   {
+    "id": "b19_1291",
+    "name": "CrawlerDie"
+   },
+   {
+    "id": "b19_1293",
+    "name": "CrawlerStunned"
+   }
+  ],
+  "owner": "Crawler__b19_7687.json"
+ },
+ "b19_2557": {
+  "name": "light supports",
+  "clips": [
+   {
+    "id": "b19_1582",
+    "name": "NeonLightOn"
+   },
+   {
+    "id": "b19_1581",
+    "name": "NeonLightOff"
+   },
+   {
+    "id": "b19_1580",
+    "name": "NeonLightFlicker"
+   }
+  ],
+  "owner": "DeepShaftTile__b8_5270.json"
+ },
+ "b19_2558": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1637",
+    "name": "TeethChatter"
+   },
+   {
+    "id": "b19_1638",
+    "name": "TeethChatterFloor"
+   }
+  ],
+  "owner": "Dentures__b19_7177.json"
+ },
+ "b19_2547": {
+  "name": "StunGrenade 1",
+  "clips": [
+   {
+    "id": "b19_1540",
+    "name": "DiyStunGrenadePinPull"
+   }
+  ],
+  "owner": "DiyFlashbang__b19_7786.json"
+ },
+ "b19_2502": {
+  "name": "DoublewingModel",
+  "clips": [
+   {
+    "id": "b19_1297",
+    "name": "DoublewingBodyIdle"
+   },
+   {
+    "id": "b19_1296",
+    "name": "DoublewingBodyFlyCenter"
+   },
+   {
+    "id": "b19_1295",
+    "name": "DoublewingBodyEndFlight"
+   },
+   {
+    "id": "b19_1301",
+    "name": "DoublewingFlyElevation"
+   },
+   {
+    "id": "b19_1300",
+    "name": "DoublewingFlyAway"
+   },
+   {
+    "id": "b19_1298",
+    "name": "DoublewingFallFromSky"
+   },
+   {
+    "id": "b19_1306",
+    "name": "DoublewingSpawn"
+   }
+  ],
+  "owner": "DoublewingedBird__b19_4831.json"
+ },
+ "b19_2501": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1303",
+    "name": "DoublewingIdle"
+   },
+   {
+    "id": "b19_1304",
+    "name": "DoublewingIdle2"
+   },
+   {
+    "id": "b19_1308",
+    "name": "DoublewingTakeOff"
+   },
+   {
+    "id": "b19_1302",
+    "name": "DoublewingGlide"
+   },
+   {
+    "id": "b19_1305",
+    "name": "DoublewingLand"
+   },
+   {
+    "id": "b19_1299",
+    "name": "DoublewingFlapHard"
+   },
+   {
+    "id": "b19_1307",
+    "name": "DoublewingStunned"
+   }
+  ],
+  "owner": "DoublewingedBird__b19_4831.json"
+ },
+ "b19_2503": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1311",
+    "name": "IdleStare"
+   },
+   {
+    "id": "b19_1309",
+    "name": "IdleDance"
+   },
+   {
+    "id": "b19_1312",
+    "name": "Walk"
+   },
+   {
+    "id": "b19_1310",
+    "name": "IdleDance2"
+   }
+  ],
+  "owner": "DressGirl__b19_2993.json"
+ },
+ "b19_2540": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1542",
+    "name": "LadderExtend"
+   },
+   {
+    "id": "b19_1541",
+    "name": "LadderBoxLidOpen"
+   },
+   {
+    "id": "b19_1543",
+    "name": "LadderFallForward"
+   }
+  ],
+  "owner": "ExtensionLadderItem__b19_5467.json"
+ },
+ "b19_2541": {
+  "name": "MeshContainer",
+  "clips": [
+   {
+    "id": "b19_1544",
+    "name": "LadderRotate"
+   }
+  ],
+  "owner": "ExtensionLadderItem__b19_5467.json"
+ },
+ "b19_2505": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1332",
+    "name": "CreepForward"
+   },
+   {
+    "id": "b19_1340",
+    "name": "WalkDiagonalBackward"
+   },
+   {
+    "id": "b19_1342",
+    "name": "WalkSideways2"
+   },
+   {
+    "id": "b19_1341",
+    "name": "WalkDiagonalBackwardsB"
+   },
+   {
+    "id": "b19_1339",
+    "name": "WalkBackward"
+   },
+   {
+    "id": "b19_1336",
+    "name": "Idle"
+   },
+   {
+    "id": "b19_1338",
+    "name": "StandUp"
+   },
+   {
+    "id": "b19_1337",
+    "name": "Kill1"
+   },
+   {
+    "id": "b19_1331",
+    "name": "CarryBodyFull"
+   },
+   {
+    "id": "b19_1333",
+    "name": "ExitVentFlowerman"
+   },
+   {
+    "id": "b19_1334",
+    "name": "FlowermanDie"
+   },
+   {
+    "id": "b19_1330",
+    "name": "CarryBodyArms"
+   },
+   {
+    "id": "b19_1335",
+    "name": "FlowermanStunned"
+   }
+  ],
+  "owner": "Flowerman__b19_6229.json"
+ },
+ "b19_2504": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1327",
+    "name": "FlowerSnakeRun"
+   },
+   {
+    "id": "b19_1325",
+    "name": "FlowerSnakeLeap"
+   },
+   {
+    "id": "b19_1314",
+    "name": "FlowerSnakeCling1"
+   },
+   {
+    "id": "b19_1316",
+    "name": "FlowerSnakeCling2"
+   },
+   {
+    "id": "b19_1320",
+    "name": "FlowerSnakeClingHead1"
+   },
+   {
+    "id": "b19_1318",
+    "name": "FlowerSnakeCling3"
+   },
+   {
+    "id": "b19_1315",
+    "name": "FlowerSnakeCling1Flap"
+   },
+   {
+    "id": "b19_1317",
+    "name": "FlowerSnakeCling2Flap"
+   },
+   {
+    "id": "b19_1319",
+    "name": "FlowerSnakeCling3Flap"
+   },
+   {
+    "id": "b19_1321",
+    "name": "FlowerSnakeClingHead1Flap"
+   },
+   {
+    "id": "b19_1322",
+    "name": "FlowerSnakeClingHead2"
+   },
+   {
+    "id": "b19_1323",
+    "name": "FlowerSnakeClingHead2Flap"
+   },
+   {
+    "id": "b19_1313",
+    "name": "FSIdle"
+   },
+   {
+    "id": "b19_1329",
+    "name": "FlowerSnakeWalk"
+   },
+   {
+    "id": "b19_1324",
+    "name": "FlowerSnakeDie"
+   },
+   {
+    "id": "b19_1326",
+    "name": "FlowerSnakeLeave"
+   },
+   {
+    "id": "b19_1328",
+    "name": "FlowerSnakeSpawn"
+   }
+  ],
+  "owner": "FlowerSnakeEnemy__b19_3796.json"
+ },
+ "b19_2506": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1346",
+    "name": "FGiantEatPlayer"
+   },
+   {
+    "id": "b19_1350",
+    "name": "FGiantWalk"
+   },
+   {
+    "id": "b19_1352",
+    "name": "FGiantWalkSideways"
+   },
+   {
+    "id": "b19_1347",
+    "name": "FGiantIdle"
+   },
+   {
+    "id": "b19_1354",
+    "name": "FGiantWalkSidewaysForward"
+   },
+   {
+    "id": "b19_1355",
+    "name": "FGiantWalkSidewaysForwardB"
+   },
+   {
+    "id": "b19_1343",
+    "name": "FGiantChaseClose"
+   },
+   {
+    "id": "b19_1344",
+    "name": "FGiantChaseCloseSideways"
+   },
+   {
+    "id": "b19_1348",
+    "name": "FGiantSpawn"
+   },
+   {
+    "id": "b19_1356",
+    "name": "ForestGiantStare"
+   },
+   {
+    "id": "b19_1349",
+    "name": "FGiantStunned"
+   },
+   {
+    "id": "b19_1351",
+    "name": "FGiantWalkBurning"
+   },
+   {
+    "id": "b19_1353",
+    "name": "FGiantWalkSidewaysBurning"
+   },
+   {
+    "id": "b19_1345",
+    "name": "FGiantDie"
+   }
+  ],
+  "owner": "ForestGiant__b19_3566.json"
+ },
+ "b19_2524": {
+  "name": "GiantKiwiModel",
+  "clips": [
+   {
+    "id": "b19_1507",
+    "name": "WoodpeckerRun"
+   },
+   {
+    "id": "b19_1513",
+    "name": "WoodpeckerWalk"
+   },
+   {
+    "id": "b19_1514",
+    "name": "WoodpeckerWalkLeftForward"
+   },
+   {
+    "id": "b19_1515",
+    "name": "WoodpeckerWalkRight"
+   },
+   {
+    "id": "b19_1516",
+    "name": "WoodpeckerWalkRightForward"
+   },
+   {
+    "id": "b19_1504",
+    "name": "WoodpeckerIdle"
+   },
+   {
+    "id": "b19_1510",
+    "name": "WoodpeckerSleep"
+   },
+   {
+    "id": "b19_1511",
+    "name": "WoodpeckerSleepWakeUp"
+   },
+   {
+    "id": "b19_1505",
+    "name": "WoodpeckerPeckTree"
+   },
+   {
+    "id": "b19_1512",
+    "name": "WoodpeckerStunned"
+   },
+   {
+    "id": "b19_1502",
+    "name": "WoodpeckerDie"
+   },
+   {
+    "id": "b19_1506",
+    "name": "WoodpeckerPryOpenDoor"
+   },
+   {
+    "id": "b19_1501",
+    "name": "WoodpeckerDance"
+   },
+   {
+    "id": "b19_1500",
+    "name": "WoodpeckerCrawl"
+   },
+   {
+    "id": "b19_1499",
+    "name": "WoodpeckerAttack"
+   },
+   {
+    "id": "b19_1503",
+    "name": "WoodpeckerHeadIdle"
+   },
+   {
+    "id": "b19_1508",
+    "name": "WoodpeckerScream"
+   },
+   {
+    "id": "b19_1498",
+    "name": "PickUpEgg"
+   },
+   {
+    "id": "b19_1509",
+    "name": "WoodpeckerScreamEnraged"
+   }
+  ],
+  "owner": "GiantKiwi__b19_4237.json"
+ },
+ "b19_2507": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1364",
+    "name": "WalkForward"
+   },
+   {
+    "id": "b19_1365",
+    "name": "WalkSideways"
+   },
+   {
+    "id": "b19_1363",
+    "name": "HoarderIdle"
+   },
+   {
+    "id": "b19_1366",
+    "name": "WalkSidewaysForward"
+   },
+   {
+    "id": "b19_1367",
+    "name": "WalkSidewaysForwardB"
+   },
+   {
+    "id": "b19_1646",
+    "name": "FlyChase"
+   },
+   {
+    "id": "b19_1359",
+    "name": "HitPlayer"
+   },
+   {
+    "id": "b19_1361",
+    "name": "HoarderBugDie"
+   },
+   {
+    "id": "b19_1358",
+    "name": "BugExitVent"
+   },
+   {
+    "id": "b19_1362",
+    "name": "HoarderBugStunned"
+   },
+   {
+    "id": "b19_1360",
+    "name": "HoarderBugDamaged"
+   },
+   {
+    "id": "b19_1357",
+    "name": "ArmsHoldItem"
+   }
+  ],
+  "owner": "HoarderBug__b19_3110.json"
+ },
+ "b19_2508": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1368",
+    "name": "Idle"
+   },
+   {
+    "id": "b19_1374",
+    "name": "JesterTurnCrank"
+   },
+   {
+    "id": "b19_1369",
+    "name": "IdleDocile"
+   },
+   {
+    "id": "b19_1376",
+    "name": "WalkDocile"
+   },
+   {
+    "id": "b19_1375",
+    "name": "RunEnraged"
+   },
+   {
+    "id": "b19_1372",
+    "name": "JesterPopUp"
+   },
+   {
+    "id": "b19_1370",
+    "name": "JesterKillPlayer"
+   },
+   {
+    "id": "b19_1371",
+    "name": "JesterLeaveVent"
+   },
+   {
+    "id": "b19_1373",
+    "name": "JesterStunned"
+   }
+  ],
+  "owner": "JesterEnemy__b19_2862.json"
+ },
+ "b19_2571": {
+  "name": "landmine",
+  "clips": [
+   {
+    "id": "b19_1599",
+    "name": "LandmineDetonate"
+   },
+   {
+    "id": "b19_1600",
+    "name": "LandmineIdle"
+   }
+  ],
+  "owner": "Landmine__b19_6502.json"
+ },
+ "b19_2509": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1378",
+    "name": "LassoManIdle"
+   },
+   {
+    "id": "b19_1377",
+    "name": "BeginPulling"
+   },
+   {
+    "id": "b19_1379",
+    "name": "LassoManWalk"
+   }
+  ],
+  "owner": "LassoMan__b19_7657.json"
+ },
+ "b19_2543": {
+  "name": "ArmsMeshContainer",
+  "clips": [
+   {
+    "id": "b19_1547",
+    "name": "Picking"
+   },
+   {
+    "id": "b19_1546",
+    "name": "LockPickerIdle"
+   },
+   {
+    "id": "b19_1545",
+    "name": "BeginPicking"
+   }
+  ],
+  "owner": "LockPickerItem__b19_3492.json"
+ },
+ "b19_2511": {
+  "name": "metarig",
+  "clips": [
+   {
+    "id": "b19_1383",
+    "name": "Idle"
+   },
+   {
+    "id": "b19_1391",
+    "name": "Walk"
+   },
+   {
+    "id": "b19_1393",
+    "name": "WalkSideways"
+   },
+   {
+    "id": "b19_1389",
+    "name": "MaskedPlayerSpawn"
+   },
+   {
+    "id": "b19_1380",
+    "name": "ClingToPlayer"
+   },
+   {
+    "id": "b19_1387",
+    "name": "MaskedPlayerRun"
+   },
+   {
+    "id": "b19_1392",
+    "name": "WalkArmsOut"
+   },
+   {
+    "id": "b19_1394",
+    "name": "WalkSidewaysArmsOut"
+   },
+   {
+    "id": "b19_1384",
+    "name": "KillPlayer"
+   },
+   {
+    "id": "b19_1385",
+    "name": "MaskedPlayerCrouch"
+   },
+   {
+    "id": "b19_1382",
+    "name": "HitMaskedPlayer"
+   },
+   {
+    "id": "b19_1386",
+    "name": "MaskedPlayerDie"
+   },
+   {
+    "id": "b19_1388",
+    "name": "MaskedPlayerRunArmsOut"
+   },
+   {
+    "id": "b19_1390",
+    "name": "StunMaskedPlayer"
+   }
+  ],
+  "owner": "MaskedPlayerEnemy__b19_4284.json"
+ },
+ "b19_2542": {
+  "name": "HeadMask",
+  "clips": [
+   {
+    "id": "b19_1549",
+    "name": "MaskHeadShake"
+   }
+  ],
+  "owner": "MaskedPlayerEnemy__b19_4284.json"
+ },
+ "b19_2510": {
+  "name": "MapDot",
+  "clips": [
+   {
+    "id": "b19_1381",
+    "name": "FakeMapDotTurning"
+   }
+  ],
+  "owner": "MaskedPlayerEnemy__b19_4284.json"
+ },
+ "b19_2552": {
+  "name": "MineshaftElevator",
+  "clips": [
+   {
+    "id": "b19_1578",
+    "name": "MineshaftElevatorGoUp"
+   },
+   {
+    "id": "b19_1577",
+    "name": "MineshaftElevatorGoDown"
+   },
+   {
+    "id": "b19_1641",
+    "name": "mineshaftelevatorVersion60Trailer"
+   }
+  ],
+  "owner": "MineshaftElevator__b19_4645.json"
+ },
+ "b19_2553": {
+  "name": "controlBox",
+  "clips": [
+   {
+    "id": "b19_1579",
+    "name": "MineshaftElevator_ControlPanelPress"
+   }
+  ],
+  "owner": "MineshaftElevator__b19_4645.json"
+ },
+ "b8_1847": {
+  "name": "EntranceVisualDoorsContainer",
+  "clips": [
+   {
+    "id": "b8_1258",
+    "name": "EntranceTeleportVisualDoorsOpen"
+   },
+   {
+    "id": "b8_1259",
+    "name": "EntranceTeleportVisualDoorsShut"
+   }
+  ],
+  "owner": "MineshaftStartTile__b8_10128.json"
+ },
+ "b19_2512": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1399",
+    "name": "Idle1"
+   },
+   {
+    "id": "b19_1405",
+    "name": "MouthDogSpawn"
+   },
+   {
+    "id": "b19_1407",
+    "name": "WalkCalm"
+   },
+   {
+    "id": "b19_1408",
+    "name": "WalkSuspicious"
+   },
+   {
+    "id": "b19_1395",
+    "name": "Chase"
+   },
+   {
+    "id": "b19_1400",
+    "name": "IdleSuspicious"
+   },
+   {
+    "id": "b19_1396",
+    "name": "ChaseHowl"
+   },
+   {
+    "id": "b19_1402",
+    "name": "Lunge"
+   },
+   {
+    "id": "b19_1403",
+    "name": "LungeKill"
+   },
+   {
+    "id": "b19_1404",
+    "name": "LungeStandUp"
+   },
+   {
+    "id": "b19_1401",
+    "name": "KillDog"
+   },
+   {
+    "id": "b19_1397",
+    "name": "DogCower"
+   },
+   {
+    "id": "b19_1398",
+    "name": "DogCowerLoop"
+   },
+   {
+    "id": "b19_1406",
+    "name": "MouthDogStunned"
+   }
+  ],
+  "owner": "MouthDog__b19_7019.json"
+ },
+ "b19_2513": {
+  "name": "metarig",
+  "clips": [
+   {
+    "id": "b19_1411",
+    "name": "Idle"
+   },
+   {
+    "id": "b19_1413",
+    "name": "IdleRest"
+   },
+   {
+    "id": "b19_1420",
+    "name": "PatrolMarch"
+   },
+   {
+    "id": "b19_1410",
+    "name": "AttackMarch"
+   },
+   {
+    "id": "b19_1414",
+    "name": "Inspect"
+   },
+   {
+    "id": "b19_1419",
+    "name": "NutcrackerShootGun"
+   },
+   {
+    "id": "b19_1416",
+    "name": "NutcrackerDie"
+   },
+   {
+    "id": "b19_1417",
+    "name": "NutcrackerKick"
+   },
+   {
+    "id": "b19_1415",
+    "name": "InspectStare"
+   },
+   {
+    "id": "b19_1418",
+    "name": "NutcrackerReload"
+   },
+   {
+    "id": "b19_1409",
+    "name": "AimGunWalk"
+   },
+   {
+    "id": "b19_1412",
+    "name": "IdleAimDownwards"
+   }
+  ],
+  "owner": "NutcrackerEnemy__b19_7106.json"
+ },
+ "b19_2514": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1423",
+    "name": "PufferIdle"
+   },
+   {
+    "id": "b19_1430",
+    "name": "PufferWalkForward"
+   },
+   {
+    "id": "b19_1432",
+    "name": "PufferWalkRight"
+   },
+   {
+    "id": "b19_1421",
+    "name": "PufferAlert"
+   },
+   {
+    "id": "b19_1431",
+    "name": "PufferWalkForwardAlert"
+   },
+   {
+    "id": "b19_1433",
+    "name": "PufferWalkRightAlert"
+   },
+   {
+    "id": "b19_1424",
+    "name": "PufferIdleAlert"
+   },
+   {
+    "id": "b19_1425",
+    "name": "PufferShakeTail"
+   },
+   {
+    "id": "b19_1427",
+    "name": "PufferSneeze"
+   },
+   {
+    "id": "b19_1428",
+    "name": "PufferStomp"
+   },
+   {
+    "id": "b19_1422",
+    "name": "PufferBite"
+   },
+   {
+    "id": "b19_1429",
+    "name": "PufferStunned"
+   }
+  ],
+  "owner": "PufferEnemy__b19_5582.json"
+ },
+ "b19_2516": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1451",
+    "name": "PumaStartle"
+   },
+   {
+    "id": "b19_1445",
+    "name": "PumaRun"
+   },
+   {
+    "id": "b19_1447",
+    "name": "PumaStalk"
+   },
+   {
+    "id": "b19_1448",
+    "name": "PumaStalkSideways"
+   },
+   {
+    "id": "b19_1449",
+    "name": "PumaStalkSidewaysForward"
+   },
+   {
+    "id": "b19_1450",
+    "name": "PumaStalkSidewaysForwardB"
+   },
+   {
+    "id": "b19_1441",
+    "name": "PumaIdle"
+   },
+   {
+    "id": "b19_1437",
+    "name": "PumaClimbUpTree"
+   },
+   {
+    "id": "b19_1436",
+    "name": "PumaClimbIdle"
+   },
+   {
+    "id": "b19_1442",
+    "name": "PumaLeap"
+   },
+   {
+    "id": "b19_1443",
+    "name": "PumaLeapEnd"
+   },
+   {
+    "id": "b19_1444",
+    "name": "PumaLeapEndB"
+   },
+   {
+    "id": "b19_1439",
+    "name": "PumaDropDown"
+   },
+   {
+    "id": "b19_1440",
+    "name": "PumaDropDownFinish"
+   },
+   {
+    "id": "b19_1434",
+    "name": "PumaAttack1"
+   },
+   {
+    "id": "b19_1435",
+    "name": "PumaAttack2"
+   },
+   {
+    "id": "b19_1438",
+    "name": "PumaDie"
+   },
+   {
+    "id": "b19_1446",
+    "name": "PumaSpawn"
+   }
+  ],
+  "owner": "PumaEnemy__b19_6960.json"
+ },
+ "b19_2517": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1463",
+    "name": "RadMechSpawn"
+   },
+   {
+    "id": "b19_1460",
+    "name": "RadMechChargeForwardB"
+   },
+   {
+    "id": "b19_1456",
+    "name": "LeftFootForward"
+   },
+   {
+    "id": "b19_1468",
+    "name": "RightFootForward"
+   },
+   {
+    "id": "b19_1459",
+    "name": "RadMechChargeForward"
+   },
+   {
+    "id": "b19_1457",
+    "name": "RadAimGunLeftFoot"
+   },
+   {
+    "id": "b19_1458",
+    "name": "RadAimGunRightFoot"
+   },
+   {
+    "id": "b19_1466",
+    "name": "RadShootLeftFoot"
+   },
+   {
+    "id": "b19_1467",
+    "name": "RadShootRightFoot"
+   },
+   {
+    "id": "b19_1452",
+    "name": "EnterFlying"
+   },
+   {
+    "id": "b19_1453",
+    "name": "EnterFlyingLeftFoot"
+   },
+   {
+    "id": "b19_1455",
+    "name": "FlyingMode"
+   },
+   {
+    "id": "b19_1454",
+    "name": "FlyingLand"
+   },
+   {
+    "id": "b19_1462",
+    "name": "RadMechGrabForPlayerRightFoot"
+   },
+   {
+    "id": "b19_1461",
+    "name": "RadMechGrabForPlayer"
+   },
+   {
+    "id": "b19_1464",
+    "name": "RadMechTorchPlayer"
+   },
+   {
+    "id": "b19_1465",
+    "name": "RadMechTorchPlayerRightFoot"
+   }
+  ],
+  "owner": "RadMechEnemy__b19_5133.json"
+ },
+ "b19_2592": {
+  "name": "Flame03-hollow_16x4_0",
+  "clips": [
+   {
+    "id": "b19_1647",
+    "name": "FireAnimation"
+   }
+  ],
+  "owner": "RadMechEnemy__b19_5133.json"
+ },
+ "b19_2577": {
+  "name": "RobotToy",
+  "clips": [
+   {
+    "id": "b19_1620",
+    "name": "RobotSwingArms"
+   }
+  ],
+  "owner": "RobotToy__b19_6401.json"
+ },
+ "b19_2518": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1471",
+    "name": "SpiderIdle"
+   },
+   {
+    "id": "b19_1472",
+    "name": "SpiderMove"
+   },
+   {
+    "id": "b19_1470",
+    "name": "SpiderDie"
+   },
+   {
+    "id": "b19_1469",
+    "name": "SpiderAttack"
+   },
+   {
+    "id": "b19_1473",
+    "name": "SpiderSpool"
+   },
+   {
+    "id": "b19_1474",
+    "name": "SpiderStunned"
+   }
+  ],
+  "owner": "SandSpider__b19_4733.json"
+ },
+ "b19_2519": {
+  "name": "Armature",
+  "clips": [
+   {
+    "id": "b19_1475",
+    "name": "SandWormEmerge"
+   },
+   {
+    "id": "b19_1476",
+    "name": "SandWormIdle"
+   }
+  ],
+  "owner": "SandWorm__b19_7324.json"
+ },
+ "b19_2567": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1601",
+    "name": "SpikeTrapIdle"
+   },
+   {
+    "id": "b19_1603",
+    "name": "SpikeTrapSlam"
+   },
+   {
+    "id": "b19_1602",
+    "name": "SpikeTrapMoveUp"
+   }
+  ],
+  "owner": "SpikeRoofTrapHazard__b19_3909.json"
+ },
+ "b19_2520": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1478",
+    "name": "SpringManIdle"
+   },
+   {
+    "id": "b19_1481",
+    "name": "Walk1"
+   },
+   {
+    "id": "b19_1480",
+    "name": "StopSuddenly2"
+   },
+   {
+    "id": "b19_1479",
+    "name": "StopSuddenly"
+   },
+   {
+    "id": "b19_1477",
+    "name": "CoilheadCooldown"
+   }
+  ],
+  "owner": "SpringMan__b19_3125.json"
+ },
+ "b8_1850": {
+  "name": "IndustrialFan",
+  "clips": [
+   {
+    "id": "b8_1260",
+    "name": "FanBlowing"
+   }
+  ],
+  "owner": "StartRoom__b8_2844.json"
+ },
+ "b19_2570": {
+  "name": "SteamValve",
+  "clips": [
+   {
+    "id": "b19_1604",
+    "name": "SteamValveTurn"
+   }
+  ],
+  "owner": "SteamValve__b19_3556.json"
+ },
+ "b19_2568": {
+  "name": "FogZone",
+  "clips": [
+   {
+    "id": "b19_1597",
+    "name": "FogZoneIncrease"
+   },
+   {
+    "id": "b19_1598",
+    "name": "FogZoneRepair"
+   }
+  ],
+  "owner": "SteamValve__b19_3556.json"
+ },
+ "b19_2561": {
+  "name": "DoorMesh",
+  "clips": [
+   {
+    "id": "b19_1588",
+    "name": "Door1Open"
+   },
+   {
+    "id": "b19_1587",
+    "name": "Door1Close"
+   }
+  ],
+  "owner": "SteelDoorMapModel__b19_7170.json"
+ },
+ "b19_2521": {
+  "name": "AnimContainer",
+  "clips": [
+   {
+    "id": "b19_1489",
+    "name": "StingrayWalkB"
+   },
+   {
+    "id": "b19_1488",
+    "name": "StingrayWalk2"
+   },
+   {
+    "id": "b19_1482",
+    "name": "StingrayAttack"
+   },
+   {
+    "id": "b19_1483",
+    "name": "StingrayCloaked"
+   },
+   {
+    "id": "b19_1484",
+    "name": "StingrayExitVent"
+   },
+   {
+    "id": "b19_1485",
+    "name": "StingrayHit"
+   },
+   {
+    "id": "b19_1487",
+    "name": "StingrayShock"
+   },
+   {
+    "id": "b19_1486",
+    "name": "StingrayKill"
+   }
+  ],
+  "owner": "StingrayEnemy__b19_7483.json"
+ },
+ "b19_2588": {
+  "name": "storage door",
+  "clips": [
+   {
+    "id": "b19_1590",
+    "name": "ElevatorLockerOpen"
+   },
+   {
+    "id": "b19_1589",
+    "name": "ElevatorLockerClose"
+   }
+  ],
+  "owner": "StorageShelfContainer__b19_5220.json"
+ },
+ "b19_2548": {
+  "name": "StunGrenade",
+  "clips": [
+   {
+    "id": "b19_1563",
+    "name": "StunGrenadePinPull"
+   }
+  ],
+  "owner": "StunGrenade__b19_3405.json"
+ },
+ "b19_2569": {
+  "name": "MeshContainer",
+  "clips": [
+   {
+    "id": "b19_1605",
+    "name": "TurretCharge"
+   },
+   {
+    "id": "b19_1607",
+    "name": "TurretFire"
+   },
+   {
+    "id": "b19_1608",
+    "name": "TurretStopFiring"
+   },
+   {
+    "id": "b19_1606",
+    "name": "TurretDeactivate"
+   }
+  ],
+  "owner": "TurretContainer__b19_7113.json"
+ },
+ "b19_2522": {
+  "name": "VentEntrance",
+  "clips": [
+   {
+    "id": "b19_1490",
+    "name": "VentOpen"
+   }
+  ],
+  "owner": "VentEntranceCave__b19_3551.json"
+ },
+ "b19_2574": {
+  "name": "MineDoorMesh",
+  "clips": [
+   {
+    "id": "b19_1615",
+    "name": "MineDoorOpen"
+   },
+   {
+    "id": "b19_1614",
+    "name": "MineDoorClose"
+   }
+  ],
+  "owner": "YellowMineDoor__b19_3234.json"
+ },
+ "b8_1904": {
+  "name": "CodeBroadcastAnim",
+  "clips": [
+   {
+    "id": "b8_1438",
+    "name": "CodeBroadcastIndicatorAnim"
+   },
+   {
+    "id": "b8_1439",
+    "name": "CodeBroadcastInvisible"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1846": {
+  "name": "AnimatedShipDoor",
+  "clips": [
+   {
+    "id": "b8_1273",
+    "name": "ShipDoorClose"
+   },
+   {
+    "id": "b8_1274",
+    "name": "ShipDoorOpen"
+   },
+   {
+    "id": "b8_1275",
+    "name": "ShipDoorOpenInOrbit"
+   },
+   {
+    "id": "b8_1276",
+    "name": "ShipDoorPryedOpen"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1859": {
+  "name": "ButtonLights",
+  "clips": [
+   {
+    "id": "b8_1286",
+    "name": "UpLight"
+   },
+   {
+    "id": "b8_1281",
+    "name": "DownLight"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1905": {
+  "name": "MainContainer",
+  "clips": [
+   {
+    "id": "b8_1440",
+    "name": "NewText"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1845": {
+  "name": "LeverSwitch",
+  "clips": [
+   {
+    "id": "b8_1250",
+    "name": "ShipMagnetLeverUp"
+   },
+   {
+    "id": "b8_1249",
+    "name": "ShipMagnetLeverDown"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1860": {
+  "name": "ButtonPanel",
+  "clips": [
+   {
+    "id": "b8_1283",
+    "name": "PanelUp"
+   },
+   {
+    "id": "b8_1282",
+    "name": "PanelDown"
+   },
+   {
+    "id": "b8_1284",
+    "name": "StartButton"
+   },
+   {
+    "id": "b8_1285",
+    "name": "StopButton"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1855": {
+  "name": "ShipElectricLights",
+  "clips": [
+   {
+    "id": "b8_1279",
+    "name": "ShipLightsOnOff"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1867": {
+  "name": "Models1",
+  "clips": [
+   {
+    "id": "b8_1261",
+    "name": "HangarShipLandB"
+   },
+   {
+    "id": "b8_1299",
+    "name": "ShipIdle"
+   },
+   {
+    "id": "b8_1300",
+    "name": "ShipLeave"
+   },
+   {
+    "id": "b8_1277",
+    "name": "ShipFlyToPlanet"
+   },
+   {
+    "id": "b8_1272",
+    "name": "ShipAlarm"
+   },
+   {
+    "id": "b8_1262",
+    "name": "HangarShipShake"
+   },
+   {
+    "id": "b8_1278",
+    "name": "ShipIdleLanded"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1844": {
+  "name": "ChargeStation",
+  "clips": [
+   {
+    "id": "b8_1251",
+    "name": "ItemChargerZap"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1864": {
+  "name": "HangarDoorLever",
+  "clips": [
+   {
+    "id": "b8_1289",
+    "name": "IntroLeverPull"
+   },
+   {
+    "id": "b8_1290",
+    "name": "IntroLeverPush"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1862": {
+  "name": "Cube_002",
+  "clips": [
+   {
+    "id": "b8_1303",
+    "name": "ShipLockerOpen"
+   },
+   {
+    "id": "b8_1301",
+    "name": "ShipLockerClose"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1856": {
+  "name": "ShipFixtures",
+  "clips": [
+   {
+    "id": "b8_1267",
+    "name": "LightSwitchFlick"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1861": {
+  "name": "Cube_000",
+  "clips": [
+   {
+    "id": "b8_1304",
+    "name": "ShipLockerOpenLeft"
+   },
+   {
+    "id": "b8_1302",
+    "name": "ShipLockerCloseLeft"
+   }
+  ],
+  "owner": "ship.json"
+ },
+ "b8_1870": {
+  "name": "metarig",
+  "clips": [
+   {
+    "id": "b8_1325",
+    "name": "Idle1"
+   },
+   {
+    "id": "b8_1367",
+    "name": "Walk"
+   },
+   {
+    "id": "b8_1370",
+    "name": "WalkTired"
+   },
+   {
+    "id": "b8_1366",
+    "name": "Sprint"
+   },
+   {
+    "id": "b8_1369",
+    "name": "WalkSideways"
+   },
+   {
+    "id": "b8_1350",
+    "name": "Jump"
+   },
+   {
+    "id": "b8_1351",
+    "name": "JumpLand"
+   },
+   {
+    "id": "b8_1317",
+    "name": "CrouchDown"
+   },
+   {
+    "id": "b8_1319",
+    "name": "CrouchWalk"
+   },
+   {
+    "id": "b8_1318",
+    "name": "CrouchIdle"
+   },
+   {
+    "id": "b8_1321",
+    "name": "FallNoJump"
+   },
+   {
+    "id": "b8_1307",
+    "name": "ClimbLadder"
+   },
+   {
+    "id": "b8_1352",
+    "name": "LimpWalk"
+   },
+   {
+    "id": "b8_1368",
+    "name": "WalkHindered"
+   },
+   {
+    "id": "b8_1360",
+    "name": "PushLever"
+   },
+   {
+    "id": "b8_1354",
+    "name": "Dance1"
+   },
+   {
+    "id": "b8_1355",
+    "name": "Dance2"
+   },
+   {
+    "id": "b8_1330",
+    "name": "HoldFlashlight"
+   },
+   {
+    "id": "b8_1326",
+    "name": "GrabOneHandedItem"
+   },
+   {
+    "id": "b8_1334",
+    "name": "HoldOneHandedItem"
+   },
+   {
+    "id": "b8_1349",
+    "name": "ThrowOneHandedItem"
+   },
+   {
+    "id": "b8_1329",
+    "name": "HoldClipboard"
+   },
+   {
+    "id": "b8_1348",
+    "name": "SpeakIntoWalkieTalkie"
+   },
+   {
+    "id": "b8_1335",
+    "name": "InhaleTZPChemical"
+   },
+   {
+    "id": "b8_1342",
+    "name": "ShakeItem"
+   },
+   {
+    "id": "b8_1333",
+    "name": "HoldMaskToFace"
+   },
+   {
+    "id": "b8_1337",
+    "name": "KnifeStab"
+   },
+   {
+    "id": "b8_1336",
+    "name": "KnifeReelUp"
+   },
+   {
+    "id": "b8_1322",
+    "name": "HandsOnWall"
+   },
+   {
+    "id": "b8_1338",
+    "name": "PullGrenadePin"
+   },
+   {
+    "id": "b8_1339",
+    "name": "PullGrenadePinHomemade"
+   },
+   {
+    "id": "b8_1323",
+    "name": "HoldLungApparatice"
+   },
+   {
+    "id": "b8_1357",
+    "name": "HoldPatcherShockRight"
+   },
+   {
+    "id": "b8_1356",
+    "name": "HoldPatcherShockLeft"
+   },
+   {
+    "id": "b8_1358",
+    "name": "HoldPatcherStraight"
+   },
+   {
+    "id": "b8_1347",
+    "name": "ShovelReelUp"
+   },
+   {
+    "id": "b8_1327",
+    "name": "HitShovel"
+   },
+   {
+    "id": "b8_1332",
+    "name": "HoldJetpackController"
+   },
+   {
+    "id": "b8_1328",
+    "name": "HitShovelCollide"
+   },
+   {
+    "id": "b8_1345",
+    "name": "ShotgunReloadSecondShell"
+   },
+   {
+    "id": "b8_1344",
+    "name": "ShotgunReloadOneShell"
+   },
+   {
+    "id": "b8_1346",
+    "name": "ShotgunShoot"
+   },
+   {
+    "id": "b8_1343",
+    "name": "ShotgunHold"
+   },
+   {
+    "id": "b8_1331",
+    "name": "HoldItemBothHandsForward"
+   },
+   {
+    "id": "b8_1341",
+    "name": "RockBabyIntense"
+   },
+   {
+    "id": "b8_1340",
+    "name": "RockBabyGentle"
+   },
+   {
+    "id": "b8_1359",
+    "name": "PullLever"
+   },
+   {
+    "id": "b8_1320",
+    "name": "EnterLadder"
+   },
+   {
+    "id": "b8_1363",
+    "name": "SpawnPlayer"
+   },
+   {
+    "id": "b8_1324",
+    "name": "Hurt1"
+   },
+   {
+    "id": "b8_1253",
+    "name": "GunOverheat"
+   },
+   {
+    "id": "b8_1364",
+    "name": "TypeOnTerminal"
+   },
+   {
+    "id": "b8_1365",
+    "name": "TypeOnTerminal2"
+   },
+   {
+    "id": "b8_1353",
+    "name": "ChargeItem"
+   },
+   {
+    "id": "b8_1315",
+    "name": "SitAndSteerNoHands"
+   },
+   {
+    "id": "b8_1312",
+    "name": "Key_Untwist"
+   },
+   {
+    "id": "b8_1309",
+    "name": "Key_Insert"
+   },
+   {
+    "id": "b8_1314",
+    "name": "SitAndSteer"
+   },
+   {
+    "id": "b8_1310",
+    "name": "Key_InsertAgain"
+   },
+   {
+    "id": "b8_1316",
+    "name": "SitAndSteerRightHandOnGearstick"
+   },
+   {
+    "id": "b8_1313",
+    "name": "PullGearstick"
+   },
+   {
+    "id": "b8_1311",
+    "name": "Key_Remove"
+   },
+   {
+    "id": "b8_1308",
+    "name": "JumpWhileInCar"
+   },
+   {
+    "id": "b8_1361",
+    "name": "SitOnCouch"
+   },
+   {
+    "id": "b8_1362",
+    "name": "SitOnElectricChair"
+   }
+  ],
+  "owner": "player.json"
+ },
+ "b19_2589": {
+  "name": "MapDot",
+  "clips": [
+   {
+    "id": "b19_1640",
+    "name": "MapRadarDotDie"
+   },
+   {
+    "id": "b19_1639",
+    "name": "MapRadarDotBlue"
+   }
+  ],
+  "owner": "player.json"
+ },
+ "b4_117": {
+  "name": "BellDingerAnimContainer",
+  "clips": [
+   {
+    "id": "b4_86",
+    "name": "BellDingerPress"
+   }
+  ],
+  "owner": "company.json"
+ },
+ "b4_114": {
+  "name": "DoorAndHookAnim",
+  "clips": [
+   {
+    "id": "b4_81",
+    "name": "DoorOpen"
+   },
+   {
+    "id": "b4_82",
+    "name": "HookSwoop"
+   },
+   {
+    "id": "b4_80",
+    "name": "DoorClose"
+   }
+  ],
+  "owner": "company.json"
+ },
+ "b4_119": {
+  "name": "CompanyBuildingStaticContainer",
+  "clips": [
+   {
+    "id": "b4_88",
+    "name": "CompanyBuildingStatic"
+   }
+  ],
+  "owner": "company.json"
+ },
+ "b4_113": {
+  "name": "BackTrunkContainer",
+  "clips": [
+   {
+    "id": "b4_79",
+    "name": "DrillBackTrunkOpen"
+   },
+   {
+    "id": "b4_78",
+    "name": "DrillBackTrunkClose"
+   }
+  ],
+  "owner": "company.json"
+ },
+ "b4_115": {
+  "name": "LeverSwitchForDrill",
+  "clips": [
+   {
+    "id": "b4_84",
+    "name": "PullDownLeverSwitch"
+   },
+   {
+    "id": "b4_83",
+    "name": "LeverSwitchIdle"
+   }
+  ],
+  "owner": "company.json"
+ },
+ "b4_116": {
+  "name": "SunAnimContainerCompanyLevel",
+  "clips": [
+   {
+    "id": "b4_85",
+    "name": "TimeOfDaySunCompanyLevel"
+   }
+  ],
+  "owner": "company.json"
+ },
+ "b4_118": {
+  "name": "TrapDoor",
+  "clips": [
+   {
+    "id": "b4_87",
+    "name": "HatchOpen"
+   }
+  ],
+  "owner": "company.json"
+ },
+ "b7_181": {
+  "name": "SunAnimContainer",
+  "clips": [
+   {
+    "id": "b7_155",
+    "name": "TimeOfDaySun"
+   },
+   {
+    "id": "b7_157",
+    "name": "TimeOfDaySunStormy"
+   },
+   {
+    "id": "b7_156",
+    "name": "TimeOfDaySunEclipse"
+   }
+  ],
+  "owner": "experimentation.json"
+ },
+ "b7_182": {
+  "name": "GarageDoor",
+  "clips": [
+   {
+    "id": "b7_158",
+    "name": "Move1"
+   },
+   {
+    "id": "b7_159",
+    "name": "Move2"
+   },
+   {
+    "id": "b7_160",
+    "name": "Move3"
+   },
+   {
+    "id": "b7_161",
+    "name": "Move4"
+   }
+  ],
+  "owner": "experimentation.json"
+ },
+ "b5_92": {
+  "name": "SunAnimContainer 1",
+  "clips": [
+   {
+    "id": "b5_82",
+    "name": "TimeOfDaySunTypeB"
+   },
+   {
+    "id": "b5_84",
+    "name": "TimeOfDaySunTypeBStormy"
+   },
+   {
+    "id": "b5_83",
+    "name": "TimeOfDaySunTypeBEclipse"
+   }
+  ],
+  "owner": "march.json"
+ },
+ "b2_46": {
+  "name": "WaterfallContainer",
+  "clips": [
+   {
+    "id": "b2_41",
+    "name": "Waterfall1"
+   }
+  ],
+  "owner": "march.json"
+ },
+ "b18_32": {
+  "name": "BlizzardSunAnimContainer",
+  "clips": [
+   {
+    "id": "b18_27",
+    "name": "TimeOfDaySunTypeC"
+   },
+   {
+    "id": "b18_29",
+    "name": "TimeOfDaySunTypeCStormy"
+   },
+   {
+    "id": "b18_28",
+    "name": "TimeOfDaySunTypeCEclipse"
+   }
+  ],
+  "owner": "titan.json"
+ },
+ "b18_33": {
+  "name": "RopeContainer",
+  "clips": [
+   {
+    "id": "b18_30",
+    "name": "RopeSway"
+   }
+  ],
+  "owner": "titan.json"
+ },
+ "shg0_7547132480844707360": {
+  "name": "LightController",
+  "clips": [
+   {
+    "id": "shg0_-521673984426126421",
+    "name": "LightControllerOff"
+   },
+   {
+    "id": "shg0_-8341613535573609528",
+    "name": "LightControllerOn"
+   },
+   {
+    "id": "shg0_3739356606892376762",
+    "name": "LightControllerFlicker"
+   }
+  ],
+  "owner": "Entry__shg0_-1269311158998257624.json"
+ },
+ "shg0_-4995299998837613837": {
+  "name": "EntranceVisualDoorsContainer",
+  "clips": [
+   {
+    "id": "shg0_3516572472614559272",
+    "name": "EntranceTeleportVisualDoorsShut"
+   },
+   {
+    "id": "shg0_1106027300913811702",
+    "name": "EntranceTeleportVisualDoorsOpen"
+   }
+  ],
+  "owner": "Entry__shg0_-1269311158998257624.json"
+ },
+ "shg0_-5451566541038431827": {
+  "name": "FenceAnimationContainer",
+  "clips": [
+   {
+    "id": "shg0_-4795618143135842811",
+    "name": "FenceDoorOpen"
+   },
+   {
+    "id": "shg0_-8265513480913731062",
+    "name": "FenceDoorClose"
+   }
+  ],
+  "owner": "FenceDoorMapModel__shg0_6465094465728158099.json"
+ },
+ "shg0_4025584074478166304": {
+  "name": "FreezerDoor",
+  "clips": [
+   {
+    "id": "shg0_-8883801765118765624",
+    "name": "FreezerDoorAnim10s"
+   },
+   {
+    "id": "shg0_-3309526299314303457",
+    "name": "FreezerDoorAnim12s"
+   },
+   {
+    "id": "shg0_2375535559728679468",
+    "name": "FreezerDoorAnim15s"
+   },
+   {
+    "id": "shg0_5481270932814428215",
+    "name": "FreezerDoorAnim18s"
+   },
+   {
+    "id": "shg0_-1549736071120767999",
+    "name": "FreezerDoorAnim20s"
+   }
+  ],
+  "owner": "FreezerDoorMapModel__shg0_-6628778843601344275.json"
+ },
+ "shg0_-6835134320324362376": {
+  "name": "AnimationContainer",
+  "clips": [
+   {
+    "id": "shg0_3196753577397837162",
+    "name": "GaragedoorCloseAnim"
+   },
+   {
+    "id": "shg0_6418779013709915327",
+    "name": "GaragedoorOpenAnim"
+   },
+   {
+    "id": "shg0_7928950537437910269",
+    "name": "GaragedoorWhat"
+   }
+  ],
+  "owner": "GarageDoorSyncedObject__shg0_-7761231674165560630.json"
+ },
+ "shg0_8069549817642868018": {
+  "name": "PigGrindingAnimContainer",
+  "clips": [
+   {
+    "id": "shg0_-732008157614438145",
+    "name": "PigGrindingAnim"
+   }
+  ],
+  "owner": "GrinderSyncedObjectContainer__shg0_7619088582663430042.json"
+ },
+ "shg0_-2524537111454332301": {
+  "name": "PentagramAnimContainer",
+  "clips": [
+   {
+    "id": "shg0_-6369778030604294911",
+    "name": "PentagramAnim"
+   }
+  ],
+  "owner": "GrinderSyncedObjectContainer__shg0_7619088582663430042.json"
+ },
+ "shg0_-7115978465366691690": {
+  "name": "GeneratorController",
+  "clips": [
+   {
+    "id": "shg0_5088209433834846719",
+    "name": "GeneratorIdle"
+   },
+   {
+    "id": "shg0_-9033827627512263210",
+    "name": "GeneratorLowPower"
+   }
+  ],
+  "owner": "GrinderSyncedObjectContainer__shg0_7619088582663430042.json"
+ },
+ "shg0_-3648162953804140906": {
+  "name": "Shredder",
+  "clips": [
+   {
+    "id": "shg0_5074922648993628745",
+    "name": "ShredderAnim"
+   }
+  ],
+  "owner": "GrinderSyncedObjectContainer__shg0_7619088582663430042.json"
+ },
+ "shg0_-845960477410874362": {
+  "name": "PigExcrementSynced",
+  "clips": [
+   {
+    "id": "shg0_3835889606079077888",
+    "name": "PoopInteractAnim"
+   }
+  ],
+  "owner": "PigExcrementSynced__shg0_-6531754814440543499.json"
+ },
+ "shg0_-4854838462373307305": {
+  "name": "FenceDoorContainerFlip",
+  "clips": [
+   {
+    "id": "shg0_4839937720295417449",
+    "name": "PigStyDoorOpenFlip"
+   },
+   {
+    "id": "shg0_6581327526548281668",
+    "name": "PigStyDoorCloseFlip"
+   }
+  ],
+  "owner": "PigStyDoorContainerFlip__shg0_-7037262435108114779.json"
+ },
+ "shg0_-6668857751126791884": {
+  "name": "FenceDoorContainer",
+  "clips": [
+   {
+    "id": "shg0_-4899442259552615823",
+    "name": "PigStyDoorOpen"
+   },
+   {
+    "id": "shg0_-3967709786148122541",
+    "name": "PigStyDoorClose"
+   }
+  ],
+  "owner": "PigStyDoorContainer__shg0_-5696186794259119877.json"
+ },
+ "shg0_1566357476067877617": {
+  "name": "DoorMesh",
+  "clips": [
+   {
+    "id": "shg0_-3632773104686632177",
+    "name": "Door1Close"
+   },
+   {
+    "id": "shg0_-8699621349004911642",
+    "name": "Door1Open"
+   }
+  ],
+  "owner": "SlaughterhouseDoorMapModel2__shg0_-588350490311791455.json"
+ },
+ "shg0_-7762460917212682962": {
+  "name": "VentEntrance",
+  "clips": [
+   {
+    "id": "shg0_-4324542015337761239",
+    "name": "VentOpen"
+   }
+  ],
+  "owner": "VentEntrance__shg0_6949437945176574833.json"
+ },
+ "b19_2578": {
+  "name": "AnimContainer 1",
+  "clips": [
+   {
+    "id": "b19_1624",
+    "name": "DiscoBallSpin"
+   },
+   {
+    "id": "b19_1623",
+    "name": "DiscoBallOff"
+   }
+  ],
+  "owner": "DiscoBallContainer__b19_7146.json"
+ },
+ "b19_2582": {
+  "name": "ElectricChair",
+  "clips": [
+   {
+    "id": "b19_1625",
+    "name": "ElectricChair"
+   }
+  ],
+  "owner": "ElectricChair__b19_6510.json"
+ },
+ "b19_2583": {
+  "name": "FishBowl",
+  "clips": [
+   {
+    "id": "b19_1626",
+    "name": "Fishbowl"
+   }
+  ],
+  "owner": "FishBowlContainer__b19_7722.json"
+ },
+ "b19_2584": {
+  "name": "FridgeDoorBottom",
+  "clips": [
+   {
+    "id": "b19_1628",
+    "name": "FridgeDoorBottomOpen"
+   },
+   {
+    "id": "b19_1627",
+    "name": "FridgeDoorBottomClose"
+   }
+  ],
+  "owner": "FridgeContainer__b19_4260.json"
+ },
+ "b19_2573": {
+  "name": "MicrowaveBody",
+  "clips": [
+   {
+    "id": "b19_1613",
+    "name": "MicrowaveOpen"
+   },
+   {
+    "id": "b19_1611",
+    "name": "MicrowaveClose"
+   },
+   {
+    "id": "b19_1612",
+    "name": "MicrowaveCook"
+   }
+  ],
+  "owner": "MicrowaveContainer__b19_2750.json"
+ },
+ "b19_2585": {
+  "name": "PJManPlush",
+  "clips": [
+   {
+    "id": "b19_1629",
+    "name": "PlushieSqueeze"
+   }
+  ],
+  "owner": "PlushiePJManContainer__b19_5625.json"
+ },
+ "b19_2587": {
+  "name": "RecordPlayerContainer",
+  "clips": [
+   {
+    "id": "b19_1630",
+    "name": "RecordPlayerPlay"
+   },
+   {
+    "id": "b19_1631",
+    "name": "RecordPlayerStop"
+   }
+  ],
+  "owner": "RecordPlayerContainer__b19_3655.json"
+ },
+ "b19_2581": {
+  "name": "CandleAnimation",
+  "clips": [
+   {
+    "id": "b19_1633",
+    "name": "RomanticTableLightsOn"
+   },
+   {
+    "id": "b19_1632",
+    "name": "RomanticTableLightsOff"
+   }
+  ],
+  "owner": "RomanticTableContainer__b19_4262.json"
+ }
+}

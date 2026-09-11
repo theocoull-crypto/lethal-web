@@ -1,0 +1,1 @@
+{"name":"HangingLightOff","length":0,"rate":60,"loop":false,"tracks":{},"floats":[{"path":"Light","attr":"m_IsActive","keys":[[0,0]],"classID":1},{"path":"IndirectLight","attr":"m_IsActive","keys":[[0,0]],"classID":1}],"events":[{"time":0.016666668,"name":"PlayAudio2Oneshot","s":null}]}

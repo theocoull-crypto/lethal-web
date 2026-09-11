@@ -1,0 +1,1314 @@
+{
+ "tileSets": {
+  "SlaughterhouseSet": [
+   {
+    "prefab": "Entry__shg0_-1269311158998257624.json",
+    "main": 500,
+    "branch": 500,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayPlus__shg0_3222191403815534859.json",
+    "main": 2,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayL__shg0_2055997766673307934.json",
+    "main": 0.6,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayStraight__shg0_-8732187310616457725.json",
+    "main": 0.5,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayT__shg0_-1896372565176949884.json",
+    "main": 1,
+    "branch": 2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "PigStyRoom__shg0_-3080263729660883502.json",
+    "main": 1.5,
+    "branch": 0,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ],
+     [
+      0.8,
+      1
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "TanningRoom__shg0_-6805137373384380076.json",
+    "main": 0.15,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "TanningRoomAlt__shg0_-1186363076596073093.json",
+    "main": 0.15,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallBathroomWide__shg0_229571886512064524.json",
+    "main": 0,
+    "branch": 0.4,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallBathroom__shg0_4775205818310312807.json",
+    "main": 0,
+    "branch": 0.8,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallOffice__shg0_-125391707924114052.json",
+    "main": 0.3,
+    "branch": 0.9,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallOfficeB__shg0_-4305406189551621751.json",
+    "main": 0.3,
+    "branch": 0.9,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallOfficeC__shg0_3147634794512079199.json",
+    "main": 0.15,
+    "branch": 0.45,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "FreezerRoom__shg0_2763203568074165951.json",
+    "main": 3,
+    "branch": 1.5,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.1,
+      0
+     ],
+     [
+      0.3357401,
+      1
+     ],
+     [
+      0.8,
+      0.5
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "LootBasementHall__shg0_2836735959744305594.json",
+    "main": 0,
+    "branch": 3,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ],
+     [
+      0.875,
+      0.03
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "LootBasement__shg0_523511549435757203.json",
+    "main": 0,
+    "branch": 100,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "ApparatusRoom__shg0_1174593976520818297.json",
+    "main": 0.3,
+    "branch": 5,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallButchery__shg0_3276921521554589844.json",
+    "main": 0,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "VentL__shg0_4003730398461946031.json",
+    "main": 0,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentLSmall__shg0_140716556541520826.json",
+    "main": 0,
+    "branch": 0.2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentZigZagB__shg0_-3660581871158845634.json",
+    "main": 0,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentZigZagLong__shg0_5333239425839880946.json",
+    "main": 0,
+    "branch": 0.6,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentZigZag__shg0_-6392146654720498666.json",
+    "main": 0,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentWrench__shg0_-1845563838058107778.json",
+    "main": 0,
+    "branch": 0.6,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallHallwayStraight__shg0_-8845305699560164029.json",
+    "main": 0.2,
+    "branch": 1.6,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ],
+     [
+      0.875,
+      0.03
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallHallwayExtender__shg0_-440766278380299597.json",
+    "main": 0.13,
+    "branch": 0.45,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ],
+     [
+      0.875,
+      0.03
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   }
+  ],
+  "GrinderRoomSet": [
+   {
+    "prefab": "GrinderRoom__shg0_1068434141793079314.json",
+    "main": 100,
+    "branch": 0,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "StartRoom": [
+   {
+    "prefab": "StartRoomTeleporter__shg0_-4679422618564341885.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "SlaughterhouseHallwaySet": [
+   {
+    "prefab": "Entry__shg0_-1269311158998257624.json",
+    "main": 500,
+    "branch": 500,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayPlus__shg0_3222191403815534859.json",
+    "main": 0.5,
+    "branch": 0.25,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayL__shg0_2055997766673307934.json",
+    "main": 0.3,
+    "branch": 0.25,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayStraight__shg0_-8732187310616457725.json",
+    "main": 1.5,
+    "branch": 0.05,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayT__shg0_-1896372565176949884.json",
+    "main": 0.3,
+    "branch": 0.3,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallHallwayStraight__shg0_-8845305699560164029.json",
+    "main": 0.7,
+    "branch": 5,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.1,
+      1
+     ],
+     [
+      0.8125,
+      0.8125
+     ],
+     [
+      0.9,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallHallwayExtender__shg0_-440766278380299597.json",
+    "main": 0.3,
+    "branch": 5,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.1,
+      1
+     ],
+     [
+      0.8125,
+      0.8125
+     ],
+     [
+      0.9,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "PigStyRoom__shg0_-3080263729660883502.json",
+    "main": 2,
+    "branch": 2,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ],
+     [
+      0.8,
+      1
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "TanningRoom__shg0_-6805137373384380076.json",
+    "main": 0.25,
+    "branch": 0.1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "TanningRoomAlt__shg0_-1186363076596073093.json",
+    "main": 0.25,
+    "branch": 0.1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallBathroomWide__shg0_229571886512064524.json",
+    "main": 0,
+    "branch": 0.4,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallBathroom__shg0_4775205818310312807.json",
+    "main": 0,
+    "branch": 0.8,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallOffice__shg0_-125391707924114052.json",
+    "main": 0.05,
+    "branch": 3,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallOfficeB__shg0_-4305406189551621751.json",
+    "main": 0.05,
+    "branch": 2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallOfficeC__shg0_3147634794512079199.json",
+    "main": 0.025,
+    "branch": 1.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "FreezerRoom__shg0_2763203568074165951.json",
+    "main": 3,
+    "branch": 2,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.1,
+      0
+     ],
+     [
+      0.3357401,
+      1
+     ],
+     [
+      0.575,
+      0.5
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "LootBasementHall__shg0_2836735959744305594.json",
+    "main": 0,
+    "branch": 3,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ],
+     [
+      0.875,
+      0.03
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "LootBasement__shg0_523511549435757203.json",
+    "main": 0,
+    "branch": 100,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallButchery__shg0_3276921521554589844.json",
+    "main": 0.1,
+    "branch": 0.4,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "ApparatusRoom__shg0_1174593976520818297.json",
+    "main": 0.3,
+    "branch": 5,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "VentL__shg0_4003730398461946031.json",
+    "main": 0,
+    "branch": 2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentLSmall__shg0_140716556541520826.json",
+    "main": 0,
+    "branch": 0.4,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentZigZag__shg0_-6392146654720498666.json",
+    "main": 0,
+    "branch": 1.6,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentZigZagB__shg0_-3660581871158845634.json",
+    "main": 0,
+    "branch": 1.6,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentZigZagLong__shg0_5333239425839880946.json",
+    "main": 0,
+    "branch": 1.2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentWrench__shg0_-1845563838058107778.json",
+    "main": 0,
+    "branch": 1.2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   }
+  ]
+ },
+ "doorParts": [
+  "GarageDoorSyncedObject__shg0_-7761231674165560630.json",
+  "GarageDoorConnector__shg0_-3799275017236089593.json",
+  "EmptyConnector__shg0_-8747484635674188105.json",
+  "Blocker__shg0_-3808228734977316593.json",
+  "EntryBlocker__shg0_-3039897087523643636.json",
+  "FenceDoorMapModel__shg0_6465094465728158099.json",
+  "FenceConnector__shg0_-211533805027212193.json",
+  "VentConnector__shg0_-1799779431443210929.json",
+  "VentEntryBlockerMain__shg0_3254227379109936216.json",
+  "VentBlockerWithTable__shg0_-2671416255839613598.json",
+  "EntranceTeleportA__shg0_-8297919288744020820.json",
+  "EntranceTeleportB__shg0_-5645272320954818676.json",
+  "VentEntrance__shg0_6949437945176574833.json",
+  "BreakerBox__shg0_8214475801038523998.json",
+  "VentEntryBlocker__shg0_2133129433924747660.json",
+  "PigExcrementSynced__shg0_-6531754814440543499.json",
+  "PigStyDoorContainer__shg0_-5696186794259119877.json",
+  "PigStyDoorContainerFlip__shg0_-7037262435108114779.json",
+  "GarageDoorBlocker__shg0_-2444441324701343177.json",
+  "SlaughterhouseDoorMapModel__shg0_-8739080491317424616.json",
+  "SlaughterhouseDoorMapSpawn__shg0_-374654705578405279.json",
+  "SlaughterhouseDoorMapModel2__shg0_-588350490311791455.json",
+  "SlaughterhouseDoorMapSpawn2__shg0_488903366372306357.json",
+  "WallBlocker__shg0_1722079950947372920.json",
+  "VentEntryBathroomBlocker__shg0_-7665376366184673314.json",
+  "BathroomBlocker__shg0_2253023305938344605.json",
+  "OfficeRoomBlocker__shg0_9153263550291333487.json",
+  "VentEntryOfficeBlocker__shg0_1475157241353520705.json",
+  "FreezerDoorMapModel__shg0_-6628778843601344275.json",
+  "FreezerDoorMapSpawn__shg0_-3035811455776392749.json",
+  "FreezerBlocker__shg0_2545109055025038976.json",
+  "FrozenAir__shg0_-7802260735559359226.json",
+  "FloorBlocker__shg0_-1363352970081391546.json",
+  "LungApparatus__shg0_1792750277395983370.json",
+  "VentFanBlocker__shg0_836433403900421934.json",
+  "VentCrawlBlocker__shg0_4724903687117587675.json",
+  "OfficeHallwayBlocker__shg0_-7843095844517367861.json",
+  "BoardedDoorBlocker__shg0_-1865262212154965026.json",
+  "VentEntryHallwayBlocker__shg0_888751792826403693.json",
+  "GrinderSyncedObjectContainer__shg0_7619088582663430042.json"
+ ],
+ "flows": {
+  "SlaughterhouseFlow": {
+   "name": "SlaughterhouseFlow",
+   "rarity": 0,
+   "Length": {
+    "Min": 5,
+    "Max": 6
+   },
+   "BranchCount": {
+    "Min": 7,
+    "Max": 8
+   },
+   "BranchMode": 0,
+   "DoorwayConnectionChance": 1,
+   "GlobalProps": [
+    {
+     "ID": 0,
+     "Count": {
+      "Min": 1,
+      "Max": 1
+     }
+    },
+    {
+     "ID": 5,
+     "Count": {
+      "Min": 5,
+      "Max": 7
+     }
+    },
+    {
+     "ID": 1231,
+     "Count": {
+      "Min": 1,
+      "Max": 1
+     }
+    },
+    {
+     "ID": 25,
+     "Count": {
+      "Min": 1,
+      "Max": 1
+     }
+    },
+    {
+     "ID": 40,
+     "Count": {
+      "Min": 3,
+      "Max": 6
+     }
+    }
+   ],
+   "nodes": [
+    {
+     "label": "Start",
+     "pos": 0,
+     "type": 1,
+     "tileSets": [
+      "SlaughterhouseSet"
+     ]
+    },
+    {
+     "label": "Goal",
+     "pos": 1,
+     "type": 2,
+     "tileSets": [
+      "GrinderRoomSet"
+     ]
+    }
+   ],
+   "lines": [
+    {
+     "pos": 0,
+     "len": 0.3,
+     "archetypes": [
+      {
+       "name": "SlaughterhouseArchetype",
+       "tileSets": [
+        "SlaughterhouseSet",
+        "StartRoom"
+       ],
+       "branchStart": [],
+       "branchCap": [],
+       "branchCapType": 1,
+       "straighten": 0,
+       "branchStartType": 0
+      }
+     ]
+    },
+    {
+     "pos": 0.3,
+     "len": 0.4,
+     "archetypes": [
+      {
+       "name": "SlaughterhouseHallwayArchetype",
+       "tileSets": [
+        "SlaughterhouseHallwaySet"
+       ],
+       "branchStart": [],
+       "branchCap": [],
+       "branchCapType": 1,
+       "straighten": 0,
+       "branchStartType": 0
+      }
+     ]
+    },
+    {
+     "pos": 0.7,
+     "len": 0.3,
+     "archetypes": [
+      {
+       "name": "SlaughterhouseArchetype",
+       "tileSets": [
+        "SlaughterhouseSet",
+        "StartRoom"
+       ],
+       "branchStart": [],
+       "branchCap": [],
+       "branchCapType": 1,
+       "straighten": 0,
+       "branchStartType": 0
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "modInterior": true,
+ "extended": {
+  "dungeonSizeMin": 1,
+  "dungeonSizeMax": 2.5,
+  "dungeonSizeLerpPercentage": 0.5,
+  "dungeonDisplayName": "",
+  "mapTileSize": 1
+ },
+ "flow": {
+  "name": "SlaughterhouseFlow",
+  "rarity": 0,
+  "Length": {
+   "Min": 5,
+   "Max": 6
+  },
+  "BranchCount": {
+   "Min": 7,
+   "Max": 8
+  },
+  "BranchMode": 0,
+  "DoorwayConnectionChance": 1,
+  "GlobalProps": [
+   {
+    "ID": 0,
+    "Count": {
+     "Min": 1,
+     "Max": 1
+    }
+   },
+   {
+    "ID": 5,
+    "Count": {
+     "Min": 5,
+     "Max": 7
+    }
+   },
+   {
+    "ID": 1231,
+    "Count": {
+     "Min": 1,
+     "Max": 1
+    }
+   },
+   {
+    "ID": 25,
+    "Count": {
+     "Min": 1,
+     "Max": 1
+    }
+   },
+   {
+    "ID": 40,
+    "Count": {
+     "Min": 3,
+     "Max": 6
+    }
+   }
+  ],
+  "nodes": [
+   {
+    "label": "Start",
+    "pos": 0,
+    "type": 1,
+    "tileSets": [
+     "SlaughterhouseSet"
+    ]
+   },
+   {
+    "label": "Goal",
+    "pos": 1,
+    "type": 2,
+    "tileSets": [
+     "GrinderRoomSet"
+    ]
+   }
+  ],
+  "lines": [
+   {
+    "pos": 0,
+    "len": 0.3,
+    "archetypes": [
+     {
+      "name": "SlaughterhouseArchetype",
+      "tileSets": [
+       "SlaughterhouseSet",
+       "StartRoom"
+      ],
+      "branchStart": [],
+      "branchCap": [],
+      "branchCapType": 1,
+      "straighten": 0,
+      "branchStartType": 0
+     }
+    ]
+   },
+   {
+    "pos": 0.3,
+    "len": 0.4,
+    "archetypes": [
+     {
+      "name": "SlaughterhouseHallwayArchetype",
+      "tileSets": [
+       "SlaughterhouseHallwaySet"
+      ],
+      "branchStart": [],
+      "branchCap": [],
+      "branchCapType": 1,
+      "straighten": 0,
+      "branchStartType": 0
+     }
+    ]
+   },
+   {
+    "pos": 0.7,
+    "len": 0.3,
+    "archetypes": [
+     {
+      "name": "SlaughterhouseArchetype",
+      "tileSets": [
+       "SlaughterhouseSet",
+       "StartRoom"
+      ],
+      "branchStart": [],
+      "branchCap": [],
+      "branchCapType": 1,
+      "straighten": 0,
+      "branchStartType": 0
+     }
+    ]
+   }
+  ]
+ }
+}

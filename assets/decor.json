@@ -1,0 +1,342 @@
+[
+ {
+  "id": 6,
+  "name": "Television",
+  "prefab": "TelevisionContainer__b19_7060.json",
+  "price": 500,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 6,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_6966"
+  }
+ },
+ {
+  "id": 9,
+  "name": "Toilet",
+  "prefab": "Toilet__b19_4436.json",
+  "price": 100,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 9,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_4020"
+  }
+ },
+ {
+  "id": 10,
+  "name": "Shower",
+  "prefab": "Shower__b19_5436.json",
+  "price": 190,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 10,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_7284"
+  }
+ },
+ {
+  "id": 12,
+  "name": "Record player",
+  "prefab": "RecordPlayerContainer__b19_3655.json",
+  "price": 180,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 12,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_3654"
+  }
+ },
+ {
+  "id": 13,
+  "name": "Table",
+  "prefab": "NormalTableContainer__b19_6390.json",
+  "price": 70,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 13,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_6667"
+  }
+ },
+ {
+  "id": 14,
+  "name": "Romantic table",
+  "prefab": "RomanticTableContainer__b19_4262.json",
+  "price": 150,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 14,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_5485"
+  }
+ },
+ {
+  "id": 20,
+  "name": "JackOLantern",
+  "prefab": "PumpkinUnlockableContainer__b19_2787.json",
+  "price": 150,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 20,
+   "placeObjectSFX": {
+    "$": "b19_1798",
+    "c": "AudioClip",
+    "n": "DropPlasticLarge"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_6640"
+  }
+ },
+ {
+  "id": 21,
+  "name": "Welcome mat",
+  "prefab": "WelcomeMatContainer__b19_3904.json",
+  "price": 60,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 21,
+   "placeObjectSFX": {
+    "$": "b19_1850",
+    "c": "AudioClip",
+    "n": "PlaceRug"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_2747"
+  }
+ },
+ {
+  "id": 22,
+  "name": "Goldfish",
+  "prefab": "FishBowlContainer__b19_7722.json",
+  "price": 70,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 22,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_3802"
+  }
+ },
+ {
+  "id": 23,
+  "name": "Plushie pajama man",
+  "prefab": "PlushiePJManContainer__b19_5625.json",
+  "price": 200,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 23,
+   "placeObjectSFX": {
+    "$": "b19_1854",
+    "c": "AudioClip",
+    "n": "PlushieSqueeze"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_5266"
+  }
+ },
+ {
+  "id": 27,
+  "name": "Disco Ball",
+  "prefab": "DiscoBallContainer__b19_7146.json",
+  "price": 280,
+  "place": {
+   "AllowPlacementOnWalls": true,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 27,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_3213"
+  }
+ },
+ {
+  "id": 28,
+  "name": "Microwave",
+  "prefab": "MicrowaveContainer__b19_2750.json",
+  "price": 60,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 28,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_4979"
+  }
+ },
+ {
+  "id": 29,
+  "name": "Sofa chair",
+  "prefab": "SofaChairContainer__b19_3356.json",
+  "price": 180,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 29,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_4181"
+  }
+ },
+ {
+  "id": 30,
+  "name": "Fridge",
+  "prefab": "FridgeContainer__b19_4260.json",
+  "price": 120,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 30,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_7262"
+  }
+ },
+ {
+  "id": 31,
+  "name": "Classic painting",
+  "prefab": "ClassicPaintingContainer__b19_4822.json",
+  "price": 55,
+  "place": {
+   "AllowPlacementOnWalls": true,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 31,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_4540"
+  }
+ },
+ {
+  "id": 32,
+  "name": "Electric chair",
+  "prefab": "ElectricChair__b19_6510.json",
+  "price": 190,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 32,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_5809"
+  }
+ },
+ {
+  "id": 33,
+  "name": "Dog house",
+  "prefab": "DogHouse__b19_2835.json",
+  "price": 145,
+  "place": {
+   "AllowPlacementOnWalls": false,
+   "AllowPlacementOnCounters": true,
+   "allowPlacementOnWalls": null,
+   "allowPlacementOnCounters": null,
+   "unlockableID": 33,
+   "placeObjectSFX": {
+    "$": "b19_1816",
+    "c": "AudioClip",
+    "n": "MoveShipObjectBig"
+   },
+   "doNotAllowPlacement": null,
+   "node": "b19_6597"
+  }
+ }
+]

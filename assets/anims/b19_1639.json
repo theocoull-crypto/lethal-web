@@ -1,0 +1,1 @@
+{"name":"MapRadarDotBlue","length":0.6,"rate":60,"loop":false,"tracks":{"null":{"pos":[],"rot":[],"scale":[[0,1.6477584,0.49345422,1.6477584],[0.6,1.6477584,0.49345422,1.6477584]]}},"floats":[{"path":"MapDirectionIndicator","attr":"m_Enabled","keys":[[0,1]],"classID":23}],"events":[]}

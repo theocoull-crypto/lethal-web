@@ -1,5 +1,5 @@
 """Build the ship television's playlist: transcode the user's own analog-horror videos to small 4:3 clips in
-assets/tv/ (gitignored, like everything else in assets) and write assets/tv/index.json.
+assets/tv/ and write assets/tv/index.json.
 Usage: python tools/pack_tv.py            (uses the SOURCES list below; missing files are skipped)
        python tools/pack_tv.py a.mp4 b.mp4 (adds these files instead)"""
 import json, os, re, subprocess, sys

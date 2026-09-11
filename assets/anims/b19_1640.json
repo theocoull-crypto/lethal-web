@@ -1,0 +1,1 @@
+{"name":"MapRadarDotDie","length":0.06666667,"rate":60,"loop":false,"tracks":{"null":{"pos":[],"rot":[],"scale":[[0,1.6477584,0.49319056,1.6477584],[0.06666667,1.0214949,1.0214949,1.0214949]]}},"floats":[{"path":"MapDirectionIndicator","attr":"m_Enabled","keys":[[0,1],[0.06666667,0]],"classID":23}],"events":[]}

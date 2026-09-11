@@ -1,0 +1,1 @@
+{"name":"SteelDoorMapSpawn","nodes":[{"id":"b8_10591","name":"SteelDoorMapSpawn","active":true,"layer":0,"tag":"Untagged","parent":null,"p":[162.73001,36.43665,61.195],"r":[0,1,0,2.8461216e-06],"s":[1,1,1],"comps":[{"t":"MB","cls":"SpawnSyncedObject","enabled":true,"d":{"spawnPrefab":{"$":"b19_7170","c":"GameObject","n":"SteelDoorMapModel"}}}]}],"managers":[]}

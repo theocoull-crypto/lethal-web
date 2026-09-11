@@ -1,0 +1,1 @@
+{"name":"PoopInteractAnim","length":0,"rate":60,"loop":false,"tracks":{},"floats":[{"path":"SM_Poop_Pig_01","attr":"m_IsActive","keys":[[0,0]],"classID":1},{"path":"PooParticle","attr":"m_IsActive","keys":[[0,1]],"classID":1}],"events":[]}

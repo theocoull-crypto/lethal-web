@@ -1,0 +1,6532 @@
+{
+ "tiles": {},
+ "tileSets": {
+  "StartRooms": [
+   {
+    "prefab": "ElevatorConnector__b8_8276.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "Level1RoomTiles": [
+   {
+    "prefab": "MediumRoomHallway1B__b8_7877.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.18940079,
+      0.793804
+     ],
+     [
+      0.8150393,
+      1
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallPillarRoom__b8_7432.json",
+    "main": 0.7,
+    "branch": 0.8,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallLRoom__b8_2396.json",
+    "main": 0.7,
+    "branch": 0.8,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "DoubleDoorRoom__b8_8143.json",
+    "main": 0.15,
+    "branch": 0.15,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "4x4BigStairTile__b8_7417.json",
+    "main": 1.3,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "4x4ServerRoomTile__b8_9297.json",
+    "main": 1.3,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeForkTileB__b8_7007.json",
+    "main": 2,
+    "branch": 0.25,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.5114634,
+      0.9224938
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "StairHoleTile__b8_5303.json",
+    "main": 0.75,
+    "branch": 0.15,
+    "depthCurve": [
+     [
+      0,
+      0.72405624
+     ],
+     [
+      0.46241635,
+      1
+     ],
+     [
+      1,
+      0.2523613
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallStorageTile__b8_6114.json",
+    "main": 0.75,
+    "branch": 0.35,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "Level1HallwayTiles": [
+   {
+    "prefab": "StartRoom__b8_2844.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.7574883,
+      0.6929248
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "THallwayIntersectionB__b8_9798.json",
+    "main": 3,
+    "branch": 3,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "HallwayCloverIntersection__b8_7727.json",
+    "main": 4,
+    "branch": 4,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "HallwayCorner__b8_6746.json",
+    "main": 0.2,
+    "branch": 0.1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.84048086,
+      0.78961974
+     ],
+     [
+      0.92134356,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallStairTile__b8_11641.json",
+    "main": 4,
+    "branch": 4,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "HallwayCloverInverse__b8_4389.json",
+    "main": 4,
+    "branch": 4,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CatwalkTile2x1Split__b8_10119.json",
+    "main": 1,
+    "branch": 0.4,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "CatwalkTile2x1__b8_8331.json",
+    "main": 1,
+    "branch": 0.4,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "Diagonal1Tile__b8_9552.json",
+    "main": 0.6,
+    "branch": 0.6,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "NarrowHallwayTile__b8_5348.json",
+    "main": 0.25,
+    "branch": 0.15,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "Level1BranchCaps": [
+   {
+    "prefab": "SmallRoom2__b8_6776.json",
+    "main": 0.25,
+    "branch": 0.25,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "Level1Maze": [
+   {
+    "prefab": "THallwayIntersectionB__b8_9798.json",
+    "main": 15,
+    "branch": 15,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallStairTile__b8_11641.json",
+    "main": 0.2,
+    "branch": 0.2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "HallwayCloverInverse__b8_4389.json",
+    "main": 2,
+    "branch": 2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "HallwayCloverIntersection__b8_7727.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CatwalkTile2x1Split__b8_10119.json",
+    "main": 0.5,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeForkTileB__b8_7007.json",
+    "main": 0.4,
+    "branch": 0.04,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.5114634,
+      0.9224938
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "Diagonal1Tile__b8_9552.json",
+    "main": 0.75,
+    "branch": 0.6,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "StairHoleTile__b8_5303.json",
+    "main": 0.2,
+    "branch": 0.2,
+    "depthCurve": [
+     [
+      0,
+      0.72405624
+     ],
+     [
+      0.46241635,
+      1
+     ],
+     [
+      1,
+      0.2523613
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallStorageTile__b8_6114.json",
+    "main": 0.125,
+    "branch": 0.125,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "NarrowHallwayTile__b8_5348.json",
+    "main": 0.125,
+    "branch": 0.125,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallStorageTile__2__Variant__b8_8455.json",
+    "main": 0.15,
+    "branch": 0.15,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "MineshaftStartRooms": [
+   {
+    "prefab": "MineshaftStartTile__b8_10128.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "Level3CaveTilesAndTunnels": [
+   {
+    "prefab": "CaveEntranceTile1a_Variant__b8_11853.json",
+    "main": 15,
+    "branch": 15,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile1a_Variant_1__b8_11855.json",
+    "main": 15,
+    "branch": 15,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile1a_Variant_2__b8_11854.json",
+    "main": 15,
+    "branch": 15,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile1a_Variant_3__b8_11852.json",
+    "main": 15,
+    "branch": 15,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "TunnelSplit__b8_11724.json",
+    "main": 0.2,
+    "branch": 0.2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.285141,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "DeepShaftTile__b8_5270.json",
+    "main": 0.2,
+    "branch": 0.2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.27360806,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "GrandTunnelRamp__b8_7224.json",
+    "main": 0.2,
+    "branch": 0.2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.21966553,
+      0
+     ]
+    ]
+   }
+  ],
+  "Level3TunnelTiles": [
+   {
+    "prefab": "TunnelSplit__b8_11724.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "GrandTunnelRamp__b8_7224.json",
+    "main": 0.02,
+    "branch": 0.01,
+    "depthCurve": [
+     [
+      0,
+      0.4944662
+     ],
+     [
+      0.37359685,
+      1
+     ],
+     [
+      0.61272335,
+      0.62843925
+     ],
+     [
+      1,
+      0.4981537
+     ]
+    ]
+   },
+   {
+    "prefab": "DeepShaftTile__b8_5270.json",
+    "main": 0.02,
+    "branch": 0.03,
+    "depthCurve": [
+     [
+      0,
+      0.29888898
+     ],
+     [
+      0.07885594,
+      0.65510684
+     ],
+     [
+      0.50409055,
+      1
+     ],
+     [
+      1,
+      0.70479584
+     ]
+    ]
+   }
+  ],
+  "Level3CaveTilesBranch": [
+   {
+    "prefab": "CaveCrampedIntersectTile__b8_8110.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.8924523,
+      0.8409169
+     ],
+     [
+      1,
+      0.5682645
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveForkStairTile__b8_9988.json",
+    "main": 0.15,
+    "branch": 0.1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveSmallIntersectTile__b8_4653.json",
+    "main": 1,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveYTile__b8_8778.json",
+    "main": 0.23,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveLongRampTile__b8_7943.json",
+    "main": 0.15,
+    "branch": 0.2,
+    "depthCurve": [
+     [
+      0,
+      0.8819182
+     ],
+     [
+      0.14175534,
+      1
+     ],
+     [
+      0.6471382,
+      0.9520308
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveWaterTile__b8_6396.json",
+    "main": 0.14,
+    "branch": 0.15,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile1a_Variant__b8_11853.json",
+    "main": 0.0001,
+    "branch": 0.0001,
+    "depthCurve": [
+     [
+      0,
+      0.804245
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile1a_Variant_1__b8_11855.json",
+    "main": 0.0001,
+    "branch": 0.0001,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile1a_Variant_2__b8_11854.json",
+    "main": 0.0001,
+    "branch": 0.0001,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile1a_Variant_3__b8_11852.json",
+    "main": 0.0001,
+    "branch": 0.0001,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "Level3CaveEntranceTiles": [
+   {
+    "prefab": "CaveEntranceTile1__b8_8109.json",
+    "main": 0.0001,
+    "branch": 5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile2__b8_8111.json",
+    "main": 0.0001,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile3__b8_8106.json",
+    "main": 0.0001,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile4__b8_8108.json",
+    "main": 0.0001,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile5__b8_8107.json",
+    "main": 0.5,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "TunnelSplitBranchStart_Variant__b8_11216.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "TunnelSplitBranchStart2_Variant__b8_6566.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "Level3CaveTiles": [
+   {
+    "prefab": "CaveCrampedIntersectTile__b8_8110.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.8924523,
+      0.8409169
+     ],
+     [
+      1,
+      0.5682645
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveForkStairTile__b8_9988.json",
+    "main": 0.15,
+    "branch": 0.08,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveSmallIntersectTile__b8_4653.json",
+    "main": 1,
+    "branch": 0.8,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveYTile__b8_8778.json",
+    "main": 0.23,
+    "branch": 0.17,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveLongRampTile__b8_7943.json",
+    "main": 0.15,
+    "branch": 0.06,
+    "depthCurve": [
+     [
+      0,
+      0.8819182
+     ],
+     [
+      0.14175534,
+      1
+     ],
+     [
+      0.6471382,
+      0.9520308
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveWaterTile__b8_6396.json",
+    "main": 0.14,
+    "branch": 0.04,
+    "depthCurve": [
+     [
+      0,
+      0.6420693
+     ],
+     [
+      0.48690906,
+      1
+     ],
+     [
+      1,
+      0.6752812
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile1__b8_8109.json",
+    "main": 0.0001,
+    "branch": 0.0001,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile2__b8_8111.json",
+    "main": 0.0001,
+    "branch": 0.0001,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile3__b8_8106.json",
+    "main": 0.0001,
+    "branch": 0.0001,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveEntranceTile4__b8_8108.json",
+    "main": 0.0001,
+    "branch": 0.0001,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "Level3EndTunnelTiles": [
+   {
+    "prefab": "TunnelSplit__b8_11724.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "DeepShaftTile__b8_5270.json",
+    "main": 0.02,
+    "branch": 0.03,
+    "depthCurve": [
+     [
+      0,
+      0.29888898
+     ],
+     [
+      0.07885594,
+      0.65510684
+     ],
+     [
+      0.50409055,
+      1
+     ],
+     [
+      1,
+      0.70479584
+     ]
+    ]
+   },
+   {
+    "prefab": "TunnelSplitEndTile__b8_11705.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "CaveCramped_ExitTile_Variant__b8_11257.json",
+    "main": 0.02,
+    "branch": 0.02,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "Level3EndCaveExit": [
+   {
+    "prefab": "CaveCramped_ExitTile_Variant__b8_11257.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "Level3EndTunnelBranchCaps": [
+   {
+    "prefab": "TunnelSplitEndTile__b8_11705.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "SlaughterhouseSet": [
+   {
+    "prefab": "Entry__shg0_-1269311158998257624.json",
+    "main": 500,
+    "branch": 500,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayPlus__shg0_3222191403815534859.json",
+    "main": 2,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayL__shg0_2055997766673307934.json",
+    "main": 0.6,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayStraight__shg0_-8732187310616457725.json",
+    "main": 0.5,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayT__shg0_-1896372565176949884.json",
+    "main": 1,
+    "branch": 2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "PigStyRoom__shg0_-3080263729660883502.json",
+    "main": 1.5,
+    "branch": 0,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ],
+     [
+      0.8,
+      1
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "TanningRoom__shg0_-6805137373384380076.json",
+    "main": 0.15,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "TanningRoomAlt__shg0_-1186363076596073093.json",
+    "main": 0.15,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallBathroomWide__shg0_229571886512064524.json",
+    "main": 0,
+    "branch": 0.4,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallBathroom__shg0_4775205818310312807.json",
+    "main": 0,
+    "branch": 0.8,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallOffice__shg0_-125391707924114052.json",
+    "main": 0.3,
+    "branch": 0.9,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallOfficeB__shg0_-4305406189551621751.json",
+    "main": 0.3,
+    "branch": 0.9,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallOfficeC__shg0_3147634794512079199.json",
+    "main": 0.15,
+    "branch": 0.45,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "FreezerRoom__shg0_2763203568074165951.json",
+    "main": 3,
+    "branch": 1.5,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.1,
+      0
+     ],
+     [
+      0.3357401,
+      1
+     ],
+     [
+      0.8,
+      0.5
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "LootBasementHall__shg0_2836735959744305594.json",
+    "main": 0,
+    "branch": 3,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ],
+     [
+      0.875,
+      0.03
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "LootBasement__shg0_523511549435757203.json",
+    "main": 0,
+    "branch": 100,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "ApparatusRoom__shg0_1174593976520818297.json",
+    "main": 0.3,
+    "branch": 5,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallButchery__shg0_3276921521554589844.json",
+    "main": 0,
+    "branch": 0.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "VentL__shg0_4003730398461946031.json",
+    "main": 0,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentLSmall__shg0_140716556541520826.json",
+    "main": 0,
+    "branch": 0.2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentZigZagB__shg0_-3660581871158845634.json",
+    "main": 0,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentZigZagLong__shg0_5333239425839880946.json",
+    "main": 0,
+    "branch": 0.6,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentZigZag__shg0_-6392146654720498666.json",
+    "main": 0,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentWrench__shg0_-1845563838058107778.json",
+    "main": 0,
+    "branch": 0.6,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallHallwayStraight__shg0_-8845305699560164029.json",
+    "main": 0.2,
+    "branch": 1.6,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ],
+     [
+      0.875,
+      0.03
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallHallwayExtender__shg0_-440766278380299597.json",
+    "main": 0.13,
+    "branch": 0.45,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ],
+     [
+      0.875,
+      0.03
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   }
+  ],
+  "GrinderRoomSet": [
+   {
+    "prefab": "GrinderRoom__shg0_1068434141793079314.json",
+    "main": 100,
+    "branch": 0,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "StartRoom": [
+   {
+    "prefab": "StartRoomTeleporter__shg0_-4679422618564341885.json",
+    "main": 1,
+    "branch": 1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   }
+  ],
+  "SlaughterhouseHallwaySet": [
+   {
+    "prefab": "Entry__shg0_-1269311158998257624.json",
+    "main": 500,
+    "branch": 500,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayPlus__shg0_3222191403815534859.json",
+    "main": 0.5,
+    "branch": 0.25,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayL__shg0_2055997766673307934.json",
+    "main": 0.3,
+    "branch": 0.25,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayStraight__shg0_-8732187310616457725.json",
+    "main": 1.5,
+    "branch": 0.05,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "LargeHallwayT__shg0_-1896372565176949884.json",
+    "main": 0.3,
+    "branch": 0.3,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallHallwayStraight__shg0_-8845305699560164029.json",
+    "main": 0.7,
+    "branch": 5,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.1,
+      1
+     ],
+     [
+      0.8125,
+      0.8125
+     ],
+     [
+      0.9,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallHallwayExtender__shg0_-440766278380299597.json",
+    "main": 0.3,
+    "branch": 5,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.1,
+      1
+     ],
+     [
+      0.8125,
+      0.8125
+     ],
+     [
+      0.9,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "PigStyRoom__shg0_-3080263729660883502.json",
+    "main": 2,
+    "branch": 2,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ],
+     [
+      0.8,
+      1
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "TanningRoom__shg0_-6805137373384380076.json",
+    "main": 0.25,
+    "branch": 0.1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "TanningRoomAlt__shg0_-1186363076596073093.json",
+    "main": 0.25,
+    "branch": 0.1,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallBathroomWide__shg0_229571886512064524.json",
+    "main": 0,
+    "branch": 0.4,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallBathroom__shg0_4775205818310312807.json",
+    "main": 0,
+    "branch": 0.8,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallOffice__shg0_-125391707924114052.json",
+    "main": 0.05,
+    "branch": 3,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallOfficeB__shg0_-4305406189551621751.json",
+    "main": 0.05,
+    "branch": 2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallOfficeC__shg0_3147634794512079199.json",
+    "main": 0.025,
+    "branch": 1.5,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "FreezerRoom__shg0_2763203568074165951.json",
+    "main": 3,
+    "branch": 2,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.1,
+      0
+     ],
+     [
+      0.3357401,
+      1
+     ],
+     [
+      0.575,
+      0.5
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "LootBasementHall__shg0_2836735959744305594.json",
+    "main": 0,
+    "branch": 3,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ],
+     [
+      0.875,
+      0.03
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "LootBasement__shg0_523511549435757203.json",
+    "main": 0,
+    "branch": 100,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "SmallButchery__shg0_3276921521554589844.json",
+    "main": 0.1,
+    "branch": 0.4,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "ApparatusRoom__shg0_1174593976520818297.json",
+    "main": 0.3,
+    "branch": 5,
+    "depthCurve": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   {
+    "prefab": "VentL__shg0_4003730398461946031.json",
+    "main": 0,
+    "branch": 2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentLSmall__shg0_140716556541520826.json",
+    "main": 0,
+    "branch": 0.4,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentZigZag__shg0_-6392146654720498666.json",
+    "main": 0,
+    "branch": 1.6,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentZigZagB__shg0_-3660581871158845634.json",
+    "main": 0,
+    "branch": 1.6,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentZigZagLong__shg0_5333239425839880946.json",
+    "main": 0,
+    "branch": 1.2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "prefab": "VentWrench__shg0_-1845563838058107778.json",
+    "main": 0,
+    "branch": 1.2,
+    "depthCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.44450837,
+      0.72534335
+     ],
+     [
+      0.8,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   }
+  ]
+ },
+ "flow": {
+  "name": "Level1Flow",
+  "rarity": 300,
+  "Length": {
+   "Min": 11,
+   "Max": 13
+  },
+  "BranchCount": {
+   "Min": 22,
+   "Max": 25
+  },
+  "BranchMode": 0,
+  "DoorwayConnectionChance": 1,
+  "GlobalProps": [
+   {
+    "ID": 0,
+    "Count": {
+     "Min": 1,
+     "Max": 1
+    }
+   },
+   {
+    "ID": 1,
+    "Count": {
+     "Min": 0,
+     "Max": 2
+    }
+   },
+   {
+    "ID": 2,
+    "Count": {
+     "Min": 0,
+     "Max": 3
+    }
+   },
+   {
+    "ID": 3,
+    "Count": {
+     "Min": 20,
+     "Max": 32
+    }
+   },
+   {
+    "ID": 7,
+    "Count": {
+     "Min": 3,
+     "Max": 9
+    }
+   },
+   {
+    "ID": 11,
+    "Count": {
+     "Min": 2,
+     "Max": 4
+    }
+   },
+   {
+    "ID": 5,
+    "Count": {
+     "Min": 5,
+     "Max": 7
+    }
+   },
+   {
+    "ID": 25,
+    "Count": {
+     "Min": 1,
+     "Max": 1
+    }
+   },
+   {
+    "ID": 1231,
+    "Count": {
+     "Min": 1,
+     "Max": 1
+    }
+   },
+   {
+    "ID": 40,
+    "Count": {
+     "Min": 4,
+     "Max": 6
+    }
+   },
+   {
+    "ID": 18,
+    "Count": {
+     "Min": 0,
+     "Max": 4
+    }
+   }
+  ],
+  "nodes": [
+   {
+    "label": "Start",
+    "pos": 0,
+    "type": 1,
+    "tileSets": [
+     "StartRooms"
+    ]
+   },
+   {
+    "label": "Goal",
+    "pos": 1,
+    "type": 2,
+    "tileSets": [
+     "Level1RoomTiles"
+    ]
+   }
+  ],
+  "lines": [
+   {
+    "pos": 0,
+    "len": 0.119617224,
+    "archetypes": [
+     {
+      "name": "Level1Archetype",
+      "tileSets": [
+       "Level1HallwayTiles",
+       "Level1RoomTiles"
+      ],
+      "branchStart": [
+       "Level1BranchCaps"
+      ],
+      "branchCap": [
+       "Level1RoomTiles"
+      ],
+      "branchCapType": 0,
+      "straighten": 0,
+      "branchStartType": 1
+     }
+    ]
+   },
+   {
+    "pos": 0.119617224,
+    "len": 0.30861244,
+    "archetypes": [
+     {
+      "name": "Level1ArchetypeMaze",
+      "tileSets": [
+       "Level1Maze"
+      ],
+      "branchStart": [],
+      "branchCap": [
+       "Level1RoomTiles"
+      ],
+      "branchCapType": 0,
+      "straighten": 0,
+      "branchStartType": 0
+     }
+    ]
+   },
+   {
+    "pos": 0.42822966,
+    "len": 0.5717703,
+    "archetypes": [
+     {
+      "name": "Level1Archetype",
+      "tileSets": [
+       "Level1HallwayTiles",
+       "Level1RoomTiles"
+      ],
+      "branchStart": [
+       "Level1BranchCaps"
+      ],
+      "branchCap": [
+       "Level1RoomTiles"
+      ],
+      "branchCapType": 0,
+      "straighten": 0,
+      "branchStartType": 1
+     }
+    ]
+   }
+  ]
+ },
+ "scrap": [
+  {
+   "name": "Cog1",
+   "itemName": "Large axle",
+   "rarity": 37,
+   "prefab": "Cog__b19_3267.json",
+   "minValue": 90,
+   "maxValue": 140,
+   "weight": 1.15,
+   "twoHanded": true,
+   "isConductiveMetal": true,
+   "floorYOffset": 0,
+   "verticalOffset": 0.5,
+   "restingRotation": {
+    "x": 7,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_1877",
+    "c": "AudioClip",
+    "n": "DropMetalObject3"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "EnginePart1",
+   "itemName": "V-type engine",
+   "rarity": 40,
+   "prefab": "EnginePart__b19_6407.json",
+   "minValue": 50,
+   "maxValue": 140,
+   "weight": 1.15,
+   "twoHanded": true,
+   "isConductiveMetal": true,
+   "floorYOffset": 0,
+   "verticalOffset": 0.4,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 90
+   },
+   "rotationOffset": {
+    "x": -7.76,
+    "y": -101.9,
+    "z": -175.91
+   },
+   "positionOffset": {
+    "x": 0.1,
+    "y": 0.1,
+    "z": 0.16
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_1877",
+    "c": "AudioClip",
+    "n": "DropMetalObject3"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "FishTestProp",
+   "itemName": "Plastic fish",
+   "rarity": 16,
+   "prefab": "FishTestProp__b19_4985.json",
+   "minValue": 70,
+   "maxValue": 100,
+   "weight": 1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.15,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 90
+   },
+   "rotationOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "grabSFX": null,
+   "dropSFX": {
+    "$": "b19_1757",
+    "c": "AudioClip",
+    "n": "DropPlastic2"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "BigBolt",
+   "itemName": "Big bolt",
+   "rarity": 47,
+   "prefab": "BigBolt__b19_2884.json",
+   "minValue": 50,
+   "maxValue": 80,
+   "weight": 1.18,
+   "twoHanded": false,
+   "isConductiveMetal": true,
+   "floorYOffset": 0,
+   "verticalOffset": 0.21,
+   "restingRotation": {
+    "x": -21,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": -25,
+    "y": 67.63,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0.1,
+    "z": 0
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_2281",
+    "c": "AudioClip",
+    "n": "DropMetalObject1"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "FancyLamp",
+   "itemName": "Fancy lamp",
+   "rarity": 27,
+   "prefab": "FancyLamp__b19_4064.json",
+   "minValue": 150,
+   "maxValue": 320,
+   "weight": 1.2,
+   "twoHanded": true,
+   "isConductiveMetal": true,
+   "floorYOffset": 0,
+   "verticalOffset": 0,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": -1.3,
+    "y": 95.17,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": -0.45,
+    "y": 0.09,
+    "z": 0.05
+   },
+   "grabSFX": null,
+   "dropSFX": {
+    "$": "b19_2388",
+    "c": "AudioClip",
+    "n": "DropMetalObject2"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "ToyCube",
+   "itemName": "Toy cube",
+   "rarity": 20,
+   "prefab": "ToyCube__b19_6093.json",
+   "minValue": 60,
+   "maxValue": 110,
+   "weight": 1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.1,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 90
+   },
+   "rotationOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_1757",
+    "c": "AudioClip",
+    "n": "DropPlastic2"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "PickleJar",
+   "itemName": "Jar of pickles",
+   "rarity": 8,
+   "prefab": "PickleJar__b19_4246.json",
+   "minValue": 80,
+   "maxValue": 150,
+   "weight": 1.15,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.3,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 0,
+    "y": 90,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": 0.19,
+    "y": 0,
+    "z": -0.15
+   },
+   "grabSFX": {
+    "$": "b19_2321",
+    "c": "AudioClip",
+    "n": "PickUpGlassJar"
+   },
+   "dropSFX": {
+    "$": "b19_1776",
+    "c": "AudioClip",
+    "n": "DropGlassJar"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "FlashLaserPointer",
+   "itemName": "Laser pointer",
+   "rarity": 10,
+   "prefab": "LaserPointer__b19_5231.json",
+   "minValue": 80,
+   "maxValue": 250,
+   "weight": 1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.15,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": 0.01,
+    "y": 0.15,
+    "z": 0.01
+   },
+   "grabSFX": {
+    "$": "b19_2118",
+    "c": "AudioClip",
+    "n": "GrabFlashlight"
+   },
+   "dropSFX": {
+    "$": "b19_2472",
+    "c": "AudioClip",
+    "n": "DropFlashlight"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [
+    "Toggle laser : [RMB]"
+   ],
+   "isScrap": true
+  },
+  {
+   "name": "FancyCup",
+   "itemName": "Golden cup",
+   "rarity": 27,
+   "prefab": "FancyGlass__b19_2761.json",
+   "minValue": 100,
+   "maxValue": 200,
+   "weight": 1.15,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.17,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": -22.8,
+    "y": 92.5,
+    "z": -24.4
+   },
+   "positionOffset": {
+    "x": -0.15,
+    "y": 0.08,
+    "z": 0.03
+   },
+   "grabSFX": null,
+   "dropSFX": {
+    "$": "b19_2281",
+    "c": "AudioClip",
+    "n": "DropMetalObject1"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "FancyPainting",
+   "itemName": "Painting",
+   "rarity": 34,
+   "prefab": "Painting__b19_6400.json",
+   "minValue": 150,
+   "maxValue": 310,
+   "weight": 1.3,
+   "twoHanded": true,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0,
+   "restingRotation": {
+    "x": 0,
+    "y": 90,
+    "z": -90
+   },
+   "rotationOffset": {
+    "x": -35.3,
+    "y": 84.2,
+    "z": 183.8
+   },
+   "positionOffset": {
+    "x": -0.3,
+    "y": 0.07,
+    "z": -0.1
+   },
+   "grabSFX": {
+    "$": "b19_2420",
+    "c": "AudioClip",
+    "n": "PickUpPlasticBin"
+   },
+   "dropSFX": {
+    "$": "b19_1798",
+    "c": "AudioClip",
+    "n": "DropPlasticLarge"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "Bell",
+   "itemName": "Bell",
+   "rarity": 37,
+   "prefab": "HandBell__b19_7252.json",
+   "minValue": 120,
+   "maxValue": 200,
+   "weight": 1.23,
+   "twoHanded": false,
+   "isConductiveMetal": true,
+   "floorYOffset": 0,
+   "verticalOffset": 0.22,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 29.5,
+    "y": 98,
+    "z": -29.2
+   },
+   "positionOffset": {
+    "x": -0.11,
+    "y": 0.07,
+    "z": -0.09
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_1936",
+    "c": "AudioClip",
+    "n": "DropBell"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "Ring",
+   "itemName": "Ring",
+   "rarity": 27,
+   "prefab": "FancyRing__b19_6405.json",
+   "minValue": 130,
+   "maxValue": 200,
+   "weight": 1.15,
+   "twoHanded": false,
+   "isConductiveMetal": true,
+   "floorYOffset": 0,
+   "verticalOffset": 0.04,
+   "restingRotation": {
+    "x": 0,
+    "y": -90,
+    "z": 90
+   },
+   "rotationOffset": {
+    "x": 402.8,
+    "y": 86.2,
+    "z": -8.5
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0.15,
+    "z": 0.02
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_2281",
+    "c": "AudioClip",
+    "n": "DropMetalObject1"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "RobotToy",
+   "itemName": "Toy robot",
+   "rarity": 35,
+   "prefab": "RobotToy__b19_6401.json",
+   "minValue": 140,
+   "maxValue": 220,
+   "weight": 1.2,
+   "twoHanded": false,
+   "isConductiveMetal": true,
+   "floorYOffset": 0,
+   "verticalOffset": 0.44,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 8,
+    "y": 89.46,
+    "z": 110
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0.09,
+    "z": -0.15
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_1798",
+    "c": "AudioClip",
+    "n": "DropPlasticLarge"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "Toothpaste",
+   "itemName": "Toothpaste",
+   "rarity": 36,
+   "prefab": "Toothpaste__b19_6503.json",
+   "minValue": 35,
+   "maxValue": 120,
+   "weight": 1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.04,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 180,
+    "y": 0,
+    "z": -35
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0.1,
+    "z": 0.03
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_1757",
+    "c": "AudioClip",
+    "n": "DropPlastic2"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "Brush",
+   "itemName": "Brush",
+   "rarity": 31,
+   "prefab": "Hairbrush__b19_3903.json",
+   "minValue": 20,
+   "maxValue": 90,
+   "weight": 1.1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.06,
+   "restingRotation": {
+    "x": 90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 63.7,
+    "y": 28.4,
+    "z": 110.1
+   },
+   "positionOffset": {
+    "x": -0.1,
+    "y": 0.1,
+    "z": 0.02
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_1757",
+    "c": "AudioClip",
+    "n": "DropPlastic2"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "PillBottle",
+   "itemName": "Pill bottle",
+   "rarity": 15,
+   "prefab": "PillBottle__b19_3687.json",
+   "minValue": 40,
+   "maxValue": 100,
+   "weight": 1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.07,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": -10.8,
+    "y": 110,
+    "z": -233.55
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0.1,
+    "z": 0.01
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_2281",
+    "c": "AudioClip",
+    "n": "DropMetalObject1"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "PerfumeBottle",
+   "itemName": "Perfume bottle",
+   "rarity": 14,
+   "prefab": "PerfumeBottle__b19_6959.json",
+   "minValue": 120,
+   "maxValue": 260,
+   "weight": 1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.1,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": -13.38,
+    "y": 90,
+    "z": -15
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0.13,
+    "z": -0.03
+   },
+   "grabSFX": {
+    "$": "b19_2321",
+    "c": "AudioClip",
+    "n": "PickUpGlassJar"
+   },
+   "dropSFX": {
+    "$": "b19_1776",
+    "c": "AudioClip",
+    "n": "DropGlassJar"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "Mug",
+   "itemName": "Mug",
+   "rarity": 21,
+   "prefab": "Mug__b19_3800.json",
+   "minValue": 60,
+   "maxValue": 170,
+   "weight": 1.05,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.07,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 180,
+    "y": -89.5,
+    "z": -84.8
+   },
+   "positionOffset": {
+    "x": 0.06,
+    "y": 0.1,
+    "z": -0.07
+   },
+   "grabSFX": {
+    "$": "b19_2420",
+    "c": "AudioClip",
+    "n": "PickUpPlasticBin"
+   },
+   "dropSFX": {
+    "$": "b19_1851",
+    "c": "AudioClip",
+    "n": "DropPlastic1"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "BottleBin",
+   "itemName": "Bottles",
+   "rarity": 33,
+   "prefab": "BinFullOfBottles__b19_5686.json",
+   "minValue": 110,
+   "maxValue": 140,
+   "weight": 1.18,
+   "twoHanded": true,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.3,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": -5.3,
+    "y": 111.9,
+    "z": 5.25
+   },
+   "positionOffset": {
+    "x": -0.39,
+    "y": 0.23,
+    "z": -0.18
+   },
+   "grabSFX": {
+    "$": "b19_2420",
+    "c": "AudioClip",
+    "n": "PickUpPlasticBin"
+   },
+   "dropSFX": {
+    "$": "b19_1985",
+    "c": "AudioClip",
+    "n": "DropBottles"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "MagnifyingGlass",
+   "itemName": "Magnifying glass",
+   "rarity": 25,
+   "prefab": "MagnifyingGlass__b19_3577.json",
+   "minValue": 110,
+   "maxValue": 150,
+   "weight": 1.1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.05,
+   "restingRotation": {
+    "x": 0,
+    "y": 90,
+    "z": -90
+   },
+   "rotationOffset": {
+    "x": 0,
+    "y": 112.5,
+    "z": 117.2
+   },
+   "positionOffset": {
+    "x": -0.03,
+    "y": 0.13,
+    "z": 0.03
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_2182",
+    "c": "AudioClip",
+    "n": "DropGlass1"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "Hairdryer",
+   "itemName": "Hairdryer",
+   "rarity": 30,
+   "prefab": "Hairdryer__b19_6506.json",
+   "minValue": 150,
+   "maxValue": 250,
+   "weight": 1.07,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.04,
+   "restingRotation": {
+    "x": 0,
+    "y": 90,
+    "z": -90
+   },
+   "rotationOffset": {
+    "x": -5,
+    "y": 99.2,
+    "z": 180
+   },
+   "positionOffset": {
+    "x": -0.14,
+    "y": 0.12,
+    "z": 0.02
+   },
+   "grabSFX": {
+    "$": "b19_2420",
+    "c": "AudioClip",
+    "n": "PickUpPlasticBin"
+   },
+   "dropSFX": {
+    "$": "b19_1757",
+    "c": "AudioClip",
+    "n": "DropPlastic2"
+   },
+   "itemIcon": null,
+   "usable": true,
+   "toolTips": [
+    "Use hairdryer : [RMB]"
+   ],
+   "isScrap": true
+  },
+  {
+   "name": "Phone",
+   "itemName": "Old phone",
+   "rarity": 22,
+   "prefab": "OldPhone__b19_6530.json",
+   "minValue": 120,
+   "maxValue": 160,
+   "weight": 1.05,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.04,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": -90
+   },
+   "rotationOffset": {
+    "x": 145,
+    "y": -4.2,
+    "z": -462.81
+   },
+   "positionOffset": {
+    "x": 0.11,
+    "y": 0.15,
+    "z": -0.04
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_2281",
+    "c": "AudioClip",
+    "n": "DropMetalObject1"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "SodaCanRed",
+   "itemName": "Red soda",
+   "rarity": 38,
+   "prefab": "RedSodaCan__b19_4359.json",
+   "minValue": 45,
+   "maxValue": 225,
+   "weight": 1.07,
+   "twoHanded": false,
+   "isConductiveMetal": true,
+   "floorYOffset": 0,
+   "verticalOffset": 0.07,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": -90
+   },
+   "rotationOffset": {
+    "x": -12.48,
+    "y": 92.44,
+    "z": -256.3
+   },
+   "positionOffset": {
+    "x": -0.01,
+    "y": 0.11,
+    "z": -0.06
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_2281",
+    "c": "AudioClip",
+    "n": "DropMetalObject1"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "Dentures",
+   "itemName": "Teeth",
+   "rarity": 21,
+   "prefab": "Dentures__b19_7177.json",
+   "minValue": 150,
+   "maxValue": 210,
+   "weight": 1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.05,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 6.5,
+    "y": 100.3,
+    "z": 56.94
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0.14,
+    "z": -0.07
+   },
+   "grabSFX": null,
+   "dropSFX": {
+    "$": "b19_1851",
+    "c": "AudioClip",
+    "n": "DropPlastic1"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "7Ball",
+   "itemName": "Magic 7 ball",
+   "rarity": 16,
+   "prefab": "Magic7Ball__b19_5755.json",
+   "minValue": 90,
+   "maxValue": 180,
+   "weight": 1.15,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.06,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 199.6,
+    "y": -91,
+    "z": -16
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "grabSFX": {
+    "$": "b19_2420",
+    "c": "AudioClip",
+    "n": "PickUpPlasticBin"
+   },
+   "dropSFX": {
+    "$": "b19_2054",
+    "c": "AudioClip",
+    "n": "DropBall"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "RubberDuck",
+   "itemName": "Rubber Ducky",
+   "rarity": 24,
+   "prefab": "RubberDucky__b19_3810.json",
+   "minValue": 5,
+   "maxValue": 250,
+   "weight": 1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": -90
+   },
+   "rotationOffset": {
+    "x": 0,
+    "y": 90,
+    "z": 17.16
+   },
+   "positionOffset": {
+    "x": 0.06,
+    "y": 0.19,
+    "z": -0.03
+   },
+   "grabSFX": {
+    "$": "b19_2032",
+    "c": "AudioClip",
+    "n": "DuckQuack"
+   },
+   "dropSFX": {
+    "$": "b19_1897",
+    "c": "AudioClip",
+    "n": "DropRubberDuck"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "TeaKettle",
+   "itemName": "Tea kettle",
+   "rarity": 30,
+   "prefab": "TeaKettle__b19_6377.json",
+   "minValue": 80,
+   "maxValue": 140,
+   "weight": 1.2,
+   "twoHanded": false,
+   "isConductiveMetal": true,
+   "floorYOffset": 0,
+   "verticalOffset": 0,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": -90
+   },
+   "rotationOffset": {
+    "x": 0,
+    "y": 112.12,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": -0.2,
+    "y": 0.2,
+    "z": -0.15
+   },
+   "grabSFX": {
+    "$": "b19_2252",
+    "c": "AudioClip",
+    "n": "ShovelPickUp"
+   },
+   "dropSFX": {
+    "$": "b19_2248",
+    "c": "AudioClip",
+    "n": "DropThinMetal"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "Airhorn",
+   "itemName": "Airhorn",
+   "rarity": 24,
+   "prefab": "Airhorn__b19_4373.json",
+   "minValue": 130,
+   "maxValue": 180,
+   "weight": 1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.06,
+   "restingRotation": {
+    "x": 0,
+    "y": 90,
+    "z": 90
+   },
+   "rotationOffset": {
+    "x": -3.5,
+    "y": 92.3,
+    "z": 177.3
+   },
+   "positionOffset": {
+    "x": -0.06,
+    "y": 0.14,
+    "z": 0.01
+   },
+   "grabSFX": {
+    "$": "b19_2118",
+    "c": "AudioClip",
+    "n": "GrabFlashlight"
+   },
+   "dropSFX": {
+    "$": "b19_1851",
+    "c": "AudioClip",
+    "n": "DropPlastic1"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [
+    "Use airhorn : [RMB]"
+   ],
+   "isScrap": true
+  },
+  {
+   "name": "ClownHorn",
+   "itemName": "Clown horn",
+   "rarity": 16,
+   "prefab": "Clownhorn__b19_2844.json",
+   "minValue": 130,
+   "maxValue": 180,
+   "weight": 1,
+   "twoHanded": false,
+   "isConductiveMetal": true,
+   "floorYOffset": 0,
+   "verticalOffset": 0.06,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": -196.6,
+    "y": -71.3,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": -0.05,
+    "y": 0.15,
+    "z": 0.02
+   },
+   "grabSFX": {
+    "$": "b19_2118",
+    "c": "AudioClip",
+    "n": "GrabFlashlight"
+   },
+   "dropSFX": {
+    "$": "b19_1851",
+    "c": "AudioClip",
+    "n": "DropPlastic1"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [
+    "Use horn : [RMB]"
+   ],
+   "isScrap": true
+  },
+  {
+   "name": "DiyFlashbang",
+   "itemName": "Homemade flashbang",
+   "rarity": 9,
+   "prefab": "DiyFlashbang__b19_7786.json",
+   "minValue": 25,
+   "maxValue": 70,
+   "weight": 1.05,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.12,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 90
+   },
+   "rotationOffset": {
+    "x": 1.78,
+    "y": 107.18,
+    "z": -136.4
+   },
+   "positionOffset": {
+    "x": -0.03,
+    "y": 0.13,
+    "z": -0.02
+   },
+   "grabSFX": {
+    "$": "b19_1973",
+    "c": "AudioClip",
+    "n": "GrabBottle"
+   },
+   "dropSFX": {
+    "$": "b19_2150",
+    "c": "AudioClip",
+    "n": "DropBottleSingle"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [
+    "Use DIY-Flashbang : [RMB]"
+   ],
+   "isScrap": true
+  },
+  {
+   "name": "GiftBox",
+   "itemName": "Gift",
+   "rarity": 17,
+   "prefab": "GiftBox__b19_7438.json",
+   "minValue": 30,
+   "maxValue": 70,
+   "weight": 1.18,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.45,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 3.72,
+    "y": 108.4,
+    "z": 0.29
+   },
+   "positionOffset": {
+    "x": 0.15,
+    "y": 0.22,
+    "z": -0.27
+   },
+   "grabSFX": {
+    "$": "b19_2030",
+    "c": "AudioClip",
+    "n": "GrabCardboardBox"
+   },
+   "dropSFX": {
+    "$": "b19_1868",
+    "c": "AudioClip",
+    "n": "DropCardboardBox"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [
+    "Open gift : [LMB]"
+   ],
+   "isScrap": true
+  },
+  {
+   "name": "TragedyMask",
+   "itemName": "Tragedy",
+   "rarity": 46,
+   "prefab": "TragedyMask__b19_7787.json",
+   "minValue": 70,
+   "maxValue": 130,
+   "weight": 1.1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 90,
+   "verticalOffset": 0.02,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": -86.75,
+    "y": -59.32,
+    "z": -0.05
+   },
+   "positionOffset": {
+    "x": 0.06,
+    "y": 0.19,
+    "z": -0.25
+   },
+   "grabSFX": {
+    "$": "b19_2030",
+    "c": "AudioClip",
+    "n": "GrabCardboardBox"
+   },
+   "dropSFX": {
+    "$": "b19_1868",
+    "c": "AudioClip",
+    "n": "DropCardboardBox"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [
+    "Wear mask : [RMB]"
+   ],
+   "isScrap": true
+  },
+  {
+   "name": "ComedyMask",
+   "itemName": "Comedy",
+   "rarity": 43,
+   "prefab": "ComedyMask__b19_3294.json",
+   "minValue": 70,
+   "maxValue": 130,
+   "weight": 1.1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 90,
+   "verticalOffset": 0.07,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": -86.75,
+    "y": -59,
+    "z": -0.05
+   },
+   "positionOffset": {
+    "x": 0.06,
+    "y": 0.19,
+    "z": -0.25
+   },
+   "grabSFX": {
+    "$": "b19_2030",
+    "c": "AudioClip",
+    "n": "GrabCardboardBox"
+   },
+   "dropSFX": {
+    "$": "b19_1868",
+    "c": "AudioClip",
+    "n": "DropCardboardBox"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [
+    "Wear mask : [RMB]"
+   ],
+   "isScrap": true
+  },
+  {
+   "name": "WhoopieCushion",
+   "itemName": "Whoopie cushion",
+   "rarity": 26,
+   "prefab": "WhoopieCushion__b19_5869.json",
+   "minValue": 15,
+   "maxValue": 90,
+   "weight": 1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 180,
+   "verticalOffset": 0.025,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 137.8,
+    "y": 18,
+    "z": 1.4
+   },
+   "positionOffset": {
+    "x": -0.01,
+    "y": 0.19,
+    "z": -0.03
+   },
+   "grabSFX": null,
+   "dropSFX": null,
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "PlasticCup",
+   "itemName": "Plastic cup",
+   "rarity": 19,
+   "prefab": "PlasticCup__b19_5284.json",
+   "minValue": 30,
+   "maxValue": 90,
+   "weight": 1,
+   "twoHanded": false,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.1,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": -1.3,
+    "y": 95.17,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": -0.01,
+    "y": 0.18,
+    "z": -0.02
+   },
+   "grabSFX": null,
+   "dropSFX": {
+    "$": "b19_2017",
+    "c": "AudioClip",
+    "n": "DropPlasticCup"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  },
+  {
+   "name": "ToiletPaperRolls",
+   "itemName": "Toilet paper",
+   "rarity": 8,
+   "prefab": "ToiletPaperRolls__b19_7515.json",
+   "minValue": 150,
+   "maxValue": 220,
+   "weight": 1.05,
+   "twoHanded": true,
+   "isConductiveMetal": false,
+   "floorYOffset": 0,
+   "verticalOffset": 0.4,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 180
+   },
+   "rotationOffset": {
+    "x": -138.55,
+    "y": 23.2,
+    "z": -188.24
+   },
+   "positionOffset": {
+    "x": -0.09,
+    "y": 0.37,
+    "z": -0.22
+   },
+   "grabSFX": {
+    "$": "b19_2013",
+    "c": "AudioClip",
+    "n": "GrabToiletPaper"
+   },
+   "dropSFX": {
+    "$": "b19_2175",
+    "c": "AudioClip",
+    "n": "DropToiletPaper"
+   },
+   "itemIcon": null,
+   "usable": false,
+   "toolTips": [],
+   "isScrap": true
+  }
+ ],
+ "hazards": [
+  {
+   "prefab": "TurretContainer__b19_7113.json",
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.75952417,
+     5.598252
+    ],
+    [
+     0.88479793,
+     15.818184
+    ],
+    [
+     1.0017693,
+     34.761364
+    ]
+   ],
+   "spawnFacingAwayFromWall": true,
+   "requireDistanceBetweenSpawns": false
+  },
+  {
+   "prefab": "Landmine__b19_6502.json",
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.77028894,
+     3.7627766
+    ],
+    [
+     0.91099787,
+     12.159094
+    ],
+    [
+     1.0002282,
+     23
+    ]
+   ],
+   "spawnFacingAwayFromWall": false,
+   "requireDistanceBetweenSpawns": false
+  },
+  {
+   "prefab": "SpikeRoofTrapHazard__b19_3909.json",
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.5610818,
+     0
+    ],
+    [
+     0.73680806,
+     2
+    ],
+    [
+     1.0002282,
+     2
+    ]
+   ],
+   "spawnFacingAwayFromWall": false,
+   "requireDistanceBetweenSpawns": true
+  }
+ ],
+ "enemies": {
+  "inside": [
+   {
+    "name": "DressGirl",
+    "enemyName": "Girl",
+    "rarity": 17,
+    "prefab": "DressGirl__b19_2993.json",
+    "power": 2,
+    "maxCount": 1,
+    "probCurve": [
+     [
+      0,
+      0.9765625
+     ],
+     [
+      0.21571648,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": false,
+    "stunTime": 4,
+    "doorSpeed": 1.5,
+    "sfx": {
+     "hitBodySFX": null,
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": null,
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "LassoMan",
+    "enemyName": "Lasso",
+    "rarity": 0,
+    "prefab": "LassoMan__b19_7657.json",
+    "power": 2,
+    "maxCount": 2,
+    "probCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": true,
+    "stunTime": 4,
+    "doorSpeed": 1.5,
+    "sfx": {
+     "hitBodySFX": null,
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": null,
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "SandSpider",
+    "enemyName": "Bunker Spider",
+    "rarity": 59,
+    "prefab": "SandSpider__b19_4733.json",
+    "power": 2,
+    "maxCount": 1,
+    "probCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": true,
+    "stunTime": 1,
+    "doorSpeed": 0.15,
+    "sfx": {
+     "hitBodySFX": {
+      "$": "b19_1714",
+      "c": "AudioClip",
+      "n": "HitEnemyBody"
+     },
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": {
+      "$": "b19_2456",
+      "c": "AudioClip",
+      "n": "StunSpider"
+     },
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "Centipede",
+    "enemyName": "Centipede",
+    "rarity": 54,
+    "prefab": "Centipede__b19_7102.json",
+    "power": 1,
+    "maxCount": 4,
+    "probCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": true,
+    "stunTime": 3,
+    "doorSpeed": 0.23,
+    "sfx": {
+     "hitBodySFX": {
+      "$": "b19_1714",
+      "c": "AudioClip",
+      "n": "HitEnemyBody"
+     },
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": null,
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "Blob",
+    "enemyName": "Blob",
+    "rarity": 20,
+    "prefab": "Blob__b19_5463.json",
+    "power": 1,
+    "maxCount": 2,
+    "probCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.58705676,
+      0.99882966
+     ],
+     [
+      1,
+      0.9582062
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": true,
+    "stunTime": 4,
+    "doorSpeed": 0.4,
+    "sfx": {
+     "hitBodySFX": null,
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": null,
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "Flowerman",
+    "enemyName": "Flowerman",
+    "rarity": 62,
+    "prefab": "Flowerman__b19_6229.json",
+    "power": 3,
+    "maxCount": 1,
+    "probCurve": [
+     [
+      0,
+      0.46494877
+     ],
+     [
+      0.23599193,
+      0.55629915
+     ],
+     [
+      0.56868184,
+      0.93826115
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": true,
+    "stunTime": 0.25,
+    "doorSpeed": 1.25,
+    "sfx": {
+     "hitBodySFX": {
+      "$": "b19_1714",
+      "c": "AudioClip",
+      "n": "HitEnemyBody"
+     },
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": {
+      "$": "b19_1725",
+      "c": "AudioClip",
+      "n": "StunDog"
+     },
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "SpringMan",
+    "enemyName": "Spring",
+    "rarity": 59,
+    "prefab": "SpringMan__b19_3125.json",
+    "power": 1,
+    "maxCount": 5,
+    "probCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": false,
+    "stunTime": 3.25,
+    "doorSpeed": 0.06,
+    "sfx": {
+     "hitBodySFX": {
+      "$": "b19_1942",
+      "c": "AudioClip",
+      "n": "HitMetal"
+     },
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": null,
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "Crawler",
+    "enemyName": "Crawler",
+    "rarity": 54,
+    "prefab": "Crawler__b19_7687.json",
+    "power": 3,
+    "maxCount": 4,
+    "probCurve": [
+     [
+      0,
+      0.9707031
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": true,
+    "stunTime": 0.4,
+    "doorSpeed": 0.3,
+    "sfx": {
+     "hitBodySFX": null,
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": {
+      "$": "b19_2092",
+      "c": "AudioClip",
+      "n": "CrawlerDie"
+     },
+     "stunSFX": {
+      "$": "b19_1792",
+      "c": "AudioClip",
+      "n": "StunCrawler"
+     },
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "HoarderBug",
+    "enemyName": "Hoarding bug",
+    "rarity": 38,
+    "prefab": "HoarderBug__b19_3110.json",
+    "power": 1,
+    "maxCount": 10,
+    "probCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": true,
+    "stunTime": 0.3,
+    "doorSpeed": 1.5,
+    "sfx": {
+     "hitBodySFX": {
+      "$": "b19_1714",
+      "c": "AudioClip",
+      "n": "HitEnemyBody"
+     },
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": {
+      "$": "b19_2098",
+      "c": "AudioClip",
+      "n": "HoarderBugCry"
+     },
+     "stunSFX": {
+      "$": "b19_1833",
+      "c": "AudioClip",
+      "n": "BugDie"
+     },
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "Jester",
+    "enemyName": "Jester",
+    "rarity": 71,
+    "prefab": "JesterEnemy__b19_2862.json",
+    "power": 3,
+    "maxCount": 1,
+    "probCurve": [
+     [
+      0,
+      0.8116556
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": false,
+    "stunTime": 0.6,
+    "doorSpeed": 0.5,
+    "sfx": {
+     "hitBodySFX": {
+      "$": "b19_2043",
+      "c": "AudioClip",
+      "n": "HitWood"
+     },
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": null,
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "Puffer",
+    "enemyName": "Puffer",
+    "rarity": 16,
+    "prefab": "PufferEnemy__b19_5582.json",
+    "power": 1,
+    "maxCount": 2,
+    "probCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": false,
+    "stunTime": 0.6,
+    "doorSpeed": 0.3,
+    "sfx": {
+     "hitBodySFX": {
+      "$": "b19_1714",
+      "c": "AudioClip",
+      "n": "HitEnemyBody"
+     },
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": null,
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "Nutcracker",
+    "enemyName": "Nutcracker",
+    "rarity": 71,
+    "prefab": "NutcrackerEnemy__b19_7106.json",
+    "power": 1,
+    "maxCount": 10,
+    "probCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": true,
+    "stunTime": 0.5,
+    "doorSpeed": 2,
+    "sfx": {
+     "hitBodySFX": null,
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": {
+      "$": "b19_1807",
+      "c": "AudioClip",
+      "n": "NutcrackerDie"
+     },
+     "stunSFX": null,
+     "audioClips": [
+      {
+       "$": "b19_2316",
+       "c": "AudioClip",
+       "n": "NutcrackerHitEye"
+      },
+      {
+       "$": "b19_1942",
+       "c": "AudioClip",
+       "n": "HitMetal"
+      },
+      {
+       "$": "b19_2290",
+       "c": "AudioClip",
+       "n": "ShotgunReloadNutcracker"
+      },
+      {
+       "$": "b19_2275",
+       "c": "AudioClip",
+       "n": "HeadGoUp"
+      }
+     ],
+     "overrideVentSFX": {
+      "$": "b19_1708",
+      "c": "AudioClip",
+      "n": "NutcrackerVentCrawl"
+     }
+    }
+   },
+   {
+    "name": "MaskedPlayerEnemy",
+    "enemyName": "Masked",
+    "rarity": 32,
+    "prefab": "MaskedPlayerEnemy__b19_4284.json",
+    "power": 1,
+    "maxCount": 10,
+    "probCurve": [
+     [
+      0,
+      0.95796204
+     ],
+     [
+      1,
+      0.9892046
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": true,
+    "stunTime": 0.75,
+    "doorSpeed": 2,
+    "sfx": {
+     "hitBodySFX": {
+      "$": "b19_2443",
+      "c": "AudioClip",
+      "n": "HitPlayerSFX"
+     },
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": {
+      "$": "b19_1807",
+      "c": "AudioClip",
+      "n": "NutcrackerDie"
+     },
+     "stunSFX": null,
+     "audioClips": [
+      {
+       "$": "b19_2376",
+       "c": "AudioClip",
+       "n": "MaskAttackPlayer"
+      },
+      {
+       "$": "b19_2265",
+       "c": "AudioClip",
+       "n": "MaskFaceLightUp"
+      },
+      {
+       "$": "b19_2121",
+       "c": "AudioClip",
+       "n": "MaskPuke"
+      }
+     ],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "Stingray",
+    "enemyName": "Stingray",
+    "rarity": 57,
+    "prefab": "StingrayEnemy__b19_7483.json",
+    "power": 0.5,
+    "maxCount": 6,
+    "probCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      0.23694682,
+      1
+     ],
+     [
+      0.8264182,
+      0.86749566
+     ],
+     [
+      1,
+      0.61533815
+     ]
+    ],
+    "isOutside": false,
+    "isDaytime": false,
+    "canDie": true,
+    "stunTime": 1,
+    "doorSpeed": 0.8,
+    "sfx": {
+     "hitBodySFX": {
+      "$": "b19_1714",
+      "c": "AudioClip",
+      "n": "HitEnemyBody"
+     },
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": null,
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   }
+  ],
+  "outside": [
+   {
+    "name": "ForestGiant",
+    "enemyName": "ForestGiant",
+    "rarity": 32,
+    "prefab": "ForestGiant__b19_3566.json",
+    "power": 3,
+    "maxCount": 3,
+    "probCurve": [
+     [
+      0,
+      0.49508107
+     ],
+     [
+      0.099496186,
+      0.675929
+     ],
+     [
+      0.17269172,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": true,
+    "isDaytime": false,
+    "canDie": true,
+    "stunTime": 1.2,
+    "doorSpeed": 1,
+    "sfx": {
+     "hitBodySFX": null,
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": {
+      "$": "b19_1822",
+      "c": "AudioClip",
+      "n": "StunGiant"
+     },
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "MouthDog",
+    "enemyName": "MouthDog",
+    "rarity": 80,
+    "prefab": "MouthDog__b19_7019.json",
+    "power": 2,
+    "maxCount": 8,
+    "probCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": true,
+    "isDaytime": false,
+    "canDie": true,
+    "stunTime": 0.7,
+    "doorSpeed": 0.6,
+    "sfx": {
+     "hitBodySFX": null,
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": {
+      "$": "b19_1725",
+      "c": "AudioClip",
+      "n": "StunDog"
+     },
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "SandWorm",
+    "enemyName": "Earth Leviathan",
+    "rarity": 4,
+    "prefab": "SandWorm__b19_7324.json",
+    "power": 2,
+    "maxCount": 3,
+    "probCurve": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "isOutside": true,
+    "isDaytime": false,
+    "canDie": false,
+    "stunTime": 5,
+    "doorSpeed": 0.5,
+    "sfx": {
+     "hitBodySFX": null,
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": null,
+     "audioClips": [],
+     "overrideVentSFX": null
+    }
+   },
+   {
+    "name": "RadMech",
+    "enemyName": "RadMech",
+    "rarity": 7,
+    "prefab": "RadMechEnemy__b19_5133.json",
+    "power": 3,
+    "maxCount": 20,
+    "probCurve": [
+     [
+      0,
+      0.23866479
+     ],
+     [
+      1,
+      1.1836548
+     ]
+    ],
+    "isOutside": true,
+    "isDaytime": false,
+    "canDie": false,
+    "stunTime": 1.2,
+    "doorSpeed": 1,
+    "sfx": {
+     "hitBodySFX": null,
+     "hitEnemyVoiceSFX": null,
+     "deathSFX": null,
+     "stunSFX": null,
+     "audioClips": [
+      {
+       "$": "b19_1958",
+       "c": "AudioClip",
+       "n": "RadMechStomp1"
+      },
+      {
+       "$": "b19_2430",
+       "c": "AudioClip",
+       "n": "RadMechStomp2"
+      },
+      {
+       "$": "b19_2187",
+       "c": "AudioClip",
+       "n": "RadMechStomp3"
+      },
+      {
+       "$": "b19_1696",
+       "c": "AudioClip",
+       "n": "RadMechStomp4"
+      },
+      {
+       "$": "b19_2346",
+       "c": "AudioClip",
+       "n": "LradBrainwashingSignal1"
+      },
+      {
+       "$": "b19_2418",
+       "c": "AudioClip",
+       "n": "LradBrainwashingSignal4"
+      },
+      {
+       "$": "b19_1779",
+       "c": "AudioClip",
+       "n": "LradBrainwashingSignal6"
+      },
+      {
+       "$": "b19_1886",
+       "c": "AudioClip",
+       "n": "LradBrainwashingSignal7"
+      },
+      {
+       "$": "b19_1701",
+       "c": "AudioClip",
+       "n": "LradBrainwashingSignal8"
+      },
+      {
+       "$": "b19_2143",
+       "c": "AudioClip",
+       "n": "robotTune"
+      },
+      {
+       "$": "b19_2055",
+       "c": "AudioClip",
+       "n": "ToWar"
+      }
+     ],
+     "overrideVentSFX": null
+    }
+   }
+  ],
+  "daytime": []
+ },
+ "outsideObjects": [
+  {
+   "name": "LargeRock1Forest",
+   "prefab": "LargeRock1Grey__b8_3957.json",
+   "width": 16,
+   "spawnFacingAwayFromWall": false,
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.67232805,
+     1.3364911
+    ],
+    [
+     0.99953943,
+     3.2408102
+    ]
+   ]
+  },
+  {
+   "name": "LargeRock2Forest",
+   "prefab": "LargeRock2Grey__b8_8296.json",
+   "width": 16,
+   "spawnFacingAwayFromWall": false,
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.67232805,
+     1.3364911
+    ],
+    [
+     0.99953943,
+     3.2408102
+    ]
+   ]
+  },
+  {
+   "name": "LargeRock3Forest",
+   "prefab": "LargeRock3Grey__b8_7175.json",
+   "width": 16,
+   "spawnFacingAwayFromWall": false,
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.67232805,
+     1.3364911
+    ],
+    [
+     0.99953943,
+     3.2408102
+    ]
+   ]
+  },
+  {
+   "name": "LargeRock4Forest",
+   "prefab": "LargeRock4Grey__b8_11413.json",
+   "width": 12,
+   "spawnFacingAwayFromWall": false,
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.67232805,
+     1.3364911
+    ],
+    [
+     0.99953943,
+     3.2408102
+    ]
+   ]
+  },
+  {
+   "name": "TreeLeafless2Snowy",
+   "prefab": "treeLeafless_002_LOD0__b8_2604.json",
+   "width": 2,
+   "spawnFacingAwayFromWall": false,
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.9200602,
+     2.1658955
+    ],
+    [
+     1.0017445,
+     12.252171
+    ]
+   ]
+  },
+  {
+   "name": "SmallGreyRocks1",
+   "prefab": "GreyRockGrouping2__b8_11745.json",
+   "width": 7,
+   "spawnFacingAwayFromWall": false,
+   "curve": [
+    [
+     0,
+     2
+    ],
+    [
+     0.6962776,
+     5.4675903
+    ],
+    [
+     1.0002282,
+     28.093853
+    ]
+   ]
+  },
+  {
+   "name": "SmallGreyRocks2",
+   "prefab": "GreyRockGrouping4__b8_7651.json",
+   "width": 5,
+   "spawnFacingAwayFromWall": false,
+   "curve": [
+    [
+     0,
+     2
+    ],
+    [
+     0.6962776,
+     5.4675903
+    ],
+    [
+     1.0002282,
+     28.093853
+    ]
+   ]
+  },
+  {
+   "name": "GiantPumpkin",
+   "prefab": "GiantPumpkin__b8_8195.json",
+   "width": 5,
+   "spawnFacingAwayFromWall": false,
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.887432,
+     2.9786797
+    ],
+    [
+     0.92637944,
+     6.655987
+    ],
+    [
+     1.0002282,
+     9.675278
+    ]
+   ]
+  }
+ ],
+ "tools": {
+  "FlashlightItem": "FlashlightItem__b19_4221.json",
+  "FlashlightItem_item": {
+   "itemName": "Pro-flashlight",
+   "weight": 1.05,
+   "twoHanded": false,
+   "grabSFX": {
+    "$": "b19_2118",
+    "c": "AudioClip",
+    "n": "GrabFlashlight"
+   },
+   "dropSFX": {
+    "$": "b19_2472",
+    "c": "AudioClip",
+    "n": "DropFlashlight"
+   },
+   "toolTips": [
+    "Toggle light : [RMB]"
+   ],
+   "requiresBattery": true,
+   "batteryUsage": 300,
+   "itemIsTrigger": false,
+   "holdButtonUse": false,
+   "creditsWorth": 28,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 90
+   },
+   "rotationOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "verticalOffset": 0.12,
+   "floorYOffset": 0
+  },
+  "WalkieTalkie": "WalkieTalkie__b19_6856.json",
+  "WalkieTalkie_item": {
+   "itemName": "Walkie-talkie",
+   "weight": 1,
+   "twoHanded": false,
+   "grabSFX": {
+    "$": "b19_2118",
+    "c": "AudioClip",
+    "n": "GrabFlashlight"
+   },
+   "dropSFX": {
+    "$": "b19_2472",
+    "c": "AudioClip",
+    "n": "DropFlashlight"
+   },
+   "toolTips": [
+    "Power button : [Q]",
+    "Send voice : [RMB]"
+   ],
+   "requiresBattery": true,
+   "batteryUsage": 820,
+   "itemIsTrigger": false,
+   "holdButtonUse": true,
+   "creditsWorth": 10,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 180
+   },
+   "rotationOffset": {
+    "x": 30.01,
+    "y": 5.9,
+    "z": 12.54
+   },
+   "positionOffset": {
+    "x": -0.012,
+    "y": 0.085,
+    "z": 0.01
+   },
+   "verticalOffset": 0.1,
+   "floorYOffset": 0
+  },
+  "ShovelItem": "ShovelItem__b19_3038.json",
+  "ShovelItem_item": {
+   "itemName": "Shovel",
+   "weight": 1.13,
+   "twoHanded": false,
+   "grabSFX": {
+    "$": "b19_1717",
+    "c": "AudioClip",
+    "n": "GrabShovel"
+   },
+   "dropSFX": {
+    "$": "b19_2064",
+    "c": "AudioClip",
+    "n": "DropShovel"
+   },
+   "toolTips": [
+    "Swing shovel : [RMB]"
+   ],
+   "requiresBattery": false,
+   "batteryUsage": 5,
+   "itemIsTrigger": false,
+   "holdButtonUse": true,
+   "creditsWorth": 30,
+   "restingRotation": {
+    "x": 0,
+    "y": -90,
+    "z": -90
+   },
+   "rotationOffset": {
+    "x": 0,
+    "y": 200,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "verticalOffset": 0.1,
+   "floorYOffset": 0
+  },
+  "Key": "Key__b19_5899.json",
+  "Key_item": {
+   "itemName": "Key",
+   "weight": 1,
+   "twoHanded": false,
+   "grabSFX": {
+    "$": "b19_1987",
+    "c": "AudioClip",
+    "n": "GrabKey"
+   },
+   "dropSFX": {
+    "$": "b19_1841",
+    "c": "AudioClip",
+    "n": "DropKey"
+   },
+   "toolTips": [
+    "Use key : [RMB]"
+   ],
+   "requiresBattery": false,
+   "batteryUsage": 120,
+   "itemIsTrigger": false,
+   "holdButtonUse": false,
+   "creditsWorth": 3,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 90
+   },
+   "rotationOffset": {
+    "x": 90,
+    "y": 0,
+    "z": 90
+   },
+   "positionOffset": {
+    "x": -0.01,
+    "y": 0.18,
+    "z": 0.01
+   },
+   "verticalOffset": 0.07,
+   "floorYOffset": 0
+  },
+  "LockPickerItem": "LockPickerItem__b19_3492.json",
+  "LockPickerItem_item": {
+   "itemName": "Lockpicker",
+   "weight": 1.1,
+   "twoHanded": false,
+   "grabSFX": {
+    "$": "b19_2118",
+    "c": "AudioClip",
+    "n": "GrabFlashlight"
+   },
+   "dropSFX": {
+    "$": "b19_2281",
+    "c": "AudioClip",
+    "n": "DropMetalObject1"
+   },
+   "toolTips": [
+    "Place on door : [RMB]"
+   ],
+   "requiresBattery": false,
+   "batteryUsage": 420,
+   "itemIsTrigger": false,
+   "holdButtonUse": false,
+   "creditsWorth": 20,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "verticalOffset": 0.14,
+   "floorYOffset": 0
+  },
+  "BBFlashlight": "BBFlashlight__b19_6302.json",
+  "BBFlashlight_item": {
+   "itemName": "Flashlight",
+   "weight": 1,
+   "twoHanded": false,
+   "grabSFX": {
+    "$": "b19_2118",
+    "c": "AudioClip",
+    "n": "GrabFlashlight"
+   },
+   "dropSFX": {
+    "$": "b19_2472",
+    "c": "AudioClip",
+    "n": "DropFlashlight"
+   },
+   "toolTips": [
+    "Toggle light : [RMB]"
+   ],
+   "requiresBattery": true,
+   "batteryUsage": 140,
+   "itemIsTrigger": false,
+   "holdButtonUse": false,
+   "creditsWorth": 15,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 90
+   },
+   "rotationOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "verticalOffset": 0.12,
+   "floorYOffset": 0
+  },
+  "StunGrenade": "StunGrenade__b19_3405.json",
+  "StunGrenade_item": {
+   "itemName": "Stun grenade",
+   "weight": 1.05,
+   "twoHanded": false,
+   "grabSFX": {
+    "$": "b19_2118",
+    "c": "AudioClip",
+    "n": "GrabFlashlight"
+   },
+   "dropSFX": {
+    "$": "b19_2472",
+    "c": "AudioClip",
+    "n": "DropFlashlight"
+   },
+   "toolTips": [
+    "Use grenade : [RMB]"
+   ],
+   "requiresBattery": false,
+   "batteryUsage": 300,
+   "itemIsTrigger": false,
+   "holdButtonUse": false,
+   "creditsWorth": 30,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 90
+   },
+   "rotationOffset": {
+    "x": 1.78,
+    "y": 107.18,
+    "z": -68.7
+   },
+   "positionOffset": {
+    "x": -0.16,
+    "y": 0.06,
+    "z": 0.05
+   },
+   "verticalOffset": 0.06,
+   "floorYOffset": 0
+  },
+  "ExtensionLadderItem": "ExtensionLadderItem__b19_5467.json",
+  "ExtensionLadderItem_item": {
+   "itemName": "Extension ladder",
+   "weight": 1,
+   "twoHanded": false,
+   "grabSFX": null,
+   "dropSFX": {
+    "$": "b19_1979",
+    "c": "AudioClip",
+    "n": "DropMetalBox"
+   },
+   "toolTips": [
+    "Pop up ladder : [RMB]"
+   ],
+   "requiresBattery": false,
+   "batteryUsage": 0,
+   "itemIsTrigger": false,
+   "holdButtonUse": false,
+   "creditsWorth": 60,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 84.3,
+    "y": 90,
+    "z": -10.46
+   },
+   "positionOffset": {
+    "x": -0.38,
+    "y": 0.18,
+    "z": -0.33
+   },
+   "verticalOffset": 0.12,
+   "floorYOffset": 90
+  },
+  "SprayPaintItem": "SprayPaintItem__b19_5189.json",
+  "SprayPaintItem_item": {
+   "itemName": "Spray paint",
+   "weight": 1,
+   "twoHanded": false,
+   "grabSFX": {
+    "$": "b19_1996",
+    "c": "AudioClip",
+    "n": "HoldTZP"
+   },
+   "dropSFX": {
+    "$": "b19_1899",
+    "c": "AudioClip",
+    "n": "DropCan"
+   },
+   "toolTips": [
+    "Spray : [RMB]",
+    "Shake can : [Q]"
+   ],
+   "requiresBattery": false,
+   "batteryUsage": 300,
+   "itemIsTrigger": false,
+   "holdButtonUse": true,
+   "creditsWorth": 50,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 90
+   },
+   "rotationOffset": {
+    "x": -0.32,
+    "y": 102.35,
+    "z": 238.7
+   },
+   "positionOffset": {
+    "x": -0.1,
+    "y": 0.14,
+    "z": 0
+   },
+   "verticalOffset": 0.12,
+   "floorYOffset": 0
+  },
+  "ClipboardManual": "ClipboardManual__b19_3816.json",
+  "ClipboardManual_item": {
+   "itemName": "clipboard",
+   "weight": 1,
+   "twoHanded": false,
+   "grabSFX": {
+    "$": "b19_2299",
+    "c": "AudioClip",
+    "n": "GrabClipboard"
+   },
+   "dropSFX": {
+    "$": "b19_2242",
+    "c": "AudioClip",
+    "n": "DropClipboard"
+   },
+   "toolTips": [
+    "Inspect: [Z]",
+    "Turn page : [Q/E]"
+   ],
+   "requiresBattery": false,
+   "batteryUsage": 0,
+   "itemIsTrigger": false,
+   "holdButtonUse": false,
+   "creditsWorth": 5,
+   "restingRotation": {
+    "x": 0,
+    "y": 0,
+    "z": 180
+   },
+   "rotationOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "positionOffset": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+   },
+   "verticalOffset": 0.06,
+   "floorYOffset": 0
+  },
+  "StickyNoteItem": "StickyNoteItem__b19_7270.json",
+  "StickyNoteItem_item": {
+   "itemName": "Sticky note",
+   "weight": 1,
+   "twoHanded": false,
+   "grabSFX": {
+    "$": "b19_1712",
+    "c": "AudioClip",
+    "n": "StickyNote"
+   },
+   "dropSFX": null,
+   "toolTips": [
+    "Inspect: [Z]"
+   ],
+   "requiresBattery": false,
+   "batteryUsage": 5,
+   "itemIsTrigger": false,
+   "holdButtonUse": false,
+   "creditsWorth": 0,
+   "restingRotation": {
+    "x": -90,
+    "y": 0,
+    "z": 0
+   },
+   "rotationOffset": {
+    "x": 96.65,
+    "y": 15.8,
+    "z": -90
+   },
+   "positionOffset": {
+    "x": 0.03,
+    "y": 0.1,
+    "z": -0.1
+   },
+   "verticalOffset": 0.05,
+   "floorYOffset": 0
+  }
+ },
+ "doorParts": [
+  "NormalDoorBlocker__b8_3553.json",
+  "SteelDoorFrameMapSpawn__b8_7012.json",
+  "SteelDoorMapModel__b19_7170.json",
+  "SteelDoorMapSpawn__b8_10591.json",
+  "EntranceTeleportB__b19_6630.json",
+  "NormalDoorBlockerWhiteCement__b8_7858.json",
+  "LungApparatus__b19_3391.json",
+  "VentEntrance__b19_3058.json",
+  "BreakerBox__b19_6113.json",
+  "NormalDoorBlockerWhiteCementNoExitDoor__b8_7857.json",
+  "HallwayBlocker__b8_11695.json",
+  "StorageShelfContainer__b19_5220.json",
+  "NormalDoorBlockerBigTex__b8_3554.json",
+  "NormalDoorBlockerWhiteWallpaper__b8_11223.json",
+  "BrickDoorBlockerForkTile__b8_10449.json",
+  "CementDarkDoorBlocker__b8_8379.json",
+  "HallwayBlockerNoOffset__b8_10470.json",
+  "HallwayBlockerNoOffsetCementDark__b8_4158.json",
+  "NormalDoorBlockerStairHoleTile_Variant__b8_10703.json",
+  "BigDoor__b19_5496.json",
+  "BigDoorSpawn__b8_9062.json",
+  "HallwayBlockerNoOffsetC__b8_3214.json",
+  "HallwayBlockerNoOffsetB__b8_6253.json",
+  "SteamValve__b19_3556.json",
+  "HallwayBlockerSmallStorageTile_Variant__b8_11726.json",
+  "BrickDoorBlockerSmallStorageTile__b8_10512.json",
+  "EntranceTeleportA__b19_5124.json",
+  "MetalWallDoorBlocker__b8_10554.json",
+  "HallwayBlockerNarrowHallwayTile_Variant__b8_2379.json",
+  "HallwayBlockerNarrowHallway_Variant__b8_9854.json",
+  "TunnelDeadEndBlockerB__b8_6609.json",
+  "MineshaftElevator__b19_4645.json",
+  "VentEntranceCave__b19_3551.json",
+  "YellowMineDoor__b19_3234.json",
+  "MineDoorSpawn__b8_9729.json",
+  "YellowMineDoorwayAbsent__b8_6885.json",
+  "TunnelDoorwayBlocker__b8_4442.json",
+  "GarageDoorSyncedObject__shg0_-7761231674165560630.json",
+  "GarageDoorConnector__shg0_-3799275017236089593.json",
+  "EmptyConnector__shg0_-8747484635674188105.json",
+  "Blocker__shg0_-3808228734977316593.json",
+  "EntryBlocker__shg0_-3039897087523643636.json",
+  "FenceDoorMapModel__shg0_6465094465728158099.json",
+  "FenceConnector__shg0_-211533805027212193.json",
+  "VentConnector__shg0_-1799779431443210929.json",
+  "VentEntryBlockerMain__shg0_3254227379109936216.json",
+  "VentBlockerWithTable__shg0_-2671416255839613598.json",
+  "EntranceTeleportA__shg0_-8297919288744020820.json",
+  "EntranceTeleportB__shg0_-5645272320954818676.json",
+  "VentEntrance__shg0_6949437945176574833.json",
+  "BreakerBox__shg0_8214475801038523998.json",
+  "VentEntryBlocker__shg0_2133129433924747660.json",
+  "PigExcrementSynced__shg0_-6531754814440543499.json",
+  "PigStyDoorContainer__shg0_-5696186794259119877.json",
+  "PigStyDoorContainerFlip__shg0_-7037262435108114779.json",
+  "GarageDoorBlocker__shg0_-2444441324701343177.json",
+  "SlaughterhouseDoorMapModel__shg0_-8739080491317424616.json",
+  "SlaughterhouseDoorMapSpawn__shg0_-374654705578405279.json",
+  "SlaughterhouseDoorMapModel2__shg0_-588350490311791455.json",
+  "SlaughterhouseDoorMapSpawn2__shg0_488903366372306357.json",
+  "WallBlocker__shg0_1722079950947372920.json",
+  "VentEntryBathroomBlocker__shg0_-7665376366184673314.json",
+  "BathroomBlocker__shg0_2253023305938344605.json",
+  "OfficeRoomBlocker__shg0_9153263550291333487.json",
+  "VentEntryOfficeBlocker__shg0_1475157241353520705.json",
+  "FreezerDoorMapModel__shg0_-6628778843601344275.json",
+  "FreezerDoorMapSpawn__shg0_-3035811455776392749.json",
+  "FreezerBlocker__shg0_2545109055025038976.json",
+  "FrozenAir__shg0_-7802260735559359226.json",
+  "FloorBlocker__shg0_-1363352970081391546.json",
+  "LungApparatus__shg0_1792750277395983370.json",
+  "VentFanBlocker__shg0_836433403900421934.json",
+  "VentCrawlBlocker__shg0_4724903687117587675.json",
+  "OfficeHallwayBlocker__shg0_-7843095844517367861.json",
+  "BoardedDoorBlocker__shg0_-1865262212154965026.json",
+  "VentEntryHallwayBlocker__shg0_888751792826403693.json",
+  "GrinderSyncedObjectContainer__shg0_7619088582663430042.json"
+ ],
+ "level": {
+  "PlanetName": "8 Titan",
+  "LevelDescription": "POPULATION: None\nCONDITIONS: Frozen, rocky. This moon was mined for resources. It's easy to get lost here.\nFAUNA: Dangerous entities have been rumored to take residence in the vast network of tunnels.",
+  "riskLevel": "S+",
+  "minScrap": 28,
+  "maxScrap": 32,
+  "minTotalScrapValue": 300,
+  "maxTotalScrapValue": 700,
+  "maxEnemyPowerCount": 18,
+  "maxOutsideEnemyPowerCount": 7,
+  "maxDaytimeEnemyPowerCount": 20,
+  "timeToArrive": 1.5,
+  "DaySpeedMultiplier": 1,
+  "planetHasTime": true,
+  "enemySpawnChanceThroughoutDay": {
+   "m_Curve": [
+    {
+     "time": 0,
+     "value": -3,
+     "inSlope": 59.199333,
+     "outSlope": 59.199333,
+     "tangentMode": 0,
+     "weightedMode": 3,
+     "inWeight": 0,
+     "outWeight": 0.18829483
+    },
+    {
+     "time": 0.16717777,
+     "value": 2.1031938,
+     "inSlope": 11.647723,
+     "outSlope": 11.647723,
+     "tangentMode": 0,
+     "weightedMode": 3,
+     "inWeight": 0.65918964,
+     "outWeight": 0.40484196
+    },
+    {
+     "time": 0.7631003,
+     "value": 11.275558,
+     "inSlope": 25.289257,
+     "outSlope": 25.289257,
+     "tangentMode": 0,
+     "weightedMode": 3,
+     "inWeight": 0.41667995,
+     "outWeight": 0.5360636
+    },
+    {
+     "time": 1,
+     "value": 15,
+     "inSlope": 35.604027,
+     "outSlope": 35.604027,
+     "tangentMode": 0,
+     "weightedMode": 1,
+     "inWeight": 0.04912584,
+     "outWeight": 0
+    }
+   ],
+   "m_Pre1e30": 2,
+   "m_Post1e30": 2,
+   "m_RotationOrder": 4
+  },
+  "outsideEnemySpawnChanceThroughDay": {
+   "m_Curve": [
+    {
+     "time": -7.7369623e-07,
+     "value": -2.8875,
+     "inSlope": 1e+30,
+     "outSlope": -1.0600616,
+     "tangentMode": 0,
+     "weightedMode": 3,
+     "inWeight": 0,
+     "outWeight": 0.14093608
+    },
+    {
+     "time": 0.5448442,
+     "value": -0.02099245,
+     "inSlope": 9.172262,
+     "outSlope": 9.172262,
+     "tangentMode": 0,
+     "weightedMode": 3,
+     "inWeight": 0.33333334,
+     "outWeight": 0.71965504
+    },
+    {
+     "time": 1.0052626,
+     "value": 5.3594007,
+     "inSlope": 16.256857,
+     "outSlope": 11.374388,
+     "tangentMode": 0,
+     "weightedMode": 3,
+     "inWeight": 0.25347674,
+     "outWeight": 0.48315445
+    }
+   ],
+   "m_Pre1e30": 2,
+   "m_Post1e30": 2,
+   "m_RotationOrder": 4
+  },
+  "daytimeEnemySpawnChanceThroughDay": {
+   "m_Curve": [],
+   "m_Pre1e30": 2,
+   "m_Post1e30": 2,
+   "m_RotationOrder": 4
+  },
+  "spawnProbabilityRange": 2,
+  "daytimeEnemiesProbabilityRange": 10,
+  "ambience": [],
+  "ambienceData": {
+   "insanityMusicAudios": [
+    {
+     "$": "b8_1507",
+     "c": "AudioClip",
+     "n": "Droning1"
+    },
+    {
+     "$": "b8_1487",
+     "c": "AudioClip",
+     "n": "GhostlySynth"
+    },
+    {
+     "$": "b8_1466",
+     "c": "AudioClip",
+     "n": "GhostlySynth2"
+    },
+    {
+     "$": "b8_1474",
+     "c": "AudioClip",
+     "n": "QuietDrum1"
+    },
+    {
+     "$": "b8_1670",
+     "c": "AudioClip",
+     "n": "DeepBass"
+    },
+    {
+     "$": "b8_1649",
+     "c": "AudioClip",
+     "n": "Droning2"
+    },
+    {
+     "$": "b8_1449",
+     "c": "AudioClip",
+     "n": "v50Scuba1"
+    },
+    {
+     "$": "b8_1611",
+     "c": "AudioClip",
+     "n": "v50Scuba2"
+    },
+    {
+     "$": "b8_1494",
+     "c": "AudioClip",
+     "n": "Didgeridoo1"
+    },
+    {
+     "$": "b8_1717",
+     "c": "AudioClip",
+     "n": "DarkAmbianceNonDiagetic"
+    }
+   ],
+   "insideAmbience": [
+    {
+     "$": "b8_1819",
+     "c": "AudioClip",
+     "n": "Creak1"
+    },
+    {
+     "$": "b8_1563",
+     "c": "AudioClip",
+     "n": "Creak2"
+    },
+    {
+     "$": "b8_1651",
+     "c": "AudioClip",
+     "n": "Creak3"
+    },
+    {
+     "$": "b8_1472",
+     "c": "AudioClip",
+     "n": "Creak4"
+    },
+    {
+     "$": "b8_1687",
+     "c": "AudioClip",
+     "n": "Creak5"
+    },
+    {
+     "$": "b8_1513",
+     "c": "AudioClip",
+     "n": "Creak6"
+    },
+    {
+     "$": "b8_1609",
+     "c": "AudioClip",
+     "n": "Creak7"
+    },
+    {
+     "$": "b8_1752",
+     "c": "AudioClip",
+     "n": "Creak8"
+    },
+    {
+     "$": "b8_1547",
+     "c": "AudioClip",
+     "n": "Creak9"
+    },
+    {
+     "$": "b8_1620",
+     "c": "AudioClip",
+     "n": "Creak10"
+    },
+    {
+     "$": "b8_1676",
+     "c": "AudioClip",
+     "n": "Creak11"
+    },
+    {
+     "$": "b8_1531",
+     "c": "AudioClip",
+     "n": "Random1"
+    },
+    {
+     "$": "b8_1582",
+     "c": "AudioClip",
+     "n": "Random2"
+    },
+    {
+     "$": "b8_1818",
+     "c": "AudioClip",
+     "n": "MetalClank1"
+    },
+    {
+     "$": "b8_1538",
+     "c": "AudioClip",
+     "n": "v50MetalCreak1"
+    },
+    {
+     "$": "b8_1749",
+     "c": "AudioClip",
+     "n": "v50MetalCreak2"
+    },
+    {
+     "$": "b8_1460",
+     "c": "AudioClip",
+     "n": "v50MetalCreak3"
+    },
+    {
+     "$": "b8_1683",
+     "c": "AudioClip",
+     "n": "PipeNoise1"
+    },
+    {
+     "$": "b8_1446",
+     "c": "AudioClip",
+     "n": "PipeNoise2"
+    },
+    {
+     "$": "b8_1495",
+     "c": "AudioClip",
+     "n": "PipeNoise3"
+    }
+   ],
+   "insideAmbienceInsanity": [
+    {
+     "audioClip": {
+      "$": "b19_2095",
+      "c": "AudioClip",
+      "n": "ChewMeat1"
+     },
+     "chance": 20
+    },
+    {
+     "audioClip": {
+      "$": "b8_1556",
+      "c": "AudioClip",
+      "n": "LoudCreak1"
+     },
+     "chance": 62
+    },
+    {
+     "audioClip": {
+      "$": "b8_1560",
+      "c": "AudioClip",
+      "n": "LoudCreak2"
+     },
+     "chance": 23
+    },
+    {
+     "audioClip": {
+      "$": "b8_1668",
+      "c": "AudioClip",
+      "n": "LoudCreak3"
+     },
+     "chance": 74
+    },
+    {
+     "audioClip": {
+      "$": "b8_1473",
+      "c": "AudioClip",
+      "n": "VoiceHey"
+     },
+     "chance": 5
+    },
+    {
+     "audioClip": {
+      "$": "b8_1798",
+      "c": "AudioClip",
+      "n": "StrangeNoise1"
+     },
+     "chance": 13
+    },
+    {
+     "audioClip": {
+      "$": "b8_1636",
+      "c": "AudioClip",
+      "n": "StrangeNoise2"
+     },
+     "chance": 20
+    },
+    {
+     "audioClip": {
+      "$": "b8_1754",
+      "c": "AudioClip",
+      "n": "StrangeNoise3"
+     },
+     "chance": 1
+    },
+    {
+     "audioClip": {
+      "$": "b8_1763",
+      "c": "AudioClip",
+      "n": "VoiceCry"
+     },
+     "chance": 8
+    },
+    {
+     "audioClip": {
+      "$": "b8_1801",
+      "c": "AudioClip",
+      "n": "VoiceCry2"
+     },
+     "chance": 4
+    },
+    {
+     "audioClip": {
+      "$": "b8_1535",
+      "c": "AudioClip",
+      "n": "FireAlarm"
+     },
+     "chance": 3
+    },
+    {
+     "audioClip": {
+      "$": "b8_1642",
+      "c": "AudioClip",
+      "n": "StrangeNoise4"
+     },
+     "chance": 57
+    }
+   ],
+   "shipAmbience": [
+    {
+     "$": "b8_1829",
+     "c": "AudioClip",
+     "n": "BumpOutsideShip1"
+    },
+    {
+     "$": "b8_1719",
+     "c": "AudioClip",
+     "n": "BumpOutsideShip2"
+    },
+    {
+     "$": "b8_1832",
+     "c": "AudioClip",
+     "n": "BumpOutsideShip3"
+    },
+    {
+     "$": "b8_1537",
+     "c": "AudioClip",
+     "n": "BumpOutsideShip4"
+    },
+    {
+     "$": "b8_1477",
+     "c": "AudioClip",
+     "n": "BumpOutsideShip5"
+    },
+    {
+     "$": "b8_1476",
+     "c": "AudioClip",
+     "n": "InsideShipCreak1"
+    },
+    {
+     "$": "b8_1601",
+     "c": "AudioClip",
+     "n": "InsideShipCreak2"
+    },
+    {
+     "$": "b8_1747",
+     "c": "AudioClip",
+     "n": "RockOutsideShip1"
+    },
+    {
+     "$": "b8_1486",
+     "c": "AudioClip",
+     "n": "RockOutsideShip2"
+    },
+    {
+     "$": "b8_1814",
+     "c": "AudioClip",
+     "n": "WindOutsideShip1"
+    },
+    {
+     "$": "b8_1526",
+     "c": "AudioClip",
+     "n": "WindOutsideShip2"
+    },
+    {
+     "$": "b8_1789",
+     "c": "AudioClip",
+     "n": "WindOutsideShip3"
+    }
+   ],
+   "shipAmbienceInsanity": [
+    {
+     "audioClip": {
+      "$": "b8_1671",
+      "c": "AudioClip",
+      "n": "ScreamOutsideShip1"
+     },
+     "chance": 100
+    },
+    {
+     "audioClip": {
+      "$": "b8_1765",
+      "c": "AudioClip",
+      "n": "ScreamOutsideShip2"
+     },
+     "chance": 100
+    },
+    {
+     "audioClip": {
+      "$": "b8_1578",
+      "c": "AudioClip",
+      "n": "ScreamOutsideShip3"
+     },
+     "chance": 69
+    },
+    {
+     "audioClip": {
+      "$": "b8_1789",
+      "c": "AudioClip",
+      "n": "WindOutsideShip3"
+     },
+     "chance": 100
+    },
+    {
+     "audioClip": {
+      "$": "b8_1747",
+      "c": "AudioClip",
+      "n": "RockOutsideShip1"
+     },
+     "chance": 86
+    },
+    {
+     "audioClip": {
+      "$": "b8_1615",
+      "c": "AudioClip",
+      "n": "Whistle"
+     },
+     "chance": 71
+    },
+    {
+     "audioClip": {
+      "$": "b8_1473",
+      "c": "AudioClip",
+      "n": "VoiceHey"
+     },
+     "chance": 58
+    },
+    {
+     "audioClip": {
+      "$": "b8_1642",
+      "c": "AudioClip",
+      "n": "StrangeNoise4"
+     },
+     "chance": 44
+    },
+    {
+     "audioClip": {
+      "$": "b8_1520",
+      "c": "AudioClip",
+      "n": "v50ShipWind"
+     },
+     "chance": 44
+    }
+   ],
+   "outsideAmbience": [
+    {
+     "$": "b19_2473",
+     "c": "AudioClip",
+     "n": "RockCrumble1"
+    },
+    {
+     "$": "b8_1475",
+     "c": "AudioClip",
+     "n": "RockCrumble2"
+    },
+    {
+     "$": "b8_1743",
+     "c": "AudioClip",
+     "n": "RockCrumble3"
+    },
+    {
+     "$": "b8_1706",
+     "c": "AudioClip",
+     "n": "RockCrumble4"
+    },
+    {
+     "$": "b8_1664",
+     "c": "AudioClip",
+     "n": "RockCrumble5"
+    }
+   ],
+   "outsideAmbienceInsanity": [
+    {
+     "audioClip": {
+      "$": "b8_1671",
+      "c": "AudioClip",
+      "n": "ScreamOutsideShip1"
+     },
+     "chance": 100
+    },
+    {
+     "audioClip": {
+      "$": "b8_1561",
+      "c": "AudioClip",
+      "n": "SuddenStep"
+     },
+     "chance": 100
+    },
+    {
+     "audioClip": {
+      "$": "b8_1558",
+      "c": "AudioClip",
+      "n": "SuddenStep2"
+     },
+     "chance": 100
+    }
+   ]
+  }
+ },
+ "levelKey": "titan",
+ "flows": {
+  "Level1Flow": {
+   "name": "Level1Flow",
+   "rarity": 300,
+   "Length": {
+    "Min": 11,
+    "Max": 13
+   },
+   "BranchCount": {
+    "Min": 22,
+    "Max": 25
+   },
+   "BranchMode": 0,
+   "DoorwayConnectionChance": 1,
+   "GlobalProps": [
+    {
+     "ID": 0,
+     "Count": {
+      "Min": 1,
+      "Max": 1
+     }
+    },
+    {
+     "ID": 1,
+     "Count": {
+      "Min": 0,
+      "Max": 2
+     }
+    },
+    {
+     "ID": 2,
+     "Count": {
+      "Min": 0,
+      "Max": 3
+     }
+    },
+    {
+     "ID": 3,
+     "Count": {
+      "Min": 20,
+      "Max": 32
+     }
+    },
+    {
+     "ID": 7,
+     "Count": {
+      "Min": 3,
+      "Max": 9
+     }
+    },
+    {
+     "ID": 11,
+     "Count": {
+      "Min": 2,
+      "Max": 4
+     }
+    },
+    {
+     "ID": 5,
+     "Count": {
+      "Min": 5,
+      "Max": 7
+     }
+    },
+    {
+     "ID": 25,
+     "Count": {
+      "Min": 1,
+      "Max": 1
+     }
+    },
+    {
+     "ID": 1231,
+     "Count": {
+      "Min": 1,
+      "Max": 1
+     }
+    },
+    {
+     "ID": 40,
+     "Count": {
+      "Min": 4,
+      "Max": 6
+     }
+    },
+    {
+     "ID": 18,
+     "Count": {
+      "Min": 0,
+      "Max": 4
+     }
+    }
+   ],
+   "nodes": [
+    {
+     "label": "Start",
+     "pos": 0,
+     "type": 1,
+     "tileSets": [
+      "StartRooms"
+     ]
+    },
+    {
+     "label": "Goal",
+     "pos": 1,
+     "type": 2,
+     "tileSets": [
+      "Level1RoomTiles"
+     ]
+    }
+   ],
+   "lines": [
+    {
+     "pos": 0,
+     "len": 0.119617224,
+     "archetypes": [
+      {
+       "name": "Level1Archetype",
+       "tileSets": [
+        "Level1HallwayTiles",
+        "Level1RoomTiles"
+       ],
+       "branchStart": [
+        "Level1BranchCaps"
+       ],
+       "branchCap": [
+        "Level1RoomTiles"
+       ],
+       "branchCapType": 0,
+       "straighten": 0,
+       "branchStartType": 1
+      }
+     ]
+    },
+    {
+     "pos": 0.119617224,
+     "len": 0.30861244,
+     "archetypes": [
+      {
+       "name": "Level1ArchetypeMaze",
+       "tileSets": [
+        "Level1Maze"
+       ],
+       "branchStart": [],
+       "branchCap": [
+        "Level1RoomTiles"
+       ],
+       "branchCapType": 0,
+       "straighten": 0,
+       "branchStartType": 0
+      }
+     ]
+    },
+    {
+     "pos": 0.42822966,
+     "len": 0.5717703,
+     "archetypes": [
+      {
+       "name": "Level1Archetype",
+       "tileSets": [
+        "Level1HallwayTiles",
+        "Level1RoomTiles"
+       ],
+       "branchStart": [
+        "Level1BranchCaps"
+       ],
+       "branchCap": [
+        "Level1RoomTiles"
+       ],
+       "branchCapType": 0,
+       "straighten": 0,
+       "branchStartType": 1
+      }
+     ]
+    }
+   ]
+  },
+  "Level3Flow": {
+   "name": "Level3Flow",
+   "rarity": 115,
+   "Length": {
+    "Min": 18,
+    "Max": 22
+   },
+   "BranchCount": {
+    "Min": 22,
+    "Max": 25
+   },
+   "BranchMode": 0,
+   "DoorwayConnectionChance": 1,
+   "GlobalProps": [
+    {
+     "ID": 67,
+     "Count": {
+      "Min": 3,
+      "Max": 5
+     }
+    },
+    {
+     "ID": 1231,
+     "Count": {
+      "Min": 1,
+      "Max": 1
+     }
+    },
+    {
+     "ID": 3,
+     "Count": {
+      "Min": 12,
+      "Max": 20
+     }
+    },
+    {
+     "ID": 0,
+     "Count": {
+      "Min": 1,
+      "Max": 1
+     }
+    },
+    {
+     "ID": 5,
+     "Count": {
+      "Min": 5,
+      "Max": 7
+     }
+    },
+    {
+     "ID": 1,
+     "Count": {
+      "Min": 0,
+      "Max": 2
+     }
+    },
+    {
+     "ID": 2,
+     "Count": {
+      "Min": 0,
+      "Max": 3
+     }
+    },
+    {
+     "ID": 7,
+     "Count": {
+      "Min": 3,
+      "Max": 9
+     }
+    },
+    {
+     "ID": 11,
+     "Count": {
+      "Min": 2,
+      "Max": 4
+     }
+    },
+    {
+     "ID": 5,
+     "Count": {
+      "Min": 2,
+      "Max": 7
+     }
+    },
+    {
+     "ID": 25,
+     "Count": {
+      "Min": 1,
+      "Max": 1
+     }
+    },
+    {
+     "ID": 40,
+     "Count": {
+      "Min": 4,
+      "Max": 6
+     }
+    },
+    {
+     "ID": 18,
+     "Count": {
+      "Min": 0,
+      "Max": 3
+     }
+    },
+    {
+     "ID": 9681,
+     "Count": {
+      "Min": 1,
+      "Max": 3
+     }
+    }
+   ],
+   "nodes": [
+    {
+     "label": "Start",
+     "pos": 0,
+     "type": 1,
+     "tileSets": [
+      "MineshaftStartRooms"
+     ]
+    },
+    {
+     "label": "Goal",
+     "pos": 1,
+     "type": 2,
+     "tileSets": [
+      "Level3CaveTilesAndTunnels"
+     ]
+    }
+   ],
+   "lines": [
+    {
+     "pos": 0,
+     "len": 0.40191388,
+     "archetypes": [
+      {
+       "name": "Level3Tunnels",
+       "tileSets": [
+        "Level3TunnelTiles",
+        "Level3CaveTilesBranch"
+       ],
+       "branchStart": [
+        "Level3CaveEntranceTiles"
+       ],
+       "branchCap": [],
+       "branchCapType": 1,
+       "straighten": 0,
+       "branchStartType": 0
+      }
+     ]
+    },
+    {
+     "pos": 0.40191388,
+     "len": 0.44680405,
+     "archetypes": [
+      {
+       "name": "Level3Caves",
+       "tileSets": [
+        "Level3CaveTiles"
+       ],
+       "branchStart": [],
+       "branchCap": [],
+       "branchCapType": 1,
+       "straighten": 0,
+       "branchStartType": 0
+      }
+     ]
+    },
+    {
+     "pos": 0.8487179,
+     "len": 0.15128207,
+     "archetypes": [
+      {
+       "name": "Level3EndTunnels",
+       "tileSets": [
+        "Level3EndTunnelTiles"
+       ],
+       "branchStart": [
+        "Level3EndCaveExit"
+       ],
+       "branchCap": [
+        "Level3EndTunnelBranchCaps"
+       ],
+       "branchCapType": 0,
+       "straighten": 0,
+       "branchStartType": 0
+      }
+     ]
+    }
+   ]
+  },
+  "SlaughterhouseFlow": {
+   "name": "SlaughterhouseFlow",
+   "rarity": 0,
+   "Length": {
+    "Min": 5,
+    "Max": 6
+   },
+   "BranchCount": {
+    "Min": 7,
+    "Max": 8
+   },
+   "BranchMode": 0,
+   "DoorwayConnectionChance": 1,
+   "GlobalProps": [
+    {
+     "ID": 0,
+     "Count": {
+      "Min": 1,
+      "Max": 1
+     }
+    },
+    {
+     "ID": 5,
+     "Count": {
+      "Min": 5,
+      "Max": 7
+     }
+    },
+    {
+     "ID": 1231,
+     "Count": {
+      "Min": 1,
+      "Max": 1
+     }
+    },
+    {
+     "ID": 25,
+     "Count": {
+      "Min": 1,
+      "Max": 1
+     }
+    },
+    {
+     "ID": 40,
+     "Count": {
+      "Min": 3,
+      "Max": 6
+     }
+    }
+   ],
+   "nodes": [
+    {
+     "label": "Start",
+     "pos": 0,
+     "type": 1,
+     "tileSets": [
+      "SlaughterhouseSet"
+     ]
+    },
+    {
+     "label": "Goal",
+     "pos": 1,
+     "type": 2,
+     "tileSets": [
+      "GrinderRoomSet"
+     ]
+    }
+   ],
+   "lines": [
+    {
+     "pos": 0,
+     "len": 0.3,
+     "archetypes": [
+      {
+       "name": "SlaughterhouseArchetype",
+       "tileSets": [
+        "SlaughterhouseSet",
+        "StartRoom"
+       ],
+       "branchStart": [],
+       "branchCap": [],
+       "branchCapType": 1,
+       "straighten": 0,
+       "branchStartType": 0
+      }
+     ]
+    },
+    {
+     "pos": 0.3,
+     "len": 0.4,
+     "archetypes": [
+      {
+       "name": "SlaughterhouseHallwayArchetype",
+       "tileSets": [
+        "SlaughterhouseHallwaySet"
+       ],
+       "branchStart": [],
+       "branchCap": [],
+       "branchCapType": 1,
+       "straighten": 0,
+       "branchStartType": 0
+      }
+     ]
+    },
+    {
+     "pos": 0.7,
+     "len": 0.3,
+     "archetypes": [
+      {
+       "name": "SlaughterhouseArchetype",
+       "tileSets": [
+        "SlaughterhouseSet",
+        "StartRoom"
+       ],
+       "branchStart": [],
+       "branchCap": [],
+       "branchCapType": 1,
+       "straighten": 0,
+       "branchStartType": 0
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "modInterior": [
+  "SlaughterhouseFlow"
+ ]
+}
