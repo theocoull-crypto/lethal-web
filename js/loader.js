@@ -144,6 +144,12 @@ diffuseColor.rgb *= blend / wsum;`);
         mat.normalScale.set(ns, ns);
       }
       const smooth = d.smoothness == null ? 0.5 : d.smoothness;
+      if (!d.map && d.maskMap && /rock|stone|cliff|cave|boulder|gravel/i.test(name)) {
+        // rock materials with no base map (the game's RockTextureGrey): HDRP shows their detail through the mask and normal
+        // maps alone, which reads as flat grey here - reuse the mask texture as albedo detail and let the normal map bite
+        mat.map = this.texture(d.maskMap.id, 'color', d.maskMap.scale, d.maskMap.offset);
+        if (mat.normalMap) mat.normalScale.set(1.2, 1.2);
+      }
       if (d.maskMap) {
         // HDRP: smoothness = lerp(remapMin, remapMax, mask.A); metallic = mask.R; AO = lerp(aoMin, aoMax, mask.G)
         const rm = d.smoothnessRemap || [0, 1];

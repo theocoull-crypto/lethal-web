@@ -633,7 +633,12 @@ export class Dungeon {
       if (o.isPointLight || o.isSpotLight) {
         let p = o, vis = true; while (p && p !== this.root) { if (p.visible === false) { vis = false; break; } p = p.parent; }
         if (!vis) return;
-        this.lights.push({ pos: o.getWorldPosition(new THREE.Vector3()), color: o.color.clone(), intensity: Math.min(o.userData.unity?.intensity || 20, 120) * 0.05, distance: Math.max((o.distance || 8) * 1.6, 13), obj: o });
+        // the pool only has omni lights: a spot (the mineshaft entrance's two big ones aim down the shaft) becomes a much
+        // dimmer, shorter point light instead of flooding the whole area
+        const spot = o.isSpotLight;
+        const inten = Math.min(o.userData.unity?.intensity || 20, 120) * 0.05 * (spot ? 0.3 : 1);
+        const dist = spot ? Math.max(Math.min(o.distance || 8, 14), 8) : Math.max((o.distance || 8) * 1.6, 13);
+        this.lights.push({ pos: o.getWorldPosition(new THREE.Vector3()), color: o.color.clone(), intensity: inten, distance: dist, obj: o });
         o.visible = false;
       }
     });
