@@ -171,7 +171,11 @@ export class Dungeon {
 
   async _generateOnce(rnd) {
     const flow = this.flow = this.pickFlow(rnd);
-    const L = flow.Length.Min + Math.floor(rnd() * (flow.Length.Max - flow.Length.Min + 1));
+    // the game scales the flow's lengths by the moon's factory size multiplier (Titan 2.2); mod interiors clamp it
+    const moon = this.game.world.activeMoon; let sizeMul = (moon && moon.sizeMul) || 1;
+    if (this.catalog.modInterior && this.catalog.modInterior.includes(flow.name) && this.catalog.extended) { const ex = this.catalog.extended; sizeMul = Math.min(ex.dungeonSizeMax || sizeMul, Math.max(ex.dungeonSizeMin || 1, sizeMul)); }
+    this.sizeMul = sizeMul;
+    const L = Math.round((flow.Length.Min + Math.floor(rnd() * (flow.Length.Max - flow.Length.Min + 1))) * sizeMul);
     // start tile
     const startSet = this.catalog.tileSets[flow.nodes[0].tileSets[0]];
     const startDef = await this.tileDef(startSet[0].prefab);
@@ -193,7 +197,7 @@ export class Dungeon {
     }
     // branches
     const mainTiles = this.placed.slice();
-    const want = flow.BranchCount.Min + Math.floor(rnd() * (flow.BranchCount.Max - flow.BranchCount.Min + 1));
+    const want = Math.round((flow.BranchCount.Min + Math.floor(rnd() * (flow.BranchCount.Max - flow.BranchCount.Min + 1))) * (this.sizeMul || 1));
     let made = 0, tries = 0;
     while (made < want && tries < want * 6) {
       tries++;
@@ -292,6 +296,8 @@ export class Dungeon {
       }
       // props: local prop sets + global props
       const propNodes = new Set();
+      // an object under a switched-off doorway blocker is not a candidate for anything (mod interiors keep fire exits inside blockers)
+      const liveObj = id => { const o = inst.objs.get(id); if (!o) return null; let q = o.parent; while (q && q !== inst.root) { if (q.visible === false) return null; q = q.parent; } return o; };
       for (const n of t.def.man.nodes) for (const c of n.comps) {
         if (c.t !== 'MB' || !c.d) continue;
         if (c.cls === 'LocalPropSet') {
@@ -308,11 +314,12 @@ export class Dungeon {
           }
         } else if (c.cls === 'GlobalProp') {
           propNodes.add(n.id);
+          if (!liveObj(n.id)) continue;
           const g = c.d.PropGroupID;
           if (!propGroups.has(g)) propGroups.set(g, []);
           propGroups.get(g).push({ inst, id: n.id, main: c.d.MainPathWeight, branch: c.d.BranchPathWeight, isMain: t.isMain, depthF: t.depthF });
         } else if (c.cls === 'RandomScrapSpawn') {
-          const o = inst.objs.get(n.id); if (o) this.scrapSpawns.push({ pos: o.getWorldPosition(new THREE.Vector3()), range: c.d.itemSpawnRange || 1, tile: t });
+          const o = liveObj(n.id); if (o) this.scrapSpawns.push({ pos: o.getWorldPosition(new THREE.Vector3()), range: c.d.itemSpawnRange || 1, tile: t });
         } else if (c.cls === 'RandomMapObject') {
           const o = inst.objs.get(n.id); if (o) this.hazardSpawns.push({ pos: o.getWorldPosition(new THREE.Vector3()), range: c.d.spawnRange || 3, prefabs: (c.d.spawnablePrefabs || []).map(p => p && p.$).filter(Boolean), tile: t });
         } else if (c.cls === 'SpawnSyncedObject') {
@@ -464,7 +471,7 @@ export class Dungeon {
     this.root.add(inst.root); inst.root.updateMatrixWorld(true);
     tile.extraInst = (tile.extraInst || []).concat([inst]);
     const name = s.name || '';
-    if (/BigDoor|SteelDoor|FancyDoor/.test(name)) this._setupDoor(inst, name);
+    if (/BigDoor|SteelDoor|FancyDoor|DoorMapModel|DoorContainer/.test(name)) this._setupDoor(inst, name);
     if (/^VentEntrance/.test(name)) {
       // vents must sit against a wall: check for geometry just behind the vent, otherwise drop it
       const vp = inst.root.getWorldPosition(new THREE.Vector3()); const vq = inst.root.getWorldQuaternion(new THREE.Quaternion());
@@ -491,7 +498,8 @@ export class Dungeon {
   _setupDoor(inst, name) {
     // SteelDoorMapModel: DoorMesh has an Animator (Door1Open / Door1Close) and a DoorSound audio source; the trigger box sits on DoorMesh/Cube
     const root = inst.root;
-    const mesh = root.getObjectByName('DoorMesh');
+    let mesh = root.getObjectByName('DoorMesh');
+    if (!mesh) { root.traverse(o => { if (!mesh && o !== root && o.userData.node && o.userData.node.comps.some(c => c.t === 'Animator' && c.controller)) mesh = o; }); }   // mod doors: the animated leaf is not always called DoorMesh
     if (!mesh) return;
     const ac = mesh.userData.node.comps.find(c => c.t === 'Animator');
     const anim = ac && ac.controller ? new Animator(mesh, ac.controller) : null;
@@ -502,7 +510,8 @@ export class Dungeon {
     inst.manifest.nodes.forEach(n => n.comps.forEach(c => { if (c.t === 'MB' && c.d && c.cls === 'AnimatedObjectTrigger') { const o = (c.d.boolTrueAudios || []).map(x => x && x.$).filter(Boolean), cl = (c.d.boolFalseAudios || []).map(x => x && x.$).filter(Boolean); if (o[0]) clipOpen = o[0]; if (cl[0]) clipClose = cl[0]; } }));
     const door = { inst, root, mesh, anim, open: false, clipOpen, clipClose, pos: mesh.getWorldPosition(new THREE.Vector3()), collider: null };
     // the door leaf gets its own collider that follows the swing (the merged dungeon collider skips DoorLock boxes)
-    const trig = mesh.children.find(c => c.userData.node && c.userData.node.comps.some(x => x.t === 'MB' && x.cls === 'DoorLock'));
+    let trig = mesh.children.find(c => c.userData.node && c.userData.node.comps.some(x => x.t === 'MB' && x.cls === 'DoorLock'));
+    if (!trig) root.traverse(o => { if (!trig && o.userData.node && o.userData.node.comps.some(x => x.t === 'MB' && x.cls === 'DoorLock' && o.userData.node.comps.some(b => b.t === 'Box' && !b.trigger))) trig = o; });
     if (trig) {
       const n = trig.userData.node; const box = n.comps.find(c => c.t === 'Box' && !c.trigger);
       if (box) {

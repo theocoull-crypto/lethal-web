@@ -50,7 +50,7 @@ class Game {
     // post-processing: bloom for the lamps and screens + a colour grade; the OutputPass does tone mapping and sRGB
     this.composer = new EffectComposer(this.renderer);
     this.renderPass = new RenderPass(this.scene, null);
-    this.bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.42, 0.55, 0.78);
+    this.bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.38, 0.5, 0.9);
     this.gradePass = new ShaderPass(GradeShader);
     this.outputPass = new OutputPass();
     this.composer.addPass(this.renderPass); this.composer.addPass(this.bloomPass); this.composer.addPass(this.outputPass); this.composer.addPass(this.gradePass);
@@ -185,6 +185,7 @@ class Game {
 
   _setupFlashlight() {
     this.flash = new THREE.SpotLight(0xffe9c4, 0, 45, THREE.MathUtils.degToRad(31), 0.7, 1.4);
+    this.flash.layers.set(0);   // the beam lights the world, not the torch held in front of the lens (which otherwise glows neon)
     this.flash.layers.set(0);
     this.flash.castShadow = true; this.flash.shadow.mapSize.set(1024, 1024); this.flash.shadow.bias = -0.002; this.flash.shadow.camera.near = 0.2;
     this.flashTarget = new THREE.Object3D();
@@ -561,7 +562,7 @@ The ship will leave without you.`);
       this._updateLights();
       if (this.flashlightOn && this.items.flashlightBattery() <= 0) this.flashlightOn = false;
       const on = this.flashlightOn && this.items.hasFlashlight() && this.state === 'play';
-      this.flash.intensity += ((on ? 140 : 0) - this.flash.intensity) * Math.min(1, dt * 14);
+      this.flash.intensity += ((on ? 105 : 0) - this.flash.intensity) * Math.min(1, dt * 14);
       this.nearLight.intensity = this.inside ? 0.3 : 0.1;
       this.sound.setListener(this.camera.position, new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion), new THREE.Vector3(0, 1, 0).applyQuaternion(this.camera.quaternion));
       this.hud.update(dt);

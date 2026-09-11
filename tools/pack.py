@@ -77,6 +77,7 @@ class Packer:
         self.textures = {}    # aid -> (key,pid,role)
         self.audio = {}       # aid -> (key,pid)
         self.materials = {}   # aid -> dict
+        self.hier_key = None  # collection holding the prefab hierarchies (default: the game's 'g0'; a mod bundle uses another)
         self.skinned = set()  # mesh aids used by SkinnedMeshRenderers (need bind poses)
         self.prefab_index = None
         for d in ('meshes', 'tex', 'audio'):
@@ -346,7 +347,7 @@ class Packer:
         if self.prefab_index is not None:
             return self.prefab_index
         idx = {}
-        g0 = self.ar.key_by_id['g0']
+        g0 = self.hier_key or self.ar.key_by_id['g0']
         coll = self.ar.coll(g0)
         pids = list(coll.assets.keys())
         self.ar.prefetch([(g0, p) for p in pids])
@@ -365,7 +366,7 @@ class Packer:
         if p is None:
             print('  !! prefab not found:', root_aid_or_name)
             return None
-        return self.pack_hierarchy(self.ar.key_by_id['g0'], p, out_path, **kw)
+        return self.pack_hierarchy(self.hier_key or self.ar.key_by_id['g0'], p, out_path, **kw)
 
     # ---------- binary assets ----------
     def flush(self, workers=8):

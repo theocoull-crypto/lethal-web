@@ -87,7 +87,8 @@ def kp(aid):
     return ar.key_by_id[cid], int(pid)
 
 
-index = {}
+index_path = os.path.join(OUT, 'index.json')
+index = json.load(open(index_path, encoding='utf-8')) if os.path.exists(index_path) else {}   # keep entries from the other session (game vs mod bundle)
 files = glob.glob(os.path.join(ASSETS, 'prefabs', '*.json')) + [os.path.join(ASSETS, 'scenes', 'ship.json'), os.path.join(ASSETS, 'scenes', 'player.json'), os.path.join(ASSETS, 'scenes', 'company.json'), os.path.join(ASSETS, 'scenes', 'experimentation.json'), os.path.join(ASSETS, 'scenes', 'assurance.json'), os.path.join(ASSETS, 'scenes', 'march.json'), os.path.join(ASSETS, 'scenes', 'titan.json')]
 for f in files:
     m = json.load(open(f, encoding='utf-8'))
@@ -97,7 +98,10 @@ for f in files:
                 ctrl = c['controller']
                 if ctrl in index:
                     continue
-                k, p = kp(ctrl)
+                try:
+                    k, p = kp(ctrl)
+                except KeyError:
+                    continue   # ids from a session that is not loaded right now (game vs mod bundle)
                 cj = ar.json(k, p)
                 clips = []
                 seen = set()

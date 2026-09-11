@@ -12,7 +12,7 @@ const SHIP_LANDED_LOCAL = new THREE.Vector3(-18.71032, -7.326942, 8.971304);
 const MOON_DEFS = [
   { key: 'moon', asset: 'experimentation', name: '41-EXPERIMENTATION', catalog: 'experimentation' },
   { key: 'assurance', asset: 'assurance', name: '220-ASSURANCE', catalog: 'assurance' },
-  { key: 'titan', asset: 'titan', name: '8-TITAN', catalog: 'titan', fogDay: 0x272b31, fogDusk: 0x15171c, sunDay: 0x9aa4b4, hemiSky: 0x5b6470, fogScale: 3.4, sunScale: 0.5, forceFlow: 'Level3Flow' },
+  { key: 'titan', asset: 'titan', name: '8-TITAN', catalog: 'titan', fogDay: 0x272b31, fogDusk: 0x15171c, sunDay: 0x9aa4b4, hemiSky: 0x5b6470, fogScale: 3.4, sunScale: 0.5, forceFlow: 'SlaughterhouseFlow', sizeMul: 2.2 },
 ];
 
 export class World {

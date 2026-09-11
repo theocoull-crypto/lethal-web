@@ -36,9 +36,16 @@ item, RMB scan, F flashlight.
   the lever to land (the real moon geometry, sky and ambience). Each moon uses its own scrap table, enemy list and spawn
   budgets. All routes are free here. Moons whose ground is a Unity terrain heightmap (March, Vow, Rend, Dine...) are not
   supported yet: the extractor only exports meshes.
-* Two interiors: the **facility** and the **mineshaft** with its elevator - ride it down to the tunnels and caves, call
-  it back from either landing. Experimentation and Assurance roll the interior with the game's own odds (mineshaft ~1%
-  and ~12%); Titan is always the mineshaft, buried in fog, with snow underfoot. The F3 debug menu can force an interior.
+* Interiors: the **facility** and the **mineshaft** with its elevator - ride it down to the tunnels and caves, call it
+  back from either landing. Experimentation and Assurance roll the interior with the game's own odds (mineshaft ~1% and
+  ~12%). Titan is buried in dark fog with snow underfoot and always uses the **Slaughterhouse** interior from Nikki's
+  mod of the same name (see below). The F3 debug menu can force an interior.
+* Mod interiors: a LethalLevelLoader interior bundle can be run through the same extractor. With AssetRipper running
+  (`tools/extract.py` starts it), `python tools/load_mod_bundle.py <bundle>` loads it next to the game's assemblies,
+  `set AR_PREFIX=sh && python tools/pack_mod_interior.py catalog_slaughterhouse.json catalog_titan.json` packs its
+  DunGen flow, tiles and doorway parts into the moon's catalog, and `python tools/load_game.py` puts the game back.
+  The mod's own scripts (custom events, hazards) do not come across; its rooms, doors, lights, vents and scrap spawns
+  do. Nothing from the mod is in this repository either - you download it from Thunderstore yourself.
 * Post-processing: light bloom and a cold colour grade (both toggles in Settings), darker facility ambience so lamps and
   the flashlight carry the scene.
 * The facility is generated every day from the game's own DunGen tile set (`Level1Flow`): real doorway sockets, tile

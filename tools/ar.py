@@ -5,7 +5,10 @@ from concurrent.futures import ThreadPoolExecutor
 
 BASE = os.environ.get('AR_BASE', 'http://127.0.0.1:8790')
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PREFIX = os.environ.get('AR_PREFIX', '')   # set e.g. AR_PREFIX=sh when a mod bundle is loaded instead of the game: ids and caches stay separate
 CACHE = os.path.join(ROOT, '.cache')
+CACHE = os.path.join(CACHE, PREFIX) if PREFIX else CACHE
+os.makedirs(CACHE, exist_ok=True)
 os.makedirs(CACHE, exist_ok=True)
 
 
@@ -32,8 +35,15 @@ def coll_path(key):
     return json.dumps({"B": {"P": list(key[0])}, "I": key[1]}, separators=(',', ':'))
 
 
+
+
 def key_id(key):
-    return ('g' if key[0] else 'b') + str(key[1])
+    path = tuple(key[0])
+    if not path:
+        return PREFIX + 'b' + str(key[1])
+    if path == (0,):
+        return PREFIX + 'g' + str(key[1])
+    return PREFIX + 'g' + ''.join(str(x) for x in path) + 'p' + str(key[1])
 
 
 _ROW = re.compile(r'<tr[^>]*>(.*?)</tr>', re.S)
@@ -64,15 +74,24 @@ class AR:
         self.by_name = {}
         self._lock = threading.Lock()
         self._jsoncache = {}
-        for bp in ((), (0,)):
+        seen = set()
+        def scan(bp, depth=0):
             h = _get(f'{BASE}/Bundles/View?Path=' + q(json.dumps({"P": list(bp)})))
             for m in re.finditer(r'<a[^>]*href="([^"]+)"[^>]*>([^<]*)</a>', h):
                 href = html.unescape(m.group(1))
-                if '/Collections/View' not in href:
-                    continue
-                r = _parse_path_link(href)
-                if r and r[1] is None:
-                    self.by_name[html.unescape(m.group(2))] = r[0]
+                if '/Collections/View' in href:
+                    r = _parse_path_link(href)
+                    if r and r[1] is None:
+                        self.by_name[html.unescape(m.group(2))] = r[0]
+                elif '/Bundles/View' in href and depth < 5:
+                    mm = re.search(r'Path=([^&]+)', href)
+                    try:
+                        pp = json.loads(urllib.parse.unquote(mm.group(1))).get('P')
+                    except Exception:
+                        pp = None
+                    if pp is not None and tuple(pp) not in seen and len(pp) > len(bp):
+                        seen.add(tuple(pp)); scan(tuple(pp), depth + 1)
+        scan(())
         self.key_by_id = {key_id(k): k for k in self.by_name.values()}
 
     # ---- collections ----
@@ -130,13 +149,18 @@ class AR:
             return (key, pid)
         c = self.coll(key)
         dep = c.deps.get(fid)
-        if dep is None and fid == 1 and c.name.endswith('(Generated Assets)'):
-            dep = self._scene_dep(key)
+        if dep is None and fid == 1 and (c.name.endswith('(Generated Assets)') or c.name in ('Prefab Hierarchies', 'Generated Prefabs')):
+            dep = self._scene_dep(key) if c.name.endswith('(Generated Assets)') else self._bundle_data_dep()
             if dep is not None:
                 c.deps[fid] = dep
         if dep is None:
             return None
         return (dep, pid)
+
+    def _bundle_data_dep(self):
+        """A loaded mod bundle: the generated prefab hierarchies point (file id 1) at the bundle's own 'cab-...' data collection."""
+        cabs = [k for n, k in self.by_name.items() if n.startswith('cab-')]
+        return cabs[0] if len(cabs) == 1 else None
 
     def _scene_dep(self, key):
         """Some '(Generated Assets)' scene collections come with an empty dependency table; their objects live in the
