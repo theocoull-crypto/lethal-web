@@ -286,6 +286,7 @@ diffuseColor.rgb *= blend / wsum;`);
           if (opts.noRender) continue;
           if (HIDDEN_LAYERS.has(n.layer)) continue;   // triggers, colliders, map radar dots, scan nodes
           if (HIDDEN_NAMES.test(n.name)) continue;
+          if (/LOD[1-9](?![0-9])/.test(n.name) && !/Nav$/.test(n.name)) continue;   // lower LOD copies (LODGroup renderer refs are not packed): only LOD0 draws
           if (n.tag === 'InteractTrigger' && (c.mats || []).length && (c.mats || []).every(id => { const d = this.materials[id]; return d && TRIGGER_MATS.test(d.name || ''); })) continue;
           pending.push(this.mesh(n.mesh).then(geoms => {
             if (!geoms.length) return;

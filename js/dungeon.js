@@ -100,7 +100,8 @@ export class Dungeon {
     const worldOf = n => {
       if (mats.has(n.id)) return mats.get(n.id);
       let m;
-      if (!n.parent || n.id === root.id) m = new THREE.Matrix4(); // root transform is reset on spawn
+      // DunGen's TileProxy zeroes the prefab root's position and rotation but keeps its scale (the mineshaft tiles are 0.85)
+      if (!n.parent || n.id === root.id) m = new THREE.Matrix4().makeScale(root.s[0], root.s[1], root.s[2]);
       else m = new THREE.Matrix4().multiplyMatrices(worldOf(byId.get(n.parent)), localOf(n));
       mats.set(n.id, m); return m;
     };
@@ -114,10 +115,13 @@ export class Dungeon {
           m.decompose(pos, q, s);
           // forward straight from the matrix: the mineshaft's cave tiles sit under mirrored (negative-scale) parents, which
           // flips the doorway's facing in a way a decomposed quaternion cannot express - the old way sent caves the wrong way
-          const fwd = new THREE.Vector3(0, 0, 1).transformDirection(m); fwd.y = 0; fwd.normalize();
-          { const zA = fwd.clone(), yA = new THREE.Vector3(0, 1, 0), xA = new THREE.Vector3().crossVectors(yA, zA).normalize(); q.setFromRotationMatrix(new THREE.Matrix4().makeBasis(xA, yA, zA)); }
+          // full 3D frame, as DunGen's DoorwayProxy (LocalRotation): the mineshaft's cave tiles are authored on their side and
+          // their doorways carry the tilt, which the placement rotation undoes
+          const fwd = new THREE.Vector3(0, 0, 1).transformDirection(m).normalize();
+          const up = new THREE.Vector3(0, 1, 0).transformDirection(m).normalize();
+          { const zA = fwd.clone(), xA = new THREE.Vector3().crossVectors(up, zA).normalize(), yA = new THREE.Vector3().crossVectors(zA, xA).normalize(); q.setFromRotationMatrix(new THREE.Matrix4().makeBasis(xA, yA, zA)); }
           doorways.push({
-            node: n, pos, q, fwd, socket: (c.d.socket || {}).n || 'NormalDoor', priority: c.d.DoorPrefabPriority || 0,
+            node: n, pos, q, fwd, up, socket: (c.d.socket || {}).n || 'NormalDoor', priority: c.d.DoorPrefabPriority || 0,
             connectors: (c.d.ConnectorPrefabWeights || []).map(w => w.GameObject && w.GameObject.$).filter(Boolean),
             connectorWeights: (c.d.ConnectorPrefabWeights || []).filter(w => w.GameObject && w.GameObject.$).map(w => w.Weight ?? 1),
             blockers: (c.d.BlockerPrefabWeights || []).map(w => w.GameObject && w.GameObject.$).filter(Boolean),
@@ -133,7 +137,7 @@ export class Dungeon {
       const src = tile.OverrideAutomaticTileBounds ? tile.TileBoundsOverride : tile.placement && tile.placement.localBounds;
       if (src && (src.m_Extent.x > 0.01 || src.m_Extent.y > 0.01 || src.m_Extent.z > 0.01)) {
         const c = V(src.m_Center), e = src.m_Extent;   // V mirrors X into three.js space
-        b = new THREE.Box3(new THREE.Vector3(c.x - e.x, c.y - e.y, c.z - e.z), new THREE.Vector3(c.x + e.x, c.y + e.y, c.z + e.z));
+        b = new THREE.Box3(new THREE.Vector3(c.x - e.x, c.y - e.y, c.z - e.z), new THREE.Vector3(c.x + e.x, c.y + e.y, c.z + e.z)).applyMatrix4(new THREE.Matrix4().makeScale(root.s[0], root.s[1], root.s[2]));
       }
     }
     // DunGen's automatic bounds: every renderer and non-trigger collider in the prefab (the mod's vent ducts rely on this;
@@ -265,7 +269,7 @@ export class Dungeon {
     const pos = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3();
     matrix.decompose(pos, q, s);
     const bounds = def.bounds.clone().applyMatrix4(matrix);
-    const doorways = def.doorways.map(d => ({ def: d, pos: d.pos.clone().applyMatrix4(matrix), fwd: d.fwd.clone().applyQuaternion(q).normalize(), q: q.clone().multiply(d.q), used: false, connected: null, socket: d.socket }));
+    const doorways = def.doorways.map(d => ({ def: d, pos: d.pos.clone().applyMatrix4(matrix), fwd: d.fwd.clone().applyQuaternion(q).normalize(), up: d.up.clone().applyQuaternion(q).normalize(), q: q.clone().multiply(d.q), used: false, connected: null, socket: d.socket }));
     this._serial = (this._serial || 0) + 1;
     return { def, matrix, pos, q, bounds, doorways, parent: parentTile, index, serial: this._serial, isMain, depthF: 0, obj: null, viaDoorway };
   }
@@ -293,11 +297,17 @@ export class Dungeon {
         const cands = def.doorways.filter(d => d.socket === pd.socket);
         if (!cands.length) continue;
         const cd = cands[Math.floor(rnd() * cands.length)];
-        // rotation so that cd.fwd == -pd.fwd
-        const target = pd.fwd.clone().negate();
-        const yawT = Math.atan2(target.x, target.z), yawC = Math.atan2(cd.fwd.x, cd.fwd.z);
-        const yaw = def.allowRotation ? yawT - yawC : 0;
-        const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+        // DunGen PositionBySocket: turn the tile so its doorway frame faces the open doorway, forward against forward
+        // and up matched, i.e. Rotation = LookRotation(-other.Forward, other.Up) * inverse(my.LocalRotation)
+        let q;
+        if (def.allowRotation) {
+          const zA = pd.fwd.clone().negate().normalize(), xA = new THREE.Vector3().crossVectors(pd.up, zA).normalize(), yA = new THREE.Vector3().crossVectors(zA, xA).normalize();
+          const look = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(xA, yA, zA));
+          q = look.multiply(cd.q.clone().invert());
+        } else {
+          if (cd.fwd.dot(pd.fwd) > -0.9998) continue;   // no rotation allowed: the doorway must already face the right way
+          q = new THREE.Quaternion();
+        }
         const rotatedDoor = cd.pos.clone().applyQuaternion(q);
         const pos = pd.pos.clone().sub(rotatedDoor);
         const m = new THREE.Matrix4().compose(pos, q, new THREE.Vector3(1, 1, 1));
@@ -331,7 +341,7 @@ export class Dungeon {
       const inst = await lib.instantiate(t.def.man, { lights: true, filter: n => true });
       const rootObj = inst.root.children[0];
       // reset prefab root transform, apply placement
-      rootObj.position.set(0, 0, 0); rootObj.quaternion.identity(); rootObj.scale.set(1, 1, 1);
+      rootObj.position.set(0, 0, 0); rootObj.quaternion.identity(); rootObj.scale.set(t.def.root.s[0], t.def.root.s[1], t.def.root.s[2]);   // as DunGen: root pos/rot zeroed, scale kept
       inst.root.matrix.copy(t.matrix); inst.root.matrix.decompose(inst.root.position, inst.root.quaternion, inst.root.scale);
       this.root.add(inst.root);
       inst.root.updateMatrixWorld(true);
