@@ -293,7 +293,7 @@ class Game {
   }
 
   backToMenu() {
-    this.state = 'menu'; this.hud.show(false); document.exitPointerLock();
+    this.state = 'menu'; this.hud.show(false); this.player.unlock();
     $('menu').classList.remove('hidden');
     this.stopMenuMusic(0);
     this.sound.stopAll(); this.world.loops = {};
@@ -475,7 +475,7 @@ The ship will leave without you.`);
     if (playerDead) lines.push('\nA new employee has been hired to replace you.');
     $('results-text').textContent = lines.join('\n');
     $('results').classList.remove('hidden');
-    this._suppressSettings = true; document.exitPointerLock();
+    this._suppressSettings = true; this.player.unlock();
     this.fired = fired;
     this.enemies.clearAll();
     this.dungeon.clear();

@@ -107,7 +107,7 @@ export class Settings {
     if (this.open) return;
     this.open = true; this.el.classList.remove('hidden');
     if (this.saveInput && this.game.state === 'play') { try { this.saveInput.value = encode(capture(this.game)); } catch (e) { this.saveInput.value = ''; } }
-    document.exitPointerLock();
+    this.game.player.unlock();
     this.game.player.keys = {};
     this.game.paused = true;
   }

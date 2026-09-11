@@ -67,7 +67,7 @@ export class Terminal {
 
   show() {
     this.open = true; this.el.classList.remove('hidden');
-    document.exitPointerLock();
+    this.game.player.unlock();
     this.game.player.keys = {};
     const c = this.game.items.sfx('enterTerminal'); if (c) this.game.sound.play(c, { vol: 0.5 });
     if (!this.booted) { this.booted = true; this.print(this.banner()); }

@@ -17,7 +17,7 @@ export class DebugMenu {
   toggle() { this.open ? this.hide() : this.show(); }
   show() {
     this.open = true; this.el.classList.remove('hidden');
-    this.game._suppressSettings = true; document.exitPointerLock();
+    this.game._suppressSettings = true; this.game.player.unlock();
     this.game.player.keys = {};
     this.refreshEnemyList();
   }

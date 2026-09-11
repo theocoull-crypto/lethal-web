@@ -20,7 +20,7 @@ export class Player {
     this.health = 100; this.dead = false;
     this.carryWeight = 0;
     this.fallSpeed = 0; this.airTime = 0;
-    this.keys = {}; this.mouse = { dx: 0, dy: 0 };
+    this.keys = {}; this.mouse = { dx: 0, dy: 0 }; this.edgeLook = { x: 0, y: 0 };
     // Google Apps Script serves pages inside a sandbox that does not grant Pointer Lock.
     // The hosted game adds ?embed=1 there, so keep controls usable with ordinary mouse
     // movement and the arrow keys while leaving normal browser play unchanged.
@@ -46,22 +46,64 @@ export class Player {
       if (this.locked && this.inputEnabled) { this.game.onKey(e.code, true); if (['Space', 'KeyE', 'KeyG', 'KeyF', 'KeyQ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault(); }
     });
     addEventListener('keyup', e => { this.keys[e.code] = false; this.game.onKey(e.code, false); });
-    addEventListener('blur', () => { this.keys = {}; });
-    addEventListener('mousemove', e => { if (this.locked && (this.embedded || document.pointerLockElement === c)) { this.mouse.dx += e.movementX; this.mouse.dy += e.movementY; } });
+    addEventListener('blur', () => { this.keys = {}; this.edgeLook.x = this.edgeLook.y = 0; });
+    addEventListener('mousemove', e => {
+      if (!this.locked || (!this.embedded && document.pointerLockElement !== c)) return;
+      this.mouse.dx += e.movementX; this.mouse.dy += e.movementY;
+      if (this.embedded) {
+        const r = c.getBoundingClientRect();
+        this.edgeLook.x = THREE.MathUtils.clamp((e.clientX - r.left) / Math.max(1, r.width) * 2 - 1, -1, 1);
+        this.edgeLook.y = THREE.MathUtils.clamp((e.clientY - r.top) / Math.max(1, r.height) * 2 - 1, -1, 1);
+      }
+    });
     addEventListener('mousedown', e => { if (this.locked && this.inputEnabled) this.game.onMouse(e.button, true); });
     addEventListener('mouseup', e => { if (this.locked) this.game.onMouse(e.button, false); });
     addEventListener('wheel', e => { if (this.locked) this.game.onWheel(Math.sign(e.deltaY)); }, { passive: true });
     document.addEventListener('pointerlockchange', () => { if (this.embedded) return; this.locked = document.pointerLockElement === c; this.game.onLockChange(this.locked); });
     c.addEventListener('click', () => {
-      if (this.embedded) { c.focus(); return; }
+      if (this.embedded) { if (!this.locked && this.game.wantsLock) this.lock(); c.focus(); return; }
       if (!this.locked && this.game.wantsLock) { try { const r = c.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch (e) { } }
     });
   }
 
   lock() {
     this.game.wantsLock = true;
-    if (this.embedded) { this.locked = true; this.game.renderer.domElement.focus(); this.game.onLockChange(true); return; }
+    if (this.embedded) {
+      this.locked = true; this.edgeLook.x = this.edgeLook.y = 0;
+      this.game.renderer.domElement.style.cursor = 'none';
+      this.game.renderer.domElement.focus(); this.game.onLockChange(true); return;
+    }
     try { const r = this.game.renderer.domElement.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch (e) { }
+  }
+
+  unlock() {
+    if (this.embedded) {
+      if (!this.locked) return;
+      this.locked = false; this.mouse.dx = this.mouse.dy = 0; this.edgeLook.x = this.edgeLook.y = 0;
+      this.game.renderer.domElement.style.cursor = 'auto';
+      this.game.onLockChange(false); return;
+    }
+    document.exitPointerLock();
+  }
+
+  _updateLook(dt) {
+    const k = this.keys;
+    if (this.locked && this.inputEnabled) {
+      this.yaw -= this.mouse.dx * this.lookSensitivity;
+      this.pitch -= this.mouse.dy * this.lookSensitivity;
+      if (this.embedded) {
+        // Once the real cursor reaches an edge, turn continuously like a virtual joystick.
+        // This is the closest browser-safe substitute for Pointer Lock in Apps Script.
+        const edge = v => { const a = Math.abs(v); return a <= 0.82 ? 0 : Math.sign(v) * Math.pow((a - 0.82) / 0.18, 1.35); };
+        this.yaw -= edge(this.edgeLook.x) * 2.8 * dt;
+        this.pitch -= edge(this.edgeLook.y) * 2.2 * dt;
+        const keyLook = 1.8 * dt;
+        if (k.ArrowLeft) this.yaw += keyLook; if (k.ArrowRight) this.yaw -= keyLook;
+        if (k.ArrowUp) this.pitch += keyLook; if (k.ArrowDown) this.pitch -= keyLook;
+      }
+      this.pitch = Math.max(-1.5, Math.min(1.5, this.pitch));
+    }
+    this.mouse.dx = this.mouse.dy = 0;
   }
 
   get eyeHeight() { return this.height + this.eyeOffset; }
@@ -93,8 +135,7 @@ export class Player {
 
   _updateLadder(dt) {
     const k = this.keys, ld = this.ladder;
-    if (this.locked && this.inputEnabled) { this.yaw -= this.mouse.dx * this.lookSensitivity; this.pitch -= this.mouse.dy * this.lookSensitivity; this.pitch = Math.max(-1.5, Math.min(1.5, this.pitch)); }
-    this.mouse.dx = this.mouse.dy = 0;
+    this._updateLook(dt);
     const up = (k.KeyW ? 1 : 0) - (k.KeyS ? 1 : 0);
     const top = Math.max(ld.topPos.y, ld.bottomPos.y), bottom = Math.min(ld.topPos.y, ld.bottomPos.y);
     this.pos.y += up * 3 * dt;
@@ -109,8 +150,7 @@ export class Player {
 
   _updateNoclip(dt) {
     const k = this.keys;
-    if (this.locked && this.inputEnabled) { this.yaw -= this.mouse.dx * this.lookSensitivity; this.pitch -= this.mouse.dy * this.lookSensitivity; this.pitch = Math.max(-1.5, Math.min(1.5, this.pitch)); }
-    this.mouse.dx = this.mouse.dy = 0;
+    this._updateLook(dt);
     const sp = (k.ShiftLeft ? 30 : 10) * dt;
     const f = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion), r = new THREE.Vector3(1, 0, 0).applyQuaternion(this.camera.quaternion);
     if (k.KeyW) this.pos.addScaledVector(f, sp); if (k.KeyS) this.pos.addScaledVector(f, -sp);
@@ -126,18 +166,7 @@ export class Player {
     if (this.noclip) { this._updateNoclip(dt); return; }
     if (this.ladder) { this._updateLadder(dt); return; }
     const k = this.keys;
-    // look
-    if (this.locked && this.inputEnabled) {
-      this.yaw -= this.mouse.dx * this.lookSensitivity;
-      this.pitch -= this.mouse.dy * this.lookSensitivity;
-      if (this.embedded) {
-        const keyLook = 1.8 * dt;
-        if (k.ArrowLeft) this.yaw += keyLook; if (k.ArrowRight) this.yaw -= keyLook;
-        if (k.ArrowUp) this.pitch += keyLook; if (k.ArrowDown) this.pitch -= keyLook;
-      }
-      this.pitch = Math.max(-1.5, Math.min(1.5, this.pitch));
-    }
-    this.mouse.dx = this.mouse.dy = 0;
+    this._updateLook(dt);
     const move = new THREE.Vector3();
     let wantSprint = false, wantCrouch = false, wantJump = false;
     if (this.locked && this.inputEnabled && !this.dead) {
