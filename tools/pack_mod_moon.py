@@ -70,7 +70,29 @@ for e in lv.get('spawnableScrap') or []:
     if hit:
         s = dict(hit); s['rarity'] = e.get('rarity', 1); scrap.append(s)
     else:
-        print('   scrap not in the game catalogs (custom or renamed):', nm)
+        # the mod's own scrap: pack its Item data and prefab from the bundle
+        r = ar.resolve(lkey, e.get('spawnableItem'))
+        it = (ar.json(*r).get('m_Structure') if r else None) or {}
+        go = ar.resolve(r[0], it.get('spawnPrefab')) if r else None
+        fn = None
+        if go:
+            aid = ar.aid(*go)
+            try:
+                fn = f"{''.join(ch if ch.isalnum() or ch in '-_' else '_' for ch in ar.name(*go))}__{aid}.json"
+                if not pk.pack_prefab(aid, os.path.join(ASSETS, 'prefabs', fn)):
+                    fn = None
+            except Exception as ex:
+                print('   !! could not pack custom scrap prefab', nm, ex); fn = None
+        if fn:
+            scrap.append({'name': ar.name(*r), 'itemName': it.get('itemName'), 'rarity': e.get('rarity', 1), 'prefab': fn,
+                          'minValue': it.get('minValue'), 'maxValue': it.get('maxValue'), 'weight': it.get('weight'), 'twoHanded': it.get('twoHanded'),
+                          'isConductiveMetal': it.get('isConductiveMetal'), 'floorYOffset': it.get('floorYOffset'), 'verticalOffset': it.get('verticalOffset'),
+                          'restingRotation': it.get('restingRotation'), 'rotationOffset': it.get('rotationOffset'), 'positionOffset': it.get('positionOffset'),
+                          'grabSFX': pk.resolve_refs(r[0], it.get('grabSFX')), 'dropSFX': pk.resolve_refs(r[0], it.get('dropSFX')),
+                          'itemIcon': None, 'usable': it.get('itemIsTrigger'), 'toolTips': it.get('toolTips'), 'isScrap': it.get('isScrap', 1)})
+            print('   custom scrap packed:', nm, '->', fn)
+        else:
+            print('   scrap not in the game catalogs and not packable:', nm)
 print('scrap entries', len(scrap))
 
 enemies = {'inside': [], 'outside': [], 'daytime': []}

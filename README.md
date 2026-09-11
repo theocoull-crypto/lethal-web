@@ -100,7 +100,11 @@ network interface and prints the addresses to open on the other device
   wired in: `python tools/load_mod_bundle.py <evescene.lethalbundle> <evestandalone.lethalbundle>` then
   `set AR_PREFIX=eve && python tools/pack_mod_moon.py eve "Eve1Level (Generated Assets)" EveLevel` packs its scene,
   both terrains and a catalog whose scrap and enemy tables are matched by name to the game's own (the mod references
-  vanilla content it cannot ship; its custom items are skipped). The moon only appears when its assets are present.
+  vanilla content it cannot ship). A mod's own scrap is packed from its bundle. The moon only appears when its assets
+  are present. **115 Wither** (ScienceBird) is wired in the same way: `python tools/load_mod_bundle.py
+  <withermoonscene.lethalbundle> <withermoon.lethalbundle> <extrawitherassets>` then
+  `set AR_PREFIX=wi && python tools/pack_mod_moon.py wither "WitherScene (Generated Assets)" WitherLevel`. Its scripted
+  set pieces (the mod's own plugin) do not come across; its map, scrap and enemy tables do.
 * Interiors: the **facility** and the **mineshaft** with its elevator - ride it down to the tunnels and caves, call it
   back from either landing. Experimentation and Assurance roll the interior with the game's own odds (mineshaft ~1% and
   ~12%). Titan is buried in dark fog with snow underfoot and always uses the **Slaughterhouse** interior from Nikki's

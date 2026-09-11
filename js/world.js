@@ -15,6 +15,8 @@ export const MOON_DEFS = [
   { key: 'titan', asset: 'titan', name: '8-TITAN', catalog: 'titan', fogDay: 0x272b31, fogDusk: 0x15171c, sunDay: 0x9aa4b4, hemiSky: 0x5b6470, fogScale: 3.4, sunScale: 0.5, forceFlow: 'SlaughterhouseFlow', sizeMul: 2.2 },
   // 127 Eve-M: RosiePies' forest moon (Thunderstore), packed with tools/pack_mod_moon.py; skipped when its assets are missing
   { key: 'eve', asset: 'eve', name: '127-EVE-M', catalog: 'eve', fogDay: 0xb9c6b3, fogDusk: 0x3b4150, sunDay: 0xfff1d6, hemiSky: 0x9cc0e0, fogScale: 0.55, sunScale: 1.15, sizeMul: 1.4, optional: true },
+  // 115 Wither: ScienceBird's late-game moon (Thunderstore); dry, dusty light
+  { key: 'wither', asset: 'wither', name: '115-WITHER', catalog: 'wither', fogDay: 0xc7b9a2, fogDusk: 0x3a3128, sunDay: 0xffe0b8, hemiSky: 0xb9a98c, fogScale: 0.8, sunScale: 1.05, optional: true },
 ];
 
 export class World {

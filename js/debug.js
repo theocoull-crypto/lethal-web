@@ -66,6 +66,7 @@ export class DebugMenu {
       this._btn('Route: Assurance', () => { g.world.destination = 'assurance'; this.log('route Assurance'); }),
       this._btn('Route: Titan', () => { g.world.destination = 'titan'; this.log('route Titan'); }),
       this._btn('Route: Eve', () => { if (!g.world.moons.eve) return this.log('Eve not installed'); g.world.destination = 'eve'; this.log('route Eve'); }),
+      this._btn('Route: Wither', () => { if (!g.world.moons.wither) return this.log('Wither not installed'); g.world.destination = 'wither'; this.log('route Wither'); }),
       this._btn('Route: company', () => { g.world.destination = 'company'; this.log('route company'); }));
     const time = document.createElement('input'); time.type = 'range'; time.min = 0; time.max = 1; time.step = 0.01; time.className = 'drange';
     const timeLbl = document.createElement('span'); timeLbl.className = 'dval';

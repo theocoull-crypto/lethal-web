@@ -150,17 +150,28 @@ class AR:
         c = self.coll(key)
         dep = c.deps.get(fid)
         if dep is None and fid == 1 and (c.name.endswith('(Generated Assets)') or c.name in ('Prefab Hierarchies', 'Generated Prefabs')):
-            dep = self._scene_dep(key) if c.name.endswith('(Generated Assets)') else self._bundle_data_dep()
-            if dep is not None:
+            scene = c.name.endswith('(Generated Assets)')
+            dep = self._scene_dep(key) if scene else self._bundle_data_dep(pid)
+            if dep is not None and (scene or len(self._cabs()) == 1):
                 c.deps[fid] = dep
         if dep is None:
             return None
         return (dep, pid)
 
-    def _bundle_data_dep(self):
-        """A loaded mod bundle: the generated prefab hierarchies point (file id 1) at the bundle's own 'cab-...' data collection."""
-        cabs = [k for n, k in self.by_name.items() if n.startswith('cab-')]
-        return cabs[0] if len(cabs) == 1 else None
+    def _cabs(self):
+        return [k for n, k in self.by_name.items() if n.startswith('cab-')]
+
+    def _bundle_data_dep(self, pid=None):
+        """A loaded mod bundle: the generated prefab hierarchies point (file id 1) at the bundle's own 'cab-...' data
+        collection.  With several bundles loaded, the one that actually holds the asset wins."""
+        cabs = self._cabs()
+        if len(cabs) == 1:
+            return cabs[0]
+        if pid is not None:
+            for k in cabs:
+                if pid in self.coll(k).assets:
+                    return k
+        return None
 
     def _scene_dep(self, key):
         """Some '(Generated Assets)' scene collections come with an empty dependency table; their objects live in the
