@@ -86,6 +86,7 @@ export async function restore(game, st) {
     }
   }
   if (tools) notes.push(tools + ' tool' + (tools === 1 ? '' : 's'));
+  if (g.hud && g.hud.setQuota) g.hud.setQuota(g.quotaFulfilled, g.quota, g.daysLeft, g.credits, g.items.scrapValueOnShip());
   return notes;
 }
 
