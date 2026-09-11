@@ -34,9 +34,12 @@ The current build is published at https://theocoull-crypto.github.io/lethal-web/
 To make a Google Apps Script web app that loads it, create a script project, copy
 `google-apps-script/Code.gs` and `google-apps-script/Index.html` into matching files, then choose **Deploy -> New
 deployment -> Web app**. The wrapper loads the GitHub Pages build full-screen. Google sandboxes Apps Script pages,
-so embedded mode also supports the arrow keys for looking around; **Open directly** launches the normal pointer-lock
+so embedded mode also supports the arrow keys for looking around; **Play with mouse lock** launches the normal pointer-lock
 version. When updating an existing Apps Script deployment, create a new version before redeploying; `Code.gs` uses
 `XFrameOptionsMode.ALLOWALL` so the deployment can connect when another page embeds it.
+
+Google's Apps Script iframe does not grant Pointer Lock. Use the wrapper's **Play with mouse lock** button to leave
+the sandbox in the same tab and launch the normal hosted build with full mouse capture.
 
 To rebuild the extracted game files later, run `python tools/extract.py` on a Windows PC that owns Lethal Company.
 It finds the Steam installation, downloads the official [AssetRipper](https://github.com/AssetRipper/AssetRipper)
