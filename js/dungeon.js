@@ -111,10 +111,31 @@ export class Dungeon {
     let b = null;
     if (tile) {
       const src = tile.OverrideAutomaticTileBounds ? tile.TileBoundsOverride : tile.placement && tile.placement.localBounds;
-      if (src) {
-        const c = V(src.m_Center), e = src.m_Extent;
+      if (src && (src.m_Extent.x > 0.01 || src.m_Extent.y > 0.01 || src.m_Extent.z > 0.01)) {
+        const c = V(src.m_Center), e = src.m_Extent;   // V mirrors X into three.js space
         b = new THREE.Box3(new THREE.Vector3(c.x - e.x, c.y - e.y, c.z - e.z), new THREE.Vector3(c.x + e.x, c.y + e.y, c.z + e.z));
       }
+    }
+    // DunGen's automatic bounds: every renderer and non-trigger collider in the prefab (the mod's vent ducts rely on this;
+    // their packed placement bounds are zero-sized, which let them run straight through other rooms)
+    if (!b) {
+      const auto = new THREE.Box3();
+      const tmp = new THREE.Box3();
+      for (const n of man.nodes) {
+        if (n.active === false) continue;
+        let q = n, dead = false; while (q && q.parent) { q = byId.get(q.parent); if (q && q.active === false) { dead = true; break; } }
+        if (dead) continue;
+        const m = worldOf(n);
+        for (const c of n.comps) {
+          if ((c.t === 'MR' || c.t === 'SMR') && n.mesh) {
+            const geoms = await this.lib.mesh(n.mesh).catch(() => []);
+            for (const g of geoms) { if (!g.boundingBox) g.computeBoundingBox(); if (g.boundingBox.isEmpty()) continue; tmp.copy(g.boundingBox).applyMatrix4(m); auto.union(tmp); }
+          } else if (c.t === 'Box' && !c.trigger && c.enabled !== false) {
+            tmp.set(new THREE.Vector3(c.c[0] - c.s[0] / 2, c.c[1] - c.s[1] / 2, c.c[2] - c.s[2] / 2), new THREE.Vector3(c.c[0] + c.s[0] / 2, c.c[1] + c.s[1] / 2, c.c[2] + c.s[2] / 2)).applyMatrix4(m); auto.union(tmp);
+          }
+        }
+      }
+      if (!auto.isEmpty()) b = auto;
     }
     if (!b) b = new THREE.Box3(new THREE.Vector3(-5, -1, -5), new THREE.Vector3(5, 5, 5));
     const def = { file, man, byId, root, tile, doorways, bounds: b, allowRotation: tile ? tile.AllowRotation !== false : true, repeat: tile ? tile.RepeatMode : 0, worldOf };
@@ -373,10 +394,14 @@ export class Dungeon {
     }
     // collision
     const entries = [];
+    // a door leaf's own colliders swing with it: keep them out of the static collider (the door's DoorLock box follows the leaf instead).
+    // The Slaughterhouse pig-pen gates carry a box on the gate mesh itself, which kept the pens sealed after the gate opened.
+    const doorRoots = new Set(this.doors.map(d => d.root));
+    const underAnimator = (inst, n) => { const byId = inst.manifest && inst.manifest.nodes ? (inst._byId || (inst._byId = new Map(inst.manifest.nodes.map(x => [x.id, x])))) : null; if (!byId) return false; let q = byId.get(n.parent); while (q) { if (q.comps.some(c => c.t === 'Animator' && c.controller)) return true; q = byId.get(q.parent); } return false; };
     for (const t of this.placed) {
       const e = await collisionEntries(lib, t.inst, { exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) });
       for (const x of e) entries.push(x);
-      for (const ex of (t.extraInst || [])) { const dyn = ex.root.userData.dynamicIds; const e2 = await collisionEntries(lib, ex, { exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) || (dyn && dyn.has(n.id)) || n.comps.some(c => c.t === 'MB' && c.cls === 'DoorLock') }); for (const x of e2) entries.push(x); }
+      for (const ex of (t.extraInst || [])) { const dyn = ex.root.userData.dynamicIds; const isDoor = doorRoots.has(ex.root); const e2 = await collisionEntries(lib, ex, { exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) || (dyn && dyn.has(n.id)) || n.comps.some(c => c.t === 'MB' && c.cls === 'DoorLock') || (isDoor && underAnimator(ex, n)) }); for (const x of e2) entries.push(x); }
     }
     this.collider = new Collider('dungeon').build(entries, null);
     // drop vents that float in the room (no wall within 1.2 m behind or in front of them)

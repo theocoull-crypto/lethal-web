@@ -93,6 +93,9 @@ export class Decor {
   }
 
   /** first candidate spot that is bare deck and clear of other furniture; otherwise beside the player */
+  /** the floor area furniture may use (ship-local); the wider ship upgrade extends it */
+  cabin() { return this.game.world.cabin || CABIN; }
+
   _freeSlot() {
     const w = this.game.world;
     for (const s of SLOTS) {
@@ -105,7 +108,8 @@ export class Decor {
       if (!taken && this._clearAt(s[0], s[2], 0.8)) return [s[0], ly, s[2]];
     }
     // every slot taken: any free bit of deck, scanned front to back
-    for (let z = CABIN.zMin + 0.8; z < CABIN.zMax; z += 0.8) for (let x = CABIN.xMin + 0.8; x < CABIN.xMax; x += 0.8) {
+    const cab = this.cabin();
+    for (let z = cab.zMin + 0.8; z < cab.zMax; z += 0.8) for (let x = cab.xMin + 0.8; x < cab.xMax; x += 0.8) {
       const ly = this._floorAt(x, z); if (ly == null) continue;
       if (this.placed.some(e => Math.hypot(e.root.position.x - x, e.root.position.z - z) < 1.6)) continue;
       if (!this._clearAt(x, z, 0.8)) continue;
@@ -357,7 +361,8 @@ export class Decor {
     if (hit) target = hit.point.clone();
     else { target = eye.clone().addScaledVector(dir, 3.5); const h = w.shipCollider.raycast(target.clone().add(new THREE.Vector3(0, 1, 0)), new THREE.Vector3(0, -1, 0), 4); if (h) target.y = h.point.y; }
     const local = w.shipObj.worldToLocal(target);
-    local.x = THREE.MathUtils.clamp(local.x, CABIN.xMin, CABIN.xMax); local.z = THREE.MathUtils.clamp(local.z, CABIN.zMin, CABIN.zMax);
+    const cab = this.cabin();
+    local.x = THREE.MathUtils.clamp(local.x, cab.xMin, cab.xMax); local.z = THREE.MathUtils.clamp(local.z, cab.zMin, cab.zMax);
     if (CEILING.test(e.def.name)) {
       // hangs from the ceiling above the aim point
       const o = w.shipObj.localToWorld(new THREE.Vector3(local.x, 1.0, local.z)); const h = w.shipCollider.raycast(o, new THREE.Vector3(0, 1, 0).applyQuaternion(w.shipObj.getWorldQuaternion(new THREE.Quaternion())), 8);

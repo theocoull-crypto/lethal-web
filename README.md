@@ -38,6 +38,11 @@ item, RMB scan, F flashlight.
   `assets/tv/` (gitignored) with a playlist; switching the set on picks a random tape, static shows while it loads,
   the sound comes out of the set, and the next tape starts when one ends. `serve.py` answers byte-range requests so
   the browser can stream them.
+* Ship upgrade: the store sells a **wider ship** ($400) - mborsh's Wider Ship Mod from Thunderstore. Its own hull,
+  floor, catwalk, posters and inner-wall beams (packed from the mod's `newship` bundle with
+  `python tools/load_mod_bundle.py <newship>` then `python tools/pack_wider_ship.py`) replace the vanilla hull, and the
+  props its plugin relocates (ladders, charge station, magnet, machinery, lamps, door panel) move the same way. The
+  upgrade is remembered in the browser. Nothing from the mod is in this repository; download it yourself.
 * The Company building: `route company` at the terminal, land, put scrap on the counter, ring the bell. Scrap is
   bought at the game's rate (30% three days out, 100% on the last day) and only sold scrap counts toward the quota.
 * Ladders on the moon and the ship can be climbed. Dying makes the ship leave without you.
@@ -51,7 +56,8 @@ item, RMB scan, F flashlight.
 * Interiors: the **facility** and the **mineshaft** with its elevator - ride it down to the tunnels and caves, call it
   back from either landing. Experimentation and Assurance roll the interior with the game's own odds (mineshaft ~1% and
   ~12%). Titan is buried in dark fog with snow underfoot and always uses the **Slaughterhouse** interior from Nikki's
-  mod of the same name (see below). The F3 debug menu can force an interior.
+  mod of the same name (see below): its vent ducts, pig pens with gates you open, freezer, tanning rooms and grinder.
+  The F3 debug menu can force an interior.
 * Mod interiors: a LethalLevelLoader interior bundle can be run through the same extractor. With AssetRipper running
   (`tools/extract.py` starts it), `python tools/load_mod_bundle.py <bundle>` loads it next to the game's assemblies,
   `set AR_PREFIX=sh && python tools/pack_mod_interior.py catalog_slaughterhouse.json catalog_titan.json` packs its

@@ -496,10 +496,12 @@ export class World {
   /** is a world point inside the ship's room (local box of HangarShip) */
   inShipRoom(worldPos) {
     const l = this.shipObj.worldToLocal(worldPos.clone());
-    return l.x > -10.8 && l.x < 7.2 && l.z > -12.6 && l.z < -1.0 && l.y > -2.5 && l.y < 5.5;
+    const b = this.roomBounds || { xMin: -10.8, xMax: 7.2, zMin: -12.6, zMax: -1.0 };   // the wider ship upgrade widens these
+    return l.x > b.xMin && l.x < b.xMax && l.z > b.zMin && l.z < b.zMax && l.y > -2.5 && l.y < 5.5;
   }
   onShipDeck(worldPos) {
     const l = this.shipObj.worldToLocal(worldPos.clone());
-    return l.x > -11.5 && l.x < 13 && l.z > -13.5 && l.z < 1.5 && l.y > -3 && l.y < 6;
+    const b = this.deckBounds || { xMin: -11.5, xMax: 13, zMin: -13.5, zMax: 1.5 };
+    return l.x > b.xMin && l.x < b.xMax && l.z > b.zMin && l.z < b.zMax && l.y > -3 && l.y < 6;
   }
 }

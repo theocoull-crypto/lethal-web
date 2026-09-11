@@ -81,7 +81,10 @@ export class Terminal {
   }
 
   /** tools plus the ship decor (furniture) once it is loaded */
-  allStore() { return this.store.concat(this.game.decor ? this.game.decor.storeList() : []); }
+  allStore() { return this.store.concat(this.upgrades(), this.game.decor ? this.game.decor.storeList() : []); }
+
+  /** ship upgrades (the Wider Ship mod's hull) */
+  upgrades() { const g = this.game; return [{ key: 'widership', name: 'Wider ship', price: g.shipmods ? g.shipmods.price : 400, upgrade: 'wider', names: ['wider ship', 'wider', 'wide ship', 'bigger ship', 'big ship', 'ship upgrade', 'ship extension'] }]; }
 
   banner() {
     return `Welcome to the FORTUNE-9 OS
@@ -155,6 +158,9 @@ ____________________________
 
 ${this.store.map(s => `* ${s.name}  //  Price: $${s.price}`).join('\n')}
 
+Ship upgrades:
+${this.upgrades().map(s => `* ${s.name}  //  ${g.shipmods && g.shipmods.owned ? 'Installed' : 'Price: $' + s.price}`).join('\n')}
+
 Ship decor (arrives on the ship; press B to move it around):
 ${(g.decor ? g.decor.storeList() : []).map(s => `* ${s.name}  //  Price: $${s.price}`).join('\n')}
 
@@ -189,6 +195,8 @@ Your credits: $${g.credits}
 
   askBuy(s, qty) {
     const g = this.game;
+    if (s.upgrade) { if (g.shipmods && g.shipmods.owned) return this.print(`The ${s.name} is already installed.
+`); qty = 1; }
     const total = s.price * qty;
     if (total > g.credits) return this.print(`You could not afford this item! Your balance is $${g.credits}. Total cost of item: $${total}.\n`);
     this.pending = { kind: 'buy', item: s, qty, total };
@@ -201,6 +209,12 @@ Please CONFIRM or DENY.
     const g = this.game;
     g.credits -= p.total;
     const c = g.items.sfx('purchase'); if (c) g.sound.play(c, { vol: 0.6 });
+    if (p.item.upgrade) {
+      g.shipmods.buy();
+      return this.print(`Ordered the ${p.item.name}. Your new balance is $${g.credits}.
+The Company's engineers have extended the ship on both sides.
+`);
+    }
     if (p.item.decor) {
       for (let i = 0; i < p.qty; i++) g.decor.buy(p.item.decor);
       return this.print(`Ordered ${p.qty} ${p.item.name}${p.qty > 1 ? 's' : ''}. Your new balance is $${g.credits}.\nIt has been placed on the ship. Look at it and press B to move it.\n`);

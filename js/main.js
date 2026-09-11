@@ -13,6 +13,7 @@ import { Terminal } from './terminal.js';
 import { Settings } from './settings.js';
 import { DebugMenu } from './debug.js';
 import { Decor } from './decor.js';
+import { WiderShip } from './widership.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -156,6 +157,7 @@ class Game {
     $('btn-menu-controls').onclick = () => { $('menu-controls').classList.toggle('hidden'); };
     this.state = 'menu'; this.ready = true;
     this.startMenuMusic();
+    this.shipmods = new WiderShip(this); this.shipmods.load(); await this.shipmods.apply();
     this.spawnPlayerInShip();
     this.decor.restore();
     this.loop();
