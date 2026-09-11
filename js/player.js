@@ -20,7 +20,7 @@ export class Player {
     this.health = 100; this.dead = false;
     this.carryWeight = 0;
     this.fallSpeed = 0; this.airTime = 0;
-    this.keys = {}; this.mouse = { dx: 0, dy: 0 }; this.edgeLook = { x: 0, y: 0 };
+    this.keys = {}; this.mouse = { dx: 0, dy: 0 };
     // Google Apps Script serves pages inside a sandbox that does not grant Pointer Lock.
     // The hosted game adds ?embed=1 there, so keep controls usable with ordinary mouse
     // movement and the arrow keys while leaving normal browser play unchanged.
@@ -46,15 +46,10 @@ export class Player {
       if (this.locked && this.inputEnabled) { this.game.onKey(e.code, true); if (['Space', 'KeyE', 'KeyG', 'KeyF', 'KeyQ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault(); }
     });
     addEventListener('keyup', e => { this.keys[e.code] = false; this.game.onKey(e.code, false); });
-    addEventListener('blur', () => { this.keys = {}; this.edgeLook.x = this.edgeLook.y = 0; });
+    addEventListener('blur', () => { this.keys = {}; });
     addEventListener('mousemove', e => {
       if (!this.locked || (!this.embedded && document.pointerLockElement !== c)) return;
       this.mouse.dx += e.movementX; this.mouse.dy += e.movementY;
-      if (this.embedded) {
-        const r = c.getBoundingClientRect();
-        this.edgeLook.x = THREE.MathUtils.clamp((e.clientX - r.left) / Math.max(1, r.width) * 2 - 1, -1, 1);
-        this.edgeLook.y = THREE.MathUtils.clamp((e.clientY - r.top) / Math.max(1, r.height) * 2 - 1, -1, 1);
-      }
     });
     addEventListener('mousedown', e => { if (this.locked && this.inputEnabled) this.game.onMouse(e.button, true); });
     addEventListener('mouseup', e => { if (this.locked) this.game.onMouse(e.button, false); });
@@ -69,7 +64,7 @@ export class Player {
   lock() {
     this.game.wantsLock = true;
     if (this.embedded) {
-      this.locked = true; this.edgeLook.x = this.edgeLook.y = 0;
+      this.locked = true;
       this.game.renderer.domElement.style.cursor = 'none';
       this.game.renderer.domElement.focus(); this.game.onLockChange(true); return;
     }
@@ -79,7 +74,7 @@ export class Player {
   unlock() {
     if (this.embedded) {
       if (!this.locked) return;
-      this.locked = false; this.mouse.dx = this.mouse.dy = 0; this.edgeLook.x = this.edgeLook.y = 0;
+      this.locked = false; this.mouse.dx = this.mouse.dy = 0;
       this.game.renderer.domElement.style.cursor = 'auto';
       this.game.onLockChange(false); return;
     }
@@ -92,11 +87,6 @@ export class Player {
       this.yaw -= this.mouse.dx * this.lookSensitivity;
       this.pitch -= this.mouse.dy * this.lookSensitivity;
       if (this.embedded) {
-        // Once the real cursor reaches an edge, turn continuously like a virtual joystick.
-        // This is the closest browser-safe substitute for Pointer Lock in Apps Script.
-        const edge = v => { const a = Math.abs(v); return a <= 0.82 ? 0 : Math.sign(v) * Math.pow((a - 0.82) / 0.18, 1.35); };
-        this.yaw -= edge(this.edgeLook.x) * 2.8 * dt;
-        this.pitch -= edge(this.edgeLook.y) * 2.2 * dt;
         const keyLook = 1.8 * dt;
         if (k.ArrowLeft) this.yaw += keyLook; if (k.ArrowRight) this.yaw -= keyLook;
         if (k.ArrowUp) this.pitch += keyLook; if (k.ArrowDown) this.pitch -= keyLook;

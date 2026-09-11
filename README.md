@@ -38,10 +38,10 @@ so embedded mode also supports the arrow keys for looking around; **Play with mo
 version. When updating an existing Apps Script deployment, create a new version before redeploying; `Code.gs` uses
 `XFrameOptionsMode.ALLOWALL` so the deployment can connect when another page embeds it.
 
-Google's Apps Script iframe does not grant true Pointer Lock. Embedded mode works around that by hiding the cursor,
-using relative mouse movement, and continuing to turn when the physical cursor reaches a screen edge. Press Esc to
-release it for menus. The wrapper's **Play with mouse lock** button still launches the normal hosted build when genuine
-browser mouse capture is preferred.
+Google's Apps Script iframe does not grant true Pointer Lock. Embedded mode works around that by hiding the cursor and
+using relative mouse movement without turning while the mouse is resting; the arrow keys also control the camera.
+Press Esc to release it for menus. The wrapper's **Play with mouse lock** button still launches the normal hosted build
+when genuine browser mouse capture is preferred.
 
 To rebuild the extracted game files later, run `python tools/extract.py` on a Windows PC that owns Lethal Company.
 It finds the Steam installation, downloads the official [AssetRipper](https://github.com/AssetRipper/AssetRipper)
