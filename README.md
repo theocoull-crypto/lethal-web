@@ -35,7 +35,8 @@ To make a Google Apps Script web app that loads it, create a script project, cop
 `google-apps-script/Code.gs` and `google-apps-script/Index.html` into matching files, then choose **Deploy -> New
 deployment -> Web app**. The wrapper loads the GitHub Pages build full-screen. Google sandboxes Apps Script pages,
 so embedded mode also supports the arrow keys for looking around; **Open directly** launches the normal pointer-lock
-version.
+version. When updating an existing Apps Script deployment, create a new version before redeploying; `Code.gs` uses
+`XFrameOptionsMode.ALLOWALL` so the deployment can connect when another page embeds it.
 
 To rebuild the extracted game files later, run `python tools/extract.py` on a Windows PC that owns Lethal Company.
 It finds the Steam installation, downloads the official [AssetRipper](https://github.com/AssetRipper/AssetRipper)
