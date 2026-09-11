@@ -16,6 +16,38 @@ class H(http.server.SimpleHTTPRequestHandler):
         self.send_header('Cache-Control', 'no-cache')
         super().end_headers()
 
+    def do_GET(self):
+        """byte ranges for the television's videos (SimpleHTTPRequestHandler ignores Range)"""
+        rng = self.headers.get('Range')
+        path = self.translate_path(self.path.split('?', 1)[0])
+        if rng and rng.startswith('bytes=') and os.path.isfile(path):
+            size = os.path.getsize(path)
+            a, _, b = rng[6:].partition('-')
+            try:
+                start = int(a) if a else max(0, size - int(b))
+                end = min(int(b), size - 1) if (a and b) else size - 1
+            except ValueError:
+                start, end = 0, size - 1
+            if start > end or start >= size:
+                self.send_response(416); self.send_header('Content-Range', 'bytes */%d' % size); self.end_headers(); return
+            ctype = self.guess_type(path)
+            self.send_response(206)
+            self.send_header('Content-Type', ctype)
+            self.send_header('Accept-Ranges', 'bytes')
+            self.send_header('Content-Range', 'bytes %d-%d/%d' % (start, end, size))
+            self.send_header('Content-Length', str(end - start + 1))
+            self.end_headers()
+            with open(path, 'rb') as f:
+                f.seek(start); left = end - start + 1
+                while left > 0:
+                    chunk = f.read(min(1 << 16, left))
+                    if not chunk: break
+                    try: self.wfile.write(chunk)
+                    except (ConnectionAbortedError, ConnectionResetError, BrokenPipeError): return
+                    left -= len(chunk)
+            return
+        super().do_GET()
+
     def log_message(self, fmt, *args):
         if '404' in (args[1] if len(args) > 1 else ''):
             sys.stderr.write('404 %s\n' % args[0])

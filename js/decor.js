@@ -189,18 +189,67 @@ export class Decor {
     } else {
       play(trig.falseA.length ? trig.falseA : trig.trueA);
       entry.playMatching(/Squeeze|Hit|Flush|Open/i, { once: true, loop: false, fade: 0.05 }, trig.anims);
-      if (/Television/i.test(entry.def.name)) {   // no video here: the screen glows and its light comes on
-        entry.tvOn = !entry.tvOn; entry.setLights(entry.tvOn);
-        entry.root.traverse(o => { if (o.isMesh && o.material && /screen/i.test((o.material.name || '') + ' ' + o.name)) {
-          const m = o.material; if (!m.userData.tvSplit) { o.material = m.clone(); o.material.userData.tvSplit = true; }
-          const mm = o.material;
-          if (entry.tvOn) { mm.emissiveMap = tvStatic().tex; mm.emissive.setRGB(0.75, 0.78, 0.85); mm.emissiveIntensity = 1; }
-          else { mm.emissiveMap = null; mm.emissive.setRGB(0, 0, 0); }
-          mm.needsUpdate = true;
-        } });
-      }
+      if (/Television/i.test(entry.def.name)) { entry.tvOn = !entry.tvOn; entry.setLights(entry.tvOn); this._tvSet(entry, entry.tvOn); }
     }
     g.enemies.onNoise(pos, 0.5);
+  }
+
+  // ---------- the television: plays the tapes in assets/tv (tools/pack_tv.py), static while a tape loads ----------
+  _tvPlaylist() {
+    if (!this._tvList) this._tvList = fetch('assets/tv/index.json').then(r => r.ok ? r.json() : []).catch(() => []);
+    return this._tvList;
+  }
+
+  _tvScreens(entry) {
+    const out = [];
+    entry.root.traverse(o => { if (o.isMesh && o.material && /screen/i.test((o.material.name || '') + ' ' + o.name)) { if (!o.material.userData.tvSplit) { o.material = o.material.clone(); o.material.userData.tvSplit = true; } out.push(o.material); } });
+    return out;
+  }
+
+  _tvSet(entry, on) {
+    const mats = this._tvScreens(entry);
+    if (!on) {
+      this._tvStopVideo(entry);
+      for (const m of mats) { m.emissiveMap = null; m.emissive.setRGB(0, 0, 0); m.needsUpdate = true; }
+      return;
+    }
+    for (const m of mats) { m.emissiveMap = tvStatic().tex; m.emissive.setRGB(0.75, 0.78, 0.85); m.emissiveIntensity = 1; m.needsUpdate = true; }
+    this._tvPlaylist().then(list => { if (entry.tvOn && list.length) this._tvPlay(entry, list); });
+  }
+
+  _tvPlay(entry, list) {
+    this._tvStopVideo(entry);
+    // a random tape, not the one that just ended
+    let pick = list[Math.floor(Math.random() * list.length)];
+    if (list.length > 1 && pick.file === entry.tvLast) pick = list[(list.indexOf(pick) + 1) % list.length];
+    entry.tvLast = pick.file;
+    const v = document.createElement('video');
+    v.src = 'assets/tv/' + pick.file; v.playsInline = true; v.preload = 'auto'; v.crossOrigin = 'anonymous'; v.muted = false;
+    const tex = new THREE.VideoTexture(v); tex.colorSpace = THREE.SRGBColorSpace; tex.flipY = false; tex.minFilter = THREE.LinearFilter; tex.generateMipmaps = false;
+    const tv = { video: v, tex, audio: null, title: pick.title };
+    entry.tv = tv;
+    const g = this.game;
+    // the tape's sound comes out of the set
+    try {
+      g.sound.ensure();
+      const ctx = g.sound.ctx, src = ctx.createMediaElementSource(v), gain = ctx.createGain(), pan = ctx.createPanner();
+      gain.gain.value = 0.9; pan.panningModel = 'HRTF'; pan.distanceModel = 'inverse'; pan.refDistance = 1.5; pan.maxDistance = 30; pan.rolloffFactor = 1.2;
+      const p = entry.root.getWorldPosition(new THREE.Vector3()); pan.positionX.value = p.x; pan.positionY.value = p.y + 0.6; pan.positionZ.value = p.z;
+      src.connect(gain); gain.connect(pan); pan.connect(g.sound.master);
+      tv.audio = { setPos(q) { pan.positionX.value = q.x; pan.positionY.value = q.y + 0.6; pan.positionZ.value = q.z; }, stop() { try { src.disconnect(); gain.disconnect(); pan.disconnect(); } catch (e) { } } };
+    } catch (e) { console.warn('tv audio', e); }
+    v.addEventListener('playing', () => { if (entry.tv !== tv) return; for (const m of this._tvScreens(entry)) { m.emissiveMap = tex; m.emissive.setRGB(1, 1, 1); m.emissiveIntensity = 1.35; m.needsUpdate = true; } });
+    v.addEventListener('ended', () => { if (entry.tv === tv && entry.tvOn) this._tvPlay(entry, list); });
+    v.addEventListener('error', () => { if (entry.tv === tv && entry.tvOn) setTimeout(() => { if (entry.tv === tv && entry.tvOn) this._tvPlay(entry, list); }, 1500); });
+    v.play().catch(e => console.warn('tv play', e));
+  }
+
+  _tvStopVideo(entry) {
+    const tv = entry.tv; if (!tv) return;
+    entry.tv = null;
+    try { tv.video.pause(); tv.video.removeAttribute('src'); tv.video.load(); } catch (e) { }
+    if (tv.audio) tv.audio.stop();
+    tv.tex.dispose();
   }
 
   async _buildCollider(entry) {
@@ -251,6 +300,7 @@ export class Decor {
   remove(entry) {
     if (this.carry === entry) this.cancel();
     for (const t of entry.triggers) if (t.loop && !t.loop.done) t.loop.stop(0.2);
+    this._tvStopVideo(entry);
     for (const a of entry.anims) if (a.ready) a.stop();
     if (entry.root.parent) entry.root.parent.remove(entry.root);
     const w = this.game.world; w.interactables = w.interactables.filter(i => i.decor !== entry);
@@ -291,10 +341,11 @@ export class Decor {
   rotate(dir) { const e = this.carry; if (!e) return; e.yaw += dir * Math.PI / 12; e.root.rotation.set(0, e.yaw, 0); }
 
   update(dt) {
-    if (_tv && this.placed.some(e => e.tvOn)) { _tv.t += dt; if (_tv.t > 0.07) { _tv.t = 0; _tv.refresh(); } }
+    if (_tv && this.placed.some(e => e.tvOn && !(e.tv && e.tv.video.readyState >= 3 && !e.tv.video.paused))) { _tv.t += dt; if (_tv.t > 0.07) { _tv.t = 0; _tv.refresh(); } }
     for (const e of this.placed) {
       for (const a of e.anims) if (a.ready) a.update(dt);
       for (const t of e.triggers) if (t.loop && !t.loop.done) t.loop.setPos(t.obj.getWorldPosition(_v));   // looping sounds follow the piece
+      if (e.tv && e.tv.audio) e.tv.audio.setPos(e.root.getWorldPosition(_v));
     }
     const e = this.carry; if (!e) return;
     const g = this.game, w = g.world;
