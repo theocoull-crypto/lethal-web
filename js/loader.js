@@ -5,6 +5,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 const ASSETS = 'assets/';
 // Unity layers that only exist for physics / minimap / scanning in Lethal Company
 const HIDDEN_LAYERS = new Set([11, 13, 14, 15, 22, 26, 28]);
+// objects a mod's own scripts would switch off at runtime (config-gated joke modes): floating "COW"/"FOX" text meshes
+const HIDDEN_NAMES = /^(COW|FOX)$|Carnophobia|Cow_Text|FoxPinata/;
 
 export class AssetLib {
   constructor(renderer) {
@@ -225,6 +227,7 @@ export class AssetLib {
         if (c.t === 'MR' && n.mesh) {
           if (opts.noRender) continue;
           if (HIDDEN_LAYERS.has(n.layer)) continue;   // triggers, colliders, map radar dots, scan nodes
+          if (HIDDEN_NAMES.test(n.name)) continue;
           pending.push(this.mesh(n.mesh).then(geoms => {
             if (!geoms.length) return;
             const mats = c.mats || [];

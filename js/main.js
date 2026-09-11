@@ -57,7 +57,8 @@ class Game {
     this.postFx = true;
     // a neutral environment so metals and glossy surfaces have something to reflect
     const pmrem = new THREE.PMREMGenerator(this.renderer);
-    this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    this.envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    this.scene.environment = this.envTex;   // switched off inside the facility: it is a base fill that would light rooms with no lamps
     pmrem.dispose();
     this.camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.08, 1500);
     this.scene.add(this.camera);
@@ -556,6 +557,7 @@ The ship will leave without you.`);
         this._updateSpectate();
       }
       this.dungeon.root.visible = this.inside;
+      this.scene.environment = this.inside ? null : this.envTex;
       this.world.setExteriorVisible(!this.inside && !this.world.inOrbit);
       this.world.shipRoot.visible = !this.inside;
       this.world.sun.visible = !this.inside;
