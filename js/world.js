@@ -409,7 +409,11 @@ export class World {
       ld.topPos = top; ld.bottomPos = bottom; ld.height = Math.abs(top.y - bottom.y);
       const hp = this.worldPosOf(ld.node);
       ld.lineX = hp.x; ld.lineZ = hp.z;
-      this.interactables.push({ pos: mid, radius: 0.9, reach: 2.4, segment: () => [ld.bottomPos, ld.topPos], label: () => '[E] Climb ladder', action: () => this.game.player.startLadder(ld), area: moon.key });
+      // the reachable part runs down to the trigger box / the ladder's standing node: a mod ladder can have its bottom
+      // exit point metres above the ground (Eve's outpost ladder), and the climb then starts from that height like the game
+      const low = bottom.clone(); low.y = Math.min(low.y, this.worldPosOf(ld.horiz).y, this.worldPosOf(ld.obj).y - 1.2);
+      ld.reachPos = low;
+      this.interactables.push({ pos: mid, radius: 0.9, reach: 2.4, segment: () => [ld.reachPos, ld.topPos], label: () => '[E] Climb ladder', action: () => this.game.player.startLadder(ld), area: moon.key });
     }
   }
 
