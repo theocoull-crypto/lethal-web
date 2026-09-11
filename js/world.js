@@ -12,7 +12,7 @@ const SHIP_LANDED_LOCAL = new THREE.Vector3(-18.71032, -7.326942, 8.971304);
 const MOON_DEFS = [
   { key: 'moon', asset: 'experimentation', name: '41-EXPERIMENTATION', catalog: 'experimentation' },
   { key: 'assurance', asset: 'assurance', name: '220-ASSURANCE', catalog: 'assurance' },
-  { key: 'titan', asset: 'titan', name: '8-TITAN', catalog: 'titan', fogDay: 0xa6aab0, fogDusk: 0x4a4550, sunDay: 0xe8ecf4, hemiSky: 0xc4cad4, fogScale: 3.4, forceFlow: 'Level3Flow' },
+  { key: 'titan', asset: 'titan', name: '8-TITAN', catalog: 'titan', fogDay: 0x272b31, fogDusk: 0x15171c, sunDay: 0x9aa4b4, hemiSky: 0x5b6470, fogScale: 3.4, sunScale: 0.5, forceFlow: 'Level3Flow' },
 ];
 
 export class World {
@@ -464,7 +464,7 @@ export class World {
     const moon = this.atCompany ? null : this.activeMoon;
     const dayCol = new THREE.Color(moon && moon.sunDay ? moon.sunDay : 0xffe2c0), duskCol = new THREE.Color(0xd06a3a), nightCol = new THREE.Color(0x1a2038);
     this.sun.color.copy(dayCol.clone().lerp(duskCol, dusk).lerp(nightCol, night));
-    this.sun.intensity = orbit ? 2.0 : (1.4 * Math.max(0, elev) + 0.15) * (1 - night * 0.97);
+    this.sun.intensity = (orbit ? 2.0 : (1.4 * Math.max(0, elev) + 0.15) * (1 - night * 0.97)) * (moon && moon.sunScale ? moon.sunScale : 1);
     const fogDay = new THREE.Color(moon && moon.fogDay ? moon.fogDay : 0x5e5048), fogDusk = new THREE.Color(moon && moon.fogDusk ? moon.fogDusk : 0x3f2b24), fogNight = new THREE.Color(0x07080b);
     const fog = fogDay.clone().lerp(fogDusk, dusk).lerp(fogNight, night);
     const fogScale = moon && moon.fogScale ? moon.fogScale : 1;
