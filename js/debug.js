@@ -55,6 +55,7 @@ export class DebugMenu {
       this._btn('Quota met', () => { g.quotaFulfilled = g.quota; this.log('quota fulfilled'); }),
       this._btn('Heal', () => { g.player.health = 100; g.player.dead = false; g.player.inputEnabled = true; }),
       this._btn('Give flashlight + walkie', async () => { const f = await g.items.makeTool('BBFlashlight', 'Flashlight'); g.items.addToInventory(f); const w = await g.items.makeTool('WalkieTalkie', 'Walkie-talkie'); g.items.addToInventory(w); }),
+      this._btn('Clear ship decor', () => { g.decor.clear(); this.log('decor cleared'); }),
       this._btn('Give 4 random scrap', async () => { for (let i = 0; i < 4; i++) { const d = g.items.defs[Math.floor(Math.random() * g.items.defs.length)]; const it = await g.items.makeInstance(d, Math.round((d.minValue + Math.random() * (d.maxValue - d.minValue)) * 0.4)); if (!g.items.addToInventory(it)) break; } }));
 
     this._title('Ship & time');

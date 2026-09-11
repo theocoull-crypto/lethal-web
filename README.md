@@ -30,7 +30,10 @@ item, RMB scan, F flashlight.
   player, disco ball, goldfish, plushie, jack-o-lantern, welcome mat, paintings, sofa, fridge, microwave, electric
   chair, dog house). Bought pieces appear on the ship; look at one and press **B** to pick it up, move the mouse to
   carry it, **R** or the wheel to rotate, left click or **B** to put it down. Pieces collide, ride the ship, and their
-  layout is remembered in the browser.
+  layout is remembered in the browser. They also work (E): the record player plays its jazz record, the shower runs,
+  the toilet flushes, the romantic table's candles light, the television shows static and lights the room, the fridge
+  doors open, the plushie squeaks, the pumpkin can be hit, the electric chair straps rattle, the disco ball spins with
+  its lights and the goldfish swims. Every sound and animation is the game's own (the candle flames are drawn here).
 * The Company building: `route company` at the terminal, land, put scrap on the counter, ring the bell. Scrap is
   bought at the game's rate (30% three days out, 100% on the last day) and only sold scrap counts toward the quota.
 * Ladders on the moon and the ship can be climbed. Dying makes the ship leave without you.
