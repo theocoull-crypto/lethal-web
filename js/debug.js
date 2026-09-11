@@ -63,6 +63,7 @@ export class DebugMenu {
       this._btn('Skip cutscene', () => this._skipShip()),
       this._btn('Route: Experimentation', () => { g.world.destination = 'moon'; this.log('route Experimentation'); }),
       this._btn('Route: Assurance', () => { g.world.destination = 'assurance'; this.log('route Assurance'); }),
+      this._btn('Route: March', () => { g.world.destination = 'march'; this.log('route March'); }),
       this._btn('Route: company', () => { g.world.destination = 'company'; this.log('route company'); }));
     const time = document.createElement('input'); time.type = 'range'; time.min = 0; time.max = 1; time.step = 0.01; time.className = 'drange';
     const timeLbl = document.createElement('span'); timeLbl.className = 'dval';
@@ -81,7 +82,10 @@ export class DebugMenu {
     this._title('Spawn');
     this.enemySel = document.createElement('select'); this.enemySel.className = 'dsel';
     this._row('Enemy', this.enemySel, this._btn('Spawn in front', () => this._spawnEnemy()), this._btn('Kill all', () => { g.enemies.clearAll(); this.log('enemies cleared'); }));
-    this._row('World', this._btn('Regenerate facility', () => { if (g.world.shipState !== 'landed' || g.world.atCompany) return this.log('land on the moon first'); g.enemies.clearAll(); g.items.clearWorldScrap(); g.dungeon.generate(Date.now() % 100000).then(() => { g.items.spawnScrap(); g._refreshLightSources(); this.log('regenerated: ' + g.dungeon.placed.length + ' tiles'); }); }),
+    const flowSel = document.createElement('select'); flowSel.className = 'dsel';
+    for (const [v, t] of [['', "Interior: moon's own odds"], ['Level1Flow', 'Interior: facility'], ['Level1Flow3Exits', 'Interior: facility (3 exits)'], ['Level1FlowExtraLarge', 'Interior: facility (extra large)'], ['Level3Flow', 'Interior: mineshaft']]) { const o = document.createElement('option'); o.value = v; o.textContent = t; flowSel.appendChild(o); }
+    flowSel.onchange = () => { g.dungeon.forceFlow = flowSel.value || null; this.log('next facility: ' + (flowSel.value || 'random')); };
+    this._row('World', flowSel, this._btn('Regenerate facility', () => { if (g.world.shipState !== 'landed' || g.world.atCompany) return this.log('land on the moon first'); g.enemies.clearAll(); g.items.clearWorldScrap(); g.dungeon.generate(Date.now() % 100000).then(() => { g.items.spawnScrap(); g._refreshLightSources(); this.log('regenerated: ' + g.dungeon.placed.length + ' tiles'); }); }),
       this._btn('Drop scrap here', async () => { const d = g.items.defs[Math.floor(Math.random() * g.items.defs.length)]; const it = await g.items.makeInstance(d, 40); g.items.addToInventory(it); g.items.dropHeld(); }),
       this._btn('Open all doors', () => { for (const d of g.dungeon.doors) if (!d.open) g.dungeon.toggleDoor(d); }));
 

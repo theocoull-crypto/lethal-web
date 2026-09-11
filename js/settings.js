@@ -1,6 +1,6 @@
 // In-game settings (Esc): brightness, light gain, shadows, FOV, sensitivity, volume, pixel filter, grain. Saved in localStorage.
 const $ = id => document.getElementById(id);
-const DEFAULTS = { exposure: 1.15, lightGain: 1.0, shadows: 1, fov: 75, sensitivity: 1.0, volume: 0.9, pixel: true, pixelSize: 2, grain: true };
+const DEFAULTS = { exposure: 1.15, lightGain: 1.0, shadows: 1, fov: 75, sensitivity: 1.0, volume: 0.9, pixel: true, pixelSize: 2, grain: true, bloom: true, grade: true };
 
 export class Settings {
   constructor(game) {
@@ -23,6 +23,8 @@ export class Settings {
       ['volume', 'Volume', 'range', 0, 1, 0.05],
       ['pixel', 'Pixel filter (P)', 'check'],
       ['pixelSize', 'Pixel size', 'select', ['Fine (520 lines)', 'Game (440 lines)', 'Strong (360 lines)', 'Chunky (280 lines)']],
+      ['bloom', 'Light bloom', 'check'],
+      ['grade', 'Colour grade', 'check'],
       ['grain', 'Film grain', 'check'],
     ];
     const box = $('settings-rows');
@@ -50,6 +52,7 @@ export class Settings {
     const g = this.game, v = this.v;
     g.renderer.toneMappingExposure = v.exposure;
     g.lightGain = v.lightGain;
+    if (g.bloomPass) { g.bloomPass.enabled = v.bloom !== false; g.gradePass.enabled = v.grade !== false; }
     g.shadowLamps = [0, 0, 2, 4][v.shadows] || 0;
     g.shadowsOn = v.shadows > 0;
     g.renderer.shadowMap.enabled = g.shadowsOn;

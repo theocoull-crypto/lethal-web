@@ -13,6 +13,25 @@ import { Terminal } from './terminal.js';
 import { Settings } from './settings.js';
 import { DebugMenu } from './debug.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+// colour grade: the game's cold, slightly crushed look (applied in display space, after tone mapping)
+const GradeShader = {
+  uniforms: { tDiffuse: { value: null }, contrast: { value: 1.07 }, saturation: { value: 0.9 }, lift: { value: new THREE.Vector3(0.0, 0.004, 0.012) }, tint: { value: new THREE.Vector3(0.985, 1.0, 1.03) } },
+  vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float contrast; uniform float saturation; uniform vec3 lift; uniform vec3 tint; varying vec2 vUv;
+    void main() {
+      vec4 c = texture2D(tDiffuse, vUv);
+      float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
+      vec3 col = mix(vec3(l), c.rgb, saturation) * tint;
+      col = (col - 0.5) * contrast + 0.5 + lift;
+      gl_FragColor = vec4(clamp(col, 0.0, 1.0), c.a);
+    }`,
+};
 
 const $ = id => document.getElementById(id);
 const PIXEL_HEIGHT = 520;
@@ -28,14 +47,24 @@ class Game {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.scene = new THREE.Scene();
+    // post-processing: bloom for the lamps and screens + a colour grade; the OutputPass does tone mapping and sRGB
+    this.composer = new EffectComposer(this.renderer);
+    this.renderPass = new RenderPass(this.scene, null);
+    this.bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.42, 0.55, 0.78);
+    this.gradePass = new ShaderPass(GradeShader);
+    this.outputPass = new OutputPass();
+    this.composer.addPass(this.renderPass); this.composer.addPass(this.bloomPass); this.composer.addPass(this.outputPass); this.composer.addPass(this.gradePass);
+    this.postFx = true;
     // a neutral environment so metals and glossy surfaces have something to reflect
     const pmrem = new THREE.PMREMGenerator(this.renderer);
     this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     pmrem.dispose();
     this.camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.08, 1500);
     this.scene.add(this.camera);
+    this.renderPass.camera = this.camera;
     this.lib = new AssetLib(this.renderer);
     this.sound = new SoundManager();
+    this.menuMusic = null; this._menuMusicKick = null; this._menuMusicToken = 0;
     this.hud = new HUD(this);
     this.clock = new THREE.Clock();
     this.state = 'loading';
@@ -72,7 +101,10 @@ class Game {
       this.canvas.style.imageRendering = 'auto';
     }
     this.canvas.style.width = '100%'; this.canvas.style.height = '100%';
+    const size = this.renderer.getSize(new THREE.Vector2());
+    if (this.composer) { this.composer.setSize(size.x, size.y); this.bloomPass.resolution.set(size.x, size.y); }
   }
+  render() { if (this.postFx) this.composer.render(); else this.renderer.render(this.scene, this.camera); }
 
   togglePixelFilter() { this.pixelFilter = !this.pixelFilter; this._resize(); document.body.classList.toggle('nofilter', !this.pixelFilter); }
 
@@ -142,6 +174,7 @@ class Game {
 
   _updateLights() {
     const inside = this.inside, lit = this.world.lightsOn;
+    if (this.world.hemi) { this.world.hemi.intensity = inside ? 0.3 : 0.6; this.world.ambient.intensity = inside ? 0.16 : 0.35; }
     for (const s of this.lightSources) {
       if (s.area === 'inside') { s.enabled = inside; continue; }
       s.enabled = !inside && (s.area === 'ship' || (!this.world.inOrbit && s.area === this.world.destination));
@@ -171,13 +204,30 @@ class Game {
   }
 
   startMenuMusic() {
-    if (this.menuMusic) return;
-    const kick = () => { this.sound.resume(); this.sound.play('b9_16', { loop: true, vol: 0.55 }).then(h => { this.menuMusic = h; }); removeEventListener('pointerdown', kick); removeEventListener('keydown', kick); };
+    if (this.menuMusic || this._menuMusicKick) return;
+    const token = ++this._menuMusicToken;
+    const kick = async () => {
+      removeEventListener('pointerdown', kick); removeEventListener('keydown', kick);
+      if (this._menuMusicKick === kick) this._menuMusicKick = null;
+      this.sound.resume();
+      const h = await this.sound.play('b9_16', { loop: true, vol: 0.55 });
+      // The activating click can also be the Start-job click. Never let that late load revive menu music in-game.
+      if (token !== this._menuMusicToken || this.state !== 'menu') { if (h) h.stop(0.1); return; }
+      this.menuMusic = h;
+    };
     // browsers only allow audio after a gesture; the first click/key on the menu starts it
     addEventListener('pointerdown', kick); addEventListener('keydown', kick);
-    this.menuMusic = true;
+    this._menuMusicKick = kick;
   }
-  stopMenuMusic() { if (this.menuMusic && this.menuMusic.stop) this.menuMusic.stop(1.0); this.menuMusic = null; }
+  stopMenuMusic(fade = 0.35) {
+    ++this._menuMusicToken;
+    if (this._menuMusicKick) {
+      removeEventListener('pointerdown', this._menuMusicKick); removeEventListener('keydown', this._menuMusicKick);
+      this._menuMusicKick = null;
+    }
+    const h = this.menuMusic; this.menuMusic = null;
+    if (h && h.stop) h.stop(fade);
+  }
 
   _bindUISounds() {
     const play = (name, vol = 0.28) => { const c = this.items.sfx(name); if (c) this.sound.play(c, { vol }); };
@@ -225,8 +275,9 @@ class Game {
   backToMenu() {
     this.state = 'menu'; this.hud.show(false); document.exitPointerLock();
     $('menu').classList.remove('hidden');
+    this.stopMenuMusic(0);
     this.sound.stopAll(); this.world.loops = {};
-    this.menuMusic = null; this.startMenuMusic();
+    this.startMenuMusic();
   }
   onJump() { const c = this.items.sfx('jump'); if (c) this.sound.play(c, { vol: 0.42, pitch: 0.98 + Math.random() * 0.04 }); }
   onLand(v) {
@@ -340,6 +391,7 @@ The ship will leave without you.`);
   }
   async onShipLanded() {
     this.dayCount++;
+    this.stopMenuMusic(0);
     this.world.stopLoop('thruster');
     const arrive = this.items.sfx('arrive'); if (arrive) this.sound.play(arrive, { vol: 0.6 });
     this.items.onLanded();
@@ -354,12 +406,13 @@ The ship will leave without you.`);
     this.items.setCatalog(catalog);
     this.enemies.setCatalog(catalog);
     this.hud.showNotice(`LANDED ON ${this.world.levelName}`, 4, '#e8c85a');
+    // Exterior ambience and music belong to the landing, not to the slower procedural facility build.
+    this.world.startLoop('outside', this.items.ambienceClip('outside'), { vol: 0.5 });
+    this.startMoonMusic();
     await this.dungeon.generate(this.dayCount * 7919 + Date.now() % 1000);
     await this.items.spawnScrap();
     this._refreshLightSources();
     this.enemies.beginDay();
-    this.world.startLoop('outside', this.items.ambienceClip('outside'), { vol: 0.5 });
-    this.startMoonMusic();
   }
   // the moon's ambient day music (the game's AmbientMusic tracks), one picked per landing
   startMoonMusic() {
@@ -367,7 +420,7 @@ The ship will leave without you.`);
     const clip = tracks[Math.floor(Math.random() * tracks.length)];
     this.world.startLoop('moonmusic', clip, { vol: 0.28 });
   }
-  stopMoonMusic() { this.world.stopLoop('moonmusic', 2.0); }
+  stopMoonMusic(fade = 2.0) { this.world.stopLoop('moonmusic', fade); }
   onShipLeft() { this.endDay(this.player.dead); }
   endDay(playerDead) {
     if (this.state !== 'play') return;
@@ -452,6 +505,7 @@ The ship will leave without you.`);
     const list = [];
     if (this.inside) { if (this.dungeon.collider) list.push(this.dungeon.collider); for (const d of this.dungeon.doors) if (d.collider && !d.open) list.push(d.collider); }
     else { list.push(this.world.shipCollider, ...this.world.doorColliders); if (!this.world.inOrbit && this.world.levelCollider) list.push(this.world.levelCollider); }
+    if (this.inside) list.push(...this.dungeon.dynamicColliders);
     return list;
   }
 
@@ -460,10 +514,10 @@ The ship will leave without you.`);
     requestAnimationFrame(() => this.loop());
     const dt = Math.min(0.05, this.clock.getDelta());
     this.tick(dt);
-    this.renderer.render(this.scene, this.camera);
+    this.render();
   }
 
-  step(n = 1, dt = 1 / 60) { for (let i = 0; i < n; i++) this.tick(dt); this.renderer.render(this.scene, this.camera); }
+  step(n = 1, dt = 1 / 60) { for (let i = 0; i < n; i++) this.tick(dt); this.render(); }
 
   tick(dt) {
     const p = this.player;
@@ -496,6 +550,7 @@ The ship will leave without you.`);
         this.dungeon.update(dt);
         this._updateHud(dt);
         this._updateScan(dt);
+        if (!this.inside && !p.dead && !this.world.inOrbit && !this.world.atCompany && !p.attached) { for (const z of (this.world.activeMoon.killZones || [])) if (z.containsPoint(p.pos)) { p.damage(1000, 'drowning'); break; } }
         this._updateSpectate();
       }
       this.dungeon.root.visible = this.inside;

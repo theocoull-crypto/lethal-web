@@ -20,6 +20,7 @@ catalog = {'tiles': {}, 'tileSets': {}, 'flow': None, 'scrap': [], 'hazards': []
 LEVELS = {
     'experimentation': (34533, 'catalog.json'),
     'assurance': (34526, 'catalog_assurance.json'),
+    'march': (34541, 'catalog_march.json'),
 }
 level_key = (sys.argv[1].lower() if len(sys.argv) > 1 else 'experimentation')
 if level_key == 'moon':
@@ -73,11 +74,16 @@ def ref_aid(pptr, key):
     return ar.aid(*r) if r else None
 
 
-# ---- dungeon flow ----
-flow = ar.json(b8, 34480)['m_Structure']
-catalog['flow'] = {'Length': flow['Length'], 'BranchCount': flow['BranchCount'], 'BranchMode': flow['BranchMode'],
-                   'DoorwayConnectionChance': flow.get('DoorwayConnectionChance'), 'GlobalProps': flow.get('GlobalProps'),
-                   'nodes': [], 'lines': []}
+# ---- dungeon flows ----
+# RoundManager.dungeonFlowTypes order (what SelectableLevel.dungeonFlowTypes[].id indexes into)
+FLOW_PIDS = {0: (34480, 'Level1Flow'), 1: (34490, 'Level2Flow'), 2: (34482, 'Level1FlowExtraLarge'), 3: (34481, 'Level1Flow3Exits'), 4: (34507, 'Level3Flow')}
+SUPPORTED_FLOWS = {'Level1Flow', 'Level1FlowExtraLarge', 'Level1Flow3Exits', 'Level3Flow'}   # the manor (Level2Flow) is not packed yet
+lvl_pre = ar.json(b8, level_pid)['m_Structure']
+flow_types = [(FLOW_PIDS[f['id']], f.get('rarity', 0)) for f in (lvl_pre.get('dungeonFlowTypes') or []) if f.get('id') in FLOW_PIDS]
+if not flow_types:
+    flow_types = [(FLOW_PIDS[0], 300)]
+
+
 def tileset(pp, key):
     r = ar.resolve(key, pp)
     ts = ar.json(*r)['m_Structure']
@@ -94,18 +100,39 @@ def tileset(pp, key):
                 entries.append({'prefab': fn, 'main': w.get('MainPathWeight', 1), 'branch': w.get('BranchPathWeight', 1), 'depthCurve': curve})
         catalog['tileSets'][name] = entries
     return name
-for n in flow['Nodes']:
-    catalog['flow']['nodes'].append({'label': n.get('Label'), 'pos': n.get('Position'), 'type': n.get('NodeType'), 'tileSets': [tileset(t, b8) for t in n.get('TileSets', [])]})
-for l in flow['Lines']:
-    arch = []
-    for a in l.get('DungeonArchetypes', []):
-        r = ar.resolve(b8, a); aj = ar.json(*r)['m_Structure']
-        arch.append({'name': ar.name(*r), 'tileSets': [tileset(t, r[0]) for t in aj.get('TileSets', [])],
-                     'branchStart': [tileset(t, r[0]) for t in aj.get('BranchStartTileSets', [])],
-                     'branchCap': [tileset(t, r[0]) for t in aj.get('BranchCapTileSets', [])],
-                     'branchCapType': aj.get('BranchCapType'), 'straighten': aj.get('StraightenChance'),
-                     'branchStartType': aj.get('BranchStartType')})
-    catalog['flow']['lines'].append({'pos': l.get('Position'), 'len': l.get('Length'), 'archetypes': arch})
+
+
+def pack_flow(pid, name, rarity):
+    flow = ar.json(b8, pid)['m_Structure']
+    out = {'name': name, 'rarity': rarity, 'Length': flow['Length'], 'BranchCount': flow['BranchCount'], 'BranchMode': flow['BranchMode'],
+           'DoorwayConnectionChance': flow.get('DoorwayConnectionChance'), 'GlobalProps': flow.get('GlobalProps'),
+           'nodes': [], 'lines': []}
+    for n in flow['Nodes']:
+        out['nodes'].append({'label': n.get('Label'), 'pos': n.get('Position'), 'type': n.get('NodeType'), 'tileSets': [tileset(t, b8) for t in n.get('TileSets', [])]})
+    for l in flow['Lines']:
+        arch = []
+        for a in l.get('DungeonArchetypes', []):
+            r = ar.resolve(b8, a); aj = ar.json(*r)['m_Structure']
+            arch.append({'name': ar.name(*r), 'tileSets': [tileset(t, r[0]) for t in aj.get('TileSets', [])],
+                         'branchStart': [tileset(t, r[0]) for t in aj.get('BranchStartTileSets', [])],
+                         'branchCap': [tileset(t, r[0]) for t in aj.get('BranchCapTileSets', [])],
+                         'branchCapType': aj.get('BranchCapType'), 'straighten': aj.get('StraightenChance'),
+                         'branchStartType': aj.get('BranchStartType')})
+        out['lines'].append({'pos': l.get('Position'), 'len': l.get('Length'), 'archetypes': arch})
+    return out
+
+
+catalog['flows'] = {}
+for (pid, name), rarity in flow_types:
+    if name not in SUPPORTED_FLOWS:
+        print('  (skipping unsupported interior', name, ')')
+        continue
+    print('== flow', name, 'rarity', rarity)
+    catalog['flows'][name] = pack_flow(pid, name, rarity)
+# the mineshaft is packed for every moon so the tiles are always available (rarity 0 = never chosen unless the level lists it)
+if 'Level3Flow' not in catalog['flows']:
+    catalog['flows']['Level3Flow'] = pack_flow(34507, 'Level3Flow', 0)
+catalog['flow'] = next(iter(catalog['flows'].values()))   # backward compatible: the first listed interior
 
 # ---- level data ----
 lvl = ar.json(b8, level_pid)['m_Structure']

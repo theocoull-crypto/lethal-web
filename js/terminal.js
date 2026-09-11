@@ -6,6 +6,7 @@ const COMMANDS = ['help', 'moons', 'store', 'buy', 'route', 'scan', 'quota', 'cl
 const MOONS = [
   { key: 'moon', label: '41-Experimentation', names: ['experimentation', '41-experimentation', '41'] },
   { key: 'assurance', label: '220-Assurance', names: ['assurance', '220-assurance', '220'] },
+  { key: 'march', label: '61-March', names: ['march', '61-march', '61'] },
   { key: 'company', label: 'The Company building', names: ['company', 'the company building', 'company building', 'the company'] },
 ];
 
@@ -142,6 +143,8 @@ ____________________________
 * 41-Experimentation   ${this.weather('moon')}${g.world.destination === 'moon' ? '   (current route)' : ''}
 
 * 220-Assurance        ${this.weather('assurance')}${g.world.destination === 'assurance' ? '   (current route)' : ''}
+
+* 61-March             ${this.weather('march')}${g.world.destination === 'march' ? '   (current route)' : ''}
 `);
       case 'store': return this.print(`Welcome to the Company store.
 Use words BUY to buy an item.
@@ -216,6 +219,6 @@ Please CONFIRM or DENY.
 
   weather(moon = this.game.world.destination) {
     if (this.game.world.dayFrac > 0.72) return '(Night)';
-    return moon === 'assurance' ? '(Clear)' : '(Foggy)';
+    return moon === 'assurance' ? '(Clear)' : moon === 'march' ? '(Flooded)' : '(Foggy)';
   }
 }

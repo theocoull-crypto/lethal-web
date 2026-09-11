@@ -32,19 +32,16 @@ export class Dungeon {
     this.entranceInside = null; this.fireExitInside = null;
     this.scrapSpawns = []; this.hazardSpawns = []; this.vents = []; this.lights = [];
     this.doors = [];
+    this.dynamicColliders = [];   // moving parts (the mineshaft elevator cage)
+    this.elevator = null;
     this.graph = null;
     this.seed = 1;
   }
 
   async load() {
-    const [experimentation, assurance] = await Promise.all([
-      fetch('assets/catalog.json').then(r => r.json()),
-      fetch('assets/catalog_assurance.json').then(r => {
-        if (!r.ok) throw new Error('Assurance assets are missing; run tools\\extract.bat again.');
-        return r.json();
-      }),
-    ]);
-    this.catalogs = { experimentation, assurance };
+    const get = (file, what) => fetch(file).then(r => { if (!r.ok) throw new Error(what + ' assets are missing; run tools\extract.bat again.'); return r.json(); });
+    const [experimentation, assurance, march] = await Promise.all([get('assets/catalog.json', 'Experimentation'), get('assets/catalog_assurance.json', 'Assurance'), get('assets/catalog_march.json', 'March')]);
+    this.catalogs = { experimentation, assurance, march };
     await Promise.all(Object.values(this.catalogs).map(c => this._primeCatalog(c)));
     this.catalog = experimentation;
   }
@@ -149,14 +146,30 @@ export class Dungeon {
     return entries[entries.length - 1];
   }
 
+  /** the interiors this moon can roll (the game's SelectableLevel.dungeonFlowTypes weights) */
+  flowsFor(catalog = this.catalog) {
+    const flows = catalog.flows ? Object.values(catalog.flows) : [Object.assign({ name: 'Level1Flow', rarity: 300 }, catalog.flow)];
+    return flows.filter(f => f && f.nodes && f.nodes.length);
+  }
+  pickFlow(rnd) {
+    const flows = this.flowsFor();
+    if (this.forceFlow) { const f = flows.find(x => x.name === this.forceFlow); if (f) return f; }
+    const total = flows.reduce((a, f) => a + (f.rarity || 0), 0);
+    if (total <= 0) return flows[0];
+    let r = rnd() * total;
+    for (const f of flows) { r -= (f.rarity || 0); if (r <= 0) return f; }
+    return flows[flows.length - 1];
+  }
+  get interiorName() { return this.flow && this.flow.name === 'Level3Flow' ? 'mineshaft' : 'facility'; }
+
   archetypeAt(f) {
-    const lines = this.catalog.flow.lines;
+    const lines = this.flow.lines;
     for (const l of lines) if (f >= l.pos - 1e-6 && f <= l.pos + l.len + 1e-6) return l.archetypes[0];
     return lines[lines.length - 1].archetypes[0];
   }
 
   async _generateOnce(rnd) {
-    const flow = this.catalog.flow;
+    const flow = this.flow = this.pickFlow(rnd);
     const L = flow.Length.Min + Math.floor(rnd() * (flow.Length.Max - flow.Length.Min + 1));
     // start tile
     const startSet = this.catalog.tileSets[flow.nodes[0].tileSets[0]];
@@ -327,7 +340,7 @@ export class Dungeon {
     }
     // global props by group budget: tiles AND door parts together (this is what limits fire exits to one)
     for (const [g, list] of propGroups) {
-      const range = (this.catalog.flow.GlobalProps || []).find(x => x.ID === g);
+      const range = (this.flow.GlobalProps || []).find(x => x.ID === g);
       const min = range ? range.Count.Min : 0, max = range ? range.Count.Max : 2;
       let count = Math.min(list.length, min + Math.floor(this.rnd() * (max - min + 1)));
       const pool = list.slice();
@@ -347,12 +360,13 @@ export class Dungeon {
     for (const t of this.placed) {
       const e = await collisionEntries(lib, t.inst, { exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) });
       for (const x of e) entries.push(x);
-      for (const ex of (t.extraInst || [])) { const e2 = await collisionEntries(lib, ex, { exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) || n.comps.some(c => c.t === 'MB' && c.cls === 'DoorLock') }); for (const x of e2) entries.push(x); }
+      for (const ex of (t.extraInst || [])) { const dyn = ex.root.userData.dynamicIds; const e2 = await collisionEntries(lib, ex, { exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) || (dyn && dyn.has(n.id)) || n.comps.some(c => c.t === 'MB' && c.cls === 'DoorLock') }); for (const x of e2) entries.push(x); }
     }
     this.collider = new Collider('dungeon').build(entries, null);
     // drop vents that float in the room (no wall within 1.2 m behind or in front of them)
     this.vents = this.vents.filter(v => {
       const c = v.inst.root.userData.ventCheck; if (!c) return true;
+      if (this.interiorName === 'mineshaft') return true;   // cave vents sit in rough rock; the wall test is for the facility's flat walls
       const o = c.pos.clone(); o.y += 0.6;
       const hitB = this.collider.raycast(o, c.back, 1.4), hitF = this.collider.raycast(o, c.fwd, 1.4);
       if (hitB || hitF) return true;
@@ -457,6 +471,7 @@ export class Dungeon {
       this.vents.push({ pos: vp, inst, tile });
     }
     if (/^LungApparatus/.test(name)) this.game.items.registerApparatus(inst);
+    if (/^MineshaftElevator/.test(name)) await this._setupElevator(inst);
     if (/^EntranceTeleportA/.test(name)) this._setupEntrance(inst, false);
     if (/^EntranceTeleportB/.test(name)) this._setupEntrance(inst, true);
   }
@@ -559,6 +574,93 @@ export class Dungeon {
 
   update(dt) {
     for (const d of this.doors) if (d.anim && d.anim.ready) d.anim.update(dt);
+    this._updateElevator(dt);
+  }
+
+  // ---------- mineshaft elevator ----------
+  async _setupElevator(inst) {
+    const first = n => (inst.byName.get(n) || [])[0];
+    const cage = first('AnimContainer'); if (!cage) return;
+    const man = inst.manifest;
+    // the animator lives on the prefab root
+    let anim = null;
+    for (const [id, o] of inst.objs) { const n = o.userData.node; const ac = n && n.comps.find(c => c.t === 'Animator' && c.controller); if (ac) { anim = new Animator(o, ac.controller); await anim.load().catch(() => null); break; } }
+    // everything under the cage moves: give it its own collider that follows the cage, and keep it out of the static one
+    const ids = new Set([cage.userData.node.id]);
+    let grew = true; while (grew) { grew = false; for (const n of man.nodes) if (!ids.has(n.id) && ids.has(n.parent)) { ids.add(n.id); grew = true; } }
+    inst.root.userData.dynamicIds = ids;
+    cage.updateMatrixWorld(true);
+    const entries = await collisionEntries(this.lib, inst, { relativeTo: cage, only: n => ids.has(n.id), exclude: n => [9, 13, 14, 15, 22, 26, 29].includes(n.layer) });
+    const col = new Collider('elevator').build(entries, cage);
+    this.dynamicColliders.push(col);
+    // ride region: the cage's own bounds (cage-local), open upward so a standing player counts as inside
+    const bounds = new THREE.Box3();
+    for (const e of entries) { if (!e.geometry.boundingBox) e.geometry.computeBoundingBox(); bounds.union(e.geometry.boundingBox.clone().applyMatrix4(e.matrix)); }
+    if (bounds.isEmpty()) bounds.set(new THREE.Vector3(-2, -1, -2), new THREE.Vector3(2, 3, 2));
+    const floorY = bounds.min.y;
+    bounds.expandByScalar(-0.15); bounds.min.y = floorY - 0.9; bounds.max.y = floorY + 4.5;
+    // buttons: one in the cage, one on each landing
+    const cubes = inst.byName.get('Cube') || [];
+    const under = (o, name) => { let q = o; while (q && q !== inst.root) { if (q.name === name) return true; q = q.parent; } return false; };
+    const btnIn = cubes.find(o => under(o, 'AnimContainer')), btnTop = cubes.find(o => under(o, 'TopElevatorPanel')), btnBottom = cubes.find(o => under(o, 'BottomElevatorPanel'));
+    const ctrl = man.nodes.flatMap(n => n.comps).find(c => c.t === 'MB' && c.cls === 'MineshaftElevatorController'); const d = (ctrl && ctrl.d) || {};
+    const clip = k => d[k] && d[k].$ ? d[k].$ : null;
+    const e = this.elevator = { inst, cage, anim, col, bounds, atBottom: false, moving: false, goDown: false, t: 0, len: 8, cooldown: 0, btnIn, btnTop, btnBottom, travel: null, speed: 0.28,
+      sfx: { startUp: clip('elevatorStartUpSFX'), startDown: clip('elevatorStartDownSFX'), travel: clip('elevatorTravelSFX'), finishUp: clip('elevatorFinishUpSFX'), finishDown: clip('elevatorFinishDownSFX') } };
+    if (anim && anim.ready && anim.has('MineshaftElevatorGoUp')) { anim.play('MineshaftElevatorGoUp', { once: true, loop: false, fade: 0 }); const c = anim.clips.get('MineshaftElevatorGoUp'); anim.update(((c && c.data && c.data.length) || 8) + 0.1); cage.updateMatrixWorld(true); }
+    // the pit at the bottom of the shaft kills, like the game's kill trigger
+    this.killZones = this.killZones || [];
+    for (const t of this.placed) for (const o of (t.inst && t.inst.byName.get('KillTrigger')) || []) {
+      const n = o.userData.node; const box = n && n.comps.find(c => c.t === 'Box');
+      if (!box) continue;
+      o.updateMatrixWorld(true);
+      const centre = o.localToWorld(new THREE.Vector3(box.c[0], box.c[1], box.c[2])); const sc = o.getWorldScale(new THREE.Vector3());
+      const half = new THREE.Vector3(box.s[0] * sc.x, box.s[1] * sc.y, box.s[2] * sc.z).multiplyScalar(0.5);
+      this.killZones.push(new THREE.Box3(centre.clone().sub(half), centre.clone().add(half)));
+    }
+    const wp = o => { const v = new THREE.Vector3(); o.getWorldPosition(v); return v; };
+    const moving = 'Elevator moving';
+    if (btnIn) this.interactables.push({ pos: wp(btnIn), radius: 1.2, reach: 2.6, dynamicObj: btnIn, label: () => e.moving ? moving : (e.atBottom ? '[E] Go up' : '[E] Go down'), action: () => this.callElevator('toggle') });
+    if (btnTop) this.interactables.push({ pos: wp(btnTop), radius: 1.2, reach: 2.6, label: () => e.moving ? moving : (e.atBottom ? '[E] Call elevator' : 'Elevator is here'), action: () => this.callElevator('up') });
+    if (btnBottom) this.interactables.push({ pos: wp(btnBottom), radius: 1.2, reach: 2.6, label: () => e.moving ? moving : (e.atBottom ? 'Elevator is here' : '[E] Call elevator'), action: () => this.callElevator('down') });
+  }
+  callElevator(where) {
+    const e = this.elevator; if (!e || e.moving || e.cooldown > 0) return;
+    const goDown = where === 'toggle' ? !e.atBottom : where === 'down';
+    if (goDown === e.atBottom) return;
+    const clipName = goDown ? 'MineshaftElevatorGoDown' : 'MineshaftElevatorGoUp';
+    if (e.anim && e.anim.ready && e.anim.has(clipName)) { e.anim.play(clipName, { once: true, loop: false, fade: 0, speed: e.speed }); const c = e.anim.clips.get(clipName); e.len = ((c && c.data && c.data.length) || 8) / e.speed; }
+    else e.len = 8;
+    e.moving = true; e.goDown = goDown; e.t = 0;
+    const pos = e.cage.getWorldPosition(new THREE.Vector3());
+    const s = e.sfx[goDown ? 'startDown' : 'startUp']; if (s) this.game.sound.play(s, { pos, vol: 0.9, min: 3, max: 40 });
+    if (e.sfx.travel) { const r = this.game.sound.play(e.sfx.travel, { pos, vol: 0.6, min: 3, max: 40, loop: true }); if (r && r.then) r.then(h => { e.travel = h; }); }
+    this.game.enemies.onNoise(pos, 0.8);
+  }
+  _updateElevator(dt) {
+    const e = this.elevator; if (!e) return;
+    if (e.anim && e.anim.ready) e.anim.update(dt);
+    e.cooldown -= dt;
+    if (e.moving) {
+      e.t += dt;
+      if (e.t >= e.len - 0.05) {
+        e.moving = false; e.atBottom = e.goDown; e.cooldown = 1.0;
+        if (e.travel && e.travel.stop) e.travel.stop(0.3); e.travel = null;
+        const pos = e.cage.getWorldPosition(new THREE.Vector3());
+        const s = e.sfx[e.goDown ? 'finishDown' : 'finishUp']; if (s) this.game.sound.play(s, { pos, vol: 0.9, min: 3, max: 40 });
+      }
+    }
+    // the in-cage button moves with the cage
+    for (const it of this.interactables) if (it.dynamicObj) it.dynamicObj.getWorldPosition(it.pos);
+    // ride: stand in the cage and you move with it
+    const p = this.game.player;
+    if (this.game.inside && !p.dead && this.killZones) for (const z of this.killZones) if (z.containsPoint(p.pos)) { p.damage(1000, 'fall'); break; }
+    if (this.game.inside && !p.dead) {
+      e.cage.updateMatrixWorld(true);
+      const local = e.cage.worldToLocal(p.pos.clone());
+      const inCage = e.bounds.containsPoint(local);
+      if (inCage) p.attachTo(e.cage); else if (p.attached === e.cage) p.attachTo(null);
+    } else if (p.attached === e.cage) p.attachTo(null);
   }
 
   /** door panels as dynamic collision: treat closed doors as thin boxes */
@@ -569,6 +671,7 @@ export class Dungeon {
     this.placed = []; this.doors = []; this.interactables = []; this.scrapSpawns = []; this.vents = []; this.lights = []; this.hazardSpawns = [];
     this.entranceInside = null; this.fireExitInside = null;
     if (this.collider) { this.collider.dispose(); this.collider = null; }
+    for (const c of this.dynamicColliders) c.dispose(); this.dynamicColliders = []; this.elevator = null; this.killZones = [];
     while (this.root.children.length) this.root.remove(this.root.children[0]);
   }
 }

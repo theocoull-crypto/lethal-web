@@ -12,6 +12,7 @@ const SHIP_LANDED_LOCAL = new THREE.Vector3(-18.71032, -7.326942, 8.971304);
 const MOON_DEFS = [
   { key: 'moon', asset: 'experimentation', name: '41-EXPERIMENTATION', catalog: 'experimentation' },
   { key: 'assurance', asset: 'assurance', name: '220-ASSURANCE', catalog: 'assurance' },
+  { key: 'march', asset: 'march', name: '61-MARCH', catalog: 'march' },
 ];
 
 export class World {
@@ -38,7 +39,7 @@ export class World {
     this.ladders = [];
     this.anims = {};
     this.shipLandingPos = new THREE.Vector3();
-    this.destination = 'moon';      // moon | assurance | company
+    this.destination = 'moon';      // moon | assurance | march | company
     this.companyRoot = new THREE.Group(); this.companyRoot.name = 'CompanyRoot'; this.scene.add(this.companyRoot);
     this.company = null; this.companyCollider = null; this.companyLights = [];
     this.desk = null;
@@ -386,6 +387,16 @@ export class World {
     for (const l of moon.lights) {
       if (l.isPointLight || l.isSpotLight) { l.intensity = Math.min(l.userData.baseIntensity, 60) * 0.03; l.distance = Math.max(l.distance, 14); l.decay = 2; l.castShadow = false; }
       else if (l.isDirectionalLight) { l.visible = false; }
+    }
+    // deep water / drop kill triggers on the moon (March drowns you)
+    moon.killZones = [];
+    for (const [id, o] of inst.objs) {
+      const n = o.userData.node; if (!n || !/KillTrigger/.test(n.name)) continue;
+      const box = n.comps.find(c => c.t === 'Box'); if (!box) continue;
+      o.updateMatrixWorld(true);
+      const centre = o.localToWorld(new THREE.Vector3(box.c[0], box.c[1], box.c[2])); const sc = o.getWorldScale(new THREE.Vector3());
+      const half = new THREE.Vector3(Math.abs(box.s[0] * sc.x), Math.abs(box.s[1] * sc.y), Math.abs(box.s[2] * sc.z)).multiplyScalar(0.5);
+      moon.killZones.push(new THREE.Box3(centre.clone().sub(half), centre.clone().add(half)));
     }
     for (const ld of moon.ladders) {
       const top = this.worldPosOf(ld.top), bottom = this.worldPosOf(ld.bottom);
