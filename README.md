@@ -36,9 +36,9 @@ item, RMB scan, F flashlight.
   the lever to land (the real moon geometry, sky and ambience). Each moon uses its own scrap table, enemy list and spawn
   budgets. All routes are free here. Moons whose ground is a Unity terrain heightmap (March, Vow, Rend, Dine...) are not
   supported yet: the extractor only exports meshes.
-* Two interiors, rolled with the game's own odds per moon: the **facility** and the **mineshaft** (Titan ~24%,
-  Assurance ~12%, Experimentation ~1%) with its elevator - ride it down to the tunnels and caves, call it back from
-  either landing. The F3 debug menu can force an interior.
+* Two interiors: the **facility** and the **mineshaft** with its elevator - ride it down to the tunnels and caves, call
+  it back from either landing. Experimentation and Assurance roll the interior with the game's own odds (mineshaft ~1%
+  and ~12%); Titan is always the mineshaft, buried in fog, with snow underfoot. The F3 debug menu can force an interior.
 * Post-processing: light bloom and a cold colour grade (both toggles in Settings), darker facility ambience so lamps and
   the flashlight carry the scene.
 * The facility is generated every day from the game's own DunGen tile set (`Level1Flow`): real doorway sockets, tile

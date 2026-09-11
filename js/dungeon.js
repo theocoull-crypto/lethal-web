@@ -153,7 +153,8 @@ export class Dungeon {
   }
   pickFlow(rnd) {
     const flows = this.flowsFor();
-    if (this.forceFlow) { const f = flows.find(x => x.name === this.forceFlow); if (f) return f; }
+    const want = this.forceFlow || (this.game.world.activeMoon && this.game.world.activeMoon.forceFlow);   // debug override, else the moon's fixed interior
+    if (want) { const f = flows.find(x => x.name === want); if (f) return f; }
     const total = flows.reduce((a, f) => a + (f.rarity || 0), 0);
     if (total <= 0) return flows[0];
     let r = rnd() * total;
