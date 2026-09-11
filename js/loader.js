@@ -290,21 +290,22 @@ const _F = new THREE.Matrix4().makeScale(-1, 1, 1);
  * Bones are the instantiated node objects; inverse bind matrices come from assets/meshes/<aid>.bind.json (Unity, mirrored).
  * Skinned meshes are added to `sceneRoot` with identity transform (bones carry the world transform).
  */
-export async function buildSkinned(lib, inst, sceneRoot) {
+export async function buildSkinned(lib, inst, sceneRoot, opts = {}) {
   const out = [];
   let lodSeen = new Set();
   for (const s of inst.skinned) {
     const c = s.comp;
     if (c.enabled === false) continue;
-    // only the highest LOD: names LOD1/LOD2/LOD3 -> keep the first encountered per parent
+    { let q = s.obj, hidden = false; while (q && q !== inst.root) { if (q.visible === false) { hidden = true; break; } q = q.parent; } if (hidden) continue; }   // switched-off props and blockers
+    // only the highest LOD: names LOD1/LOD2/LOD3 or ..._LOD1 -> keep the first encountered per parent
     const parentId = s.node.parent;
-    if (/^LOD\d/.test(s.node.name)) { if (lodSeen.has(parentId)) continue; lodSeen.add(parentId); }
+    if (/^LOD\d|_LOD\d$/.test(s.node.name)) { if (lodSeen.has(parentId)) continue; lodSeen.add(parentId); }
     const geoms = await lib.mesh(c.mesh);
     if (!geoms.length) continue;
     let bind = null;
-    try { bind = await fetch(ASSETS + 'meshes/' + c.mesh + '.bind.json').then(r => r.ok ? r.json() : null); } catch (e) { }
+    if (!opts.static) { try { bind = await fetch(ASSETS + 'meshes/' + c.mesh + '.bind.json').then(r => r.ok ? r.json() : null); } catch (e) { } }
     const bones = c.bones.map(id => inst.objs.get(id) || null);
-    if (!bind || !bones.length || bones.some(b => !b)) {
+    if (opts.static || !bind || !bones.length || bones.some(b => !b)) {
       // fallback: static meshes at the renderer node
       for (let i = 0; i < geoms.length; i++) { const m = new THREE.Mesh(geoms[i], lib.material(c.mats[Math.min(i, c.mats.length - 1)])); s.obj.add(m); out.push(m); }
       continue;

@@ -1,6 +1,7 @@
 // Procedural facility built from the game's own DunGen tiles (Level1Flow), simplified re-implementation of DunGen.
 import * as THREE from 'three';
 import { Collider, collisionEntries } from './collision.js';
+import { buildSkinned } from './loader.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Animator } from './anim.js';
 
@@ -357,6 +358,8 @@ export class Dungeon {
         }
       }
       for (const id of propNodes) { const o = inst.objs.get(id); if (o && !o.userData.propOn) o.visible = false; }
+      // skinned renderers (the Slaughterhouse's hanging carcasses): real skinned meshes under the dungeon root, bones carry the tile transform
+      await buildSkinned(lib, inst, this.root);
     }
     // doors + blockers at doorways (their global props / synced spawns are collected, not spawned yet)
     for (const t of this.placed) {
@@ -478,6 +481,7 @@ export class Dungeon {
     if (rootObj) { rootObj.position.set(0, 0, 0); rootObj.quaternion.identity(); }
     inst.root.position.copy(d.pos); inst.root.quaternion.copy(d.q);
     this.root.add(inst.root); inst.root.updateMatrixWorld(true);
+    await buildSkinned(this.lib, inst, this.root);   // e.g. the grinder's pig
     tile.extraInst = (tile.extraInst || []).concat([inst]);
     // nested synced spawns (e.g. BigDoorSpawn -> BigDoor, blockers -> EntranceTeleportB) and global props (fire exit containers)
     for (const n of man.nodes) for (const c of n.comps) {
