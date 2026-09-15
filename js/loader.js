@@ -278,6 +278,13 @@ diffuseColor.rgb *= blend / wsum;`);
     const staticRoot = opts.staticRoot || root;
     const pending = [];
     const lights = [];
+    // LOD groups by name: 'GeneratorLOD0' / 'GeneratorLOD1', 'rock.015_LOD1' (alone: keep it). Only the finest present copy draws.
+    const lodSkip = new Set();
+    { const best = new Map(), members = [], byId = new Map(man.nodes.map(n => [n.id, n]));
+      const hasMR = n => !!n && n.comps.some(c => c.t === 'MR');
+      for (const n of man.nodes) { const mm = /^(.*?)_?LOD(\d)(?![0-9])(.*)$/.exec(n.name); if (!mm || /Nav$/.test(n.name) || !hasMR(n)) continue; const key = (n.parent || '') + '|' + mm[1] + '|' + mm[3]; const lod = +mm[2]; members.push({ id: n.id, key, lod, parentMR: hasMR(byId.get(n.parent)) }); if (!best.has(key) || lod < best.get(key)) best.set(key, lod); }
+      // the LOD0 is usually the parent itself ('rock.015 (1)' > 'rock.015_LOD1'); a lone LOD1 with no finer copy anywhere stays
+      for (const m of members) if (m.lod > best.get(m.key) || (m.lod > 0 && m.parentMR)) lodSkip.add(m.id); }
     const audios = [];
     const skinned = [];
     for (const n of nodes) {
@@ -287,7 +294,7 @@ diffuseColor.rgb *= blend / wsum;`);
           if (opts.noRender) continue;
           if (HIDDEN_LAYERS.has(n.layer)) continue;   // triggers, colliders, map radar dots, scan nodes
           if (HIDDEN_NAMES.test(n.name)) continue;
-          if (/LOD[1-9](?![0-9])/.test(n.name) && !/Nav$/.test(n.name)) continue;   // lower LOD copies (LODGroup renderer refs are not packed): only LOD0 draws
+          if (lodSkip.has(n.id)) continue;   // a lower-detail copy of a sibling that also has a finer LOD (LODGroup refs are not packed)
           if (n.tag === 'InteractTrigger' && (c.mats || []).length && (c.mats || []).every(id => { const d = this.materials[id]; return d && TRIGGER_MATS.test(d.name || ''); })) continue;
           pending.push(this.mesh(n.mesh).then(geoms => {
             if (!geoms.length) return;

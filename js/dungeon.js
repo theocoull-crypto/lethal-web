@@ -635,7 +635,9 @@ export class Dungeon {
         if (!vis) return;
         // the pool only has omni lights: a spot (the mineshaft entrance's two big ones aim down the shaft) becomes a much
         // dimmer, shorter point light instead of flooding the whole area
-        const spot = o.isSpotLight;
+        // only in the mineshaft (its entrance pair is 436 and aims down the shaft); the facility's own 512 spots light its
+        // big rooms and stay exactly as they were
+        const spot = o.isSpotLight && /Level3/.test(String((this.flow && (this.flow.name || this.flow.key)) || this.flow || ''));
         const inten = Math.min(o.userData.unity?.intensity || 20, 120) * 0.05 * (spot ? 0.3 : 1);
         const dist = spot ? Math.max(Math.min(o.distance || 8, 14), 8) : Math.max((o.distance || 8) * 1.6, 13);
         this.lights.push({ pos: o.getWorldPosition(new THREE.Vector3()), color: o.color.clone(), intensity: inten, distance: dist, obj: o });
