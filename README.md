@@ -48,7 +48,7 @@ It finds the Steam installation, downloads the official [AssetRipper](https://gi
 release, and replaces the converted files in `assets/`.
 
 Controls: WASD move, Shift sprint, Ctrl crouch, Space jump, E interact/grab, G drop, 1-4 or wheel to select, LMB use
-item, RMB scan, F flashlight.
+item, RMB scan (only tags what is on screen with a clear line of sight - no scanning through walls), F flashlight.
 
 ### Playing from another device (a Chromebook, a laptop, a phone)
 
@@ -104,7 +104,11 @@ network interface and prints the addresses to open on the other device
   are present. **115 Wither** (ScienceBird) is wired in the same way: `python tools/load_mod_bundle.py
   <withermoonscene.lethalbundle> <withermoon.lethalbundle> <extrawitherassets>` then
   `set AR_PREFIX=wi && python tools/pack_mod_moon.py wither "WitherScene (Generated Assets)" WitherLevel`. Its scripted
-  set pieces (the mod's own plugin) do not come across; its map, scrap and enemy tables do.
+  set pieces (the mod's own plugin) do not come across; its map, scrap and enemy tables do. **42 Tranquillity**
+  (NeatWolf): `python tools/load_mod_bundle.py <tranquillitymod.lethalbundle> <tranquillitymodscene.lethalbundle>` then
+  `set AR_PREFIX=tq && python tools/pack_mod_moon.py tranquillity "Tranquillity (Generated Assets)" TranquillityLevel`;
+  its custom Manor/Facility interior is deliberately not used - the catalog is rewritten to the game's own facility and
+  mineshaft tiles at even odds, and its custom enemies (Sandman, GhostBird) and knife scrap are skipped.
 * Interiors: the **facility** and the **mineshaft** with its elevator - ride it down to the tunnels and caves, call it
   back from either landing. Experimentation and Assurance roll the interior with the game's own odds (mineshaft ~1% and
   ~12%). Titan is buried in dark fog with snow underfoot and always uses the **Slaughterhouse** interior from Nikki's

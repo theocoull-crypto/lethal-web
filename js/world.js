@@ -17,6 +17,9 @@ export const MOON_DEFS = [
   { key: 'eve', asset: 'eve', name: '127-EVE-M', catalog: 'eve', fogDay: 0xb9c6b3, fogDusk: 0x3b4150, sunDay: 0xfff1d6, hemiSky: 0x9cc0e0, fogScale: 0.55, sunScale: 1.15, sizeMul: 1.4, optional: true },
   // 115 Wither: ScienceBird's late-game moon (Thunderstore); dry, dusty light
   { key: 'wither', asset: 'wither', name: '115-WITHER', catalog: 'wither', fogDay: 0xc7b9a2, fogDusk: 0x3a3128, sunDay: 0xffe0b8, hemiSky: 0xb9a98c, fogScale: 0.8, sunScale: 1.05, optional: true },
+  // 42 Tranquillity: NeatWolf's A+ moon (Thunderstore); eternal low sun. Its custom Manor/Facility interior is NOT used - the
+  // catalog was rewritten to the game's own facility/mineshaft tiles at even odds (tools/pack_mod_moon.py + catalog swap)
+  { key: 'tranquillity', asset: 'tranquillity', name: '42-TRANQUILLITY', catalog: 'tranquillity', fogDay: 0xd2a978, fogDusk: 0x4a3222, sunDay: 0xffd6a0, hemiSky: 0xdcb07a, fogScale: 0.7, sunScale: 1.2, optional: true },
 ];
 
 export class World {

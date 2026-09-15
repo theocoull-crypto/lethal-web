@@ -10,6 +10,7 @@ const MOONS = [
   { key: 'titan', label: '8-Titan', names: ['titan', '8-titan', '8'] },
   { key: 'eve', label: '127-Eve-M', names: ['eve', '127-eve', '127-eve-m', 'eve-m', '127'] },
   { key: 'wither', label: '115-Wither', names: ['wither', '115-wither', '115'] },
+  { key: 'tranquillity', label: '42-Tranquillity', names: ['tranquillity', 'tranquility', '42-tranquillity', '42-tranquility', '42', 'tranq'] },
   { key: 'company', label: 'The Company building', names: ['company', 'the company building', 'company building', 'the company'] },
 ];
 
@@ -160,7 +161,7 @@ ____________________________
 * 220-Assurance        ${this.weather('assurance')}${g.world.destination === 'assurance' ? '   (current route)' : ''}
 
 * 8-Titan              ${this.weather('titan')}${g.world.destination === 'titan' ? '   (current route)' : ''}
-${g.world.moons.eve ? `\n* 127-Eve-M            ${this.weather('eve')}${g.world.destination === 'eve' ? '   (current route)' : ''}\n` : ''}${g.world.moons.wither ? `\n* 115-Wither           ${this.weather('wither')}${g.world.destination === 'wither' ? '   (current route)' : ''}\n` : ''}`);
+${g.world.moons.eve ? `\n* 127-Eve-M            ${this.weather('eve')}${g.world.destination === 'eve' ? '   (current route)' : ''}\n` : ''}${g.world.moons.wither ? `\n* 115-Wither           ${this.weather('wither')}${g.world.destination === 'wither' ? '   (current route)' : ''}\n` : ''}${g.world.moons.tranquillity ? `\n* 42-Tranquillity      ${this.weather('tranquillity')}${g.world.destination === 'tranquillity' ? '   (current route)' : ''}\n` : ''}`);
       case 'store': return this.print(`Welcome to the Company store.
 Use words BUY to buy an item.
 ____________________________
@@ -269,6 +270,6 @@ The Company's engineers have extended the ship on both sides.
 
   weather(moon = this.game.world.destination) {
     if (this.game.world.dayFrac > 0.72) return '(Night)';
-    return moon === 'assurance' || moon === 'eve' || moon === 'wither' ? '(Clear)' : moon === 'titan' ? '(Snowy)' : '(Foggy)';
+    return moon === 'assurance' || moon === 'eve' || moon === 'wither' || moon === 'tranquillity' ? '(Clear)' : moon === 'titan' ? '(Snowy)' : '(Foggy)';
   }
 }
