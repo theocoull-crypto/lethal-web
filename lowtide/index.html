@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="../">
+  <title>14—LOWTIDE // Exterior Prototype</title>
+  <link rel="stylesheet" href="js/moons/lowtide/preview.css">
+  <script type="importmap">
+  { "imports": { "three": "./lib/three.module.js", "three/addons/": "./lib/addons/" } }
+  </script>
+</head>
+<body>
+  <canvas id="lowtide-canvas"></canvas>
+  <div id="lowtide-vignette"></div>
+  <div id="lowtide-grain"></div>
+  <div id="lowtide-crosshair"></div>
+
+  <header id="lowtide-header">
+    <div class="designation">14—LOWTIDE</div>
+    <div class="prototype">EXTERIOR PROTOTYPE // NOT IN CONTRACT ROTATION</div>
+  </header>
+
+  <section id="lowtide-clock" aria-live="polite">
+    <span id="clock-time">8:00 AM</span>
+    <span id="clock-rate">1×</span>
+  </section>
+
+  <section id="lowtide-status" aria-live="polite">
+    <div><span>TIDE</span><strong id="tide-state">DRY</strong></div>
+    <div><span>WATER</span><strong id="water-level">-2.4 M</strong></div>
+    <div><span>CYCLES</span><strong id="tide-count">0 / 3</strong></div>
+    <div><span>TEST CARGO</span><strong id="crate-count">3</strong></div>
+  </section>
+
+  <aside id="lowtide-debug">
+    <button id="debug-collapse" aria-expanded="true">DEVELOPMENT CONTROL</button>
+    <div id="debug-body">
+      <div class="debug-row two">
+        <button id="toggle-speed">ACCELERATE [T]</button>
+        <button id="resume-timeline">RESUME CLOCK</button>
+      </div>
+      <div class="debug-label">FORCE TIDE STATE [1–6]</div>
+      <div class="debug-row states">
+        <button data-state="dry">DRY</button>
+        <button data-state="warning">WARNING</button>
+        <button data-state="incoming">INCOMING</button>
+        <button data-state="high">HIGH</button>
+        <button data-state="outgoing">OUTGOING</button>
+        <button data-state="dry-after-tide">AFTER</button>
+      </div>
+      <div class="debug-row two">
+        <button id="trigger-breath">BREATHE [B]</button>
+        <button id="toggle-eye">MOVE EYE [O]</button>
+        <button id="toggle-markers">MARKERS [M]</button>
+        <button id="spawn-crate">DROP TEST [P]</button>
+        <button id="reset-player">RESET [R]</button>
+        <button id="reload-moon">RELOAD [L]</button>
+      </div>
+      <pre id="perf-stats">FPS --
+DRAW --  TRI --</pre>
+    </div>
+  </aside>
+
+  <div id="lowtide-notice" aria-live="assertive"></div>
+  <div id="lowtide-context"></div>
+
+  <div id="lowtide-loading">
+    <div class="loading-card">
+      <div class="loading-kicker">COMPANY SURVEY // UNREGISTERED BODY</div>
+      <h1>14—LOWTIDE</h1>
+      <div class="loading-rule"></div>
+      <p id="loading-text">ASSEMBLING EXTERIOR...</p>
+      <div class="loading-bar"><i id="loading-fill"></i></div>
+      <button id="enter-preview" disabled>ENTER SURVEY</button>
+      <p class="controls">WASD move · Shift sprint · Ctrl crouch · Space jump<br>Esc releases mouse · R returns to ship</p>
+    </div>
+  </div>
+
+  <script type="module" src="js/moons/lowtide/preview.mjs"></script>
+</body>
+</html>
