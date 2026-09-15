@@ -33,15 +33,15 @@ The current build is published at https://theocoull-crypto.github.io/lethal-web/
 
 To make a Google Apps Script web app that loads it, create a script project, copy
 `google-apps-script/Code.gs` and `google-apps-script/Index.html` into matching files, then choose **Deploy -> New
-deployment -> Web app**. The wrapper loads the GitHub Pages build full-screen. Google sandboxes Apps Script pages,
-so embedded mode also supports the arrow keys for looking around; **Play with mouse lock** launches the normal pointer-lock
-version. When updating an existing Apps Script deployment, create a new version before redeploying; `Code.gs` uses
-`XFrameOptionsMode.ALLOWALL` so the deployment can connect when another page embeds it.
+deployment -> Web app**. This version does not create a nested GitHub Pages iframe: the game DOM runs directly in the
+Apps Script document, its small code runtime loads from the
+[`lethal-web-runtime`](https://github.com/theocoull-crypto/lethal-web-runtime) jsDelivr package, and the large binary
+assets load from the pinned `lethal-web-assets-v1` CDN tag. When updating an existing Apps Script deployment, create a
+new version before redeploying; `Code.gs` uses `XFrameOptionsMode.ALLOWALL` so another page can embed the deployment.
 
-Google's Apps Script iframe does not grant true Pointer Lock. Embedded mode works around that by hiding the cursor and
-using relative mouse movement without turning while the mouse is resting; the arrow keys also control the camera.
-Press Esc to release it for menus. The wrapper's **Play with mouse lock** button still launches the normal hosted build
-when genuine browser mouse capture is preferred.
+Google's Apps Script sandbox does not grant true Pointer Lock. Direct embedded mode works around that by hiding the
+cursor and using relative mouse movement without turning while the mouse is resting; the arrow keys also control the
+camera. Press Esc to release it for menus.
 
 To rebuild the extracted game files later, run `python tools/extract.py` on a Windows PC that owns Lethal Company.
 It finds the Steam installation, downloads the official [AssetRipper](https://github.com/AssetRipper/AssetRipper)
