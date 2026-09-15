@@ -617,7 +617,8 @@ export class Dungeon {
     for (const t of this.placed) {
       for (const d of t.doorways) {
         if (!d.used || d.nodeId != null) continue;
-        const other = d.connected; const od = other.doorways.find(x => x.connected === t);
+        const other = d.connected; if (!other || other.nodeId == null) continue;   // a connection to a tile that is no longer placed
+        const od = other.doorways.find(x => x.connected === t);
         const id = add(d.pos.clone().add(new THREE.Vector3(0, 0.3, 0)), t);
         d.nodeId = id; if (od) od.nodeId = id;
         edges.push([t.nodeId, id]); edges.push([other.nodeId, id]);

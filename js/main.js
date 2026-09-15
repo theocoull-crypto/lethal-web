@@ -404,7 +404,19 @@ The ship will leave without you.`);
     this.scanT = 3.0;
     this.hud.scanPulse();
     const c = this.items.sfx('scan'); if (c) this.sound.play(c, { vol: 0.5 });
-    this.scanTargets = this.items.scannables(this.camera.position, 22).concat(this.enemies.scannables(this.camera.position, 30), this.dungeon.scannables(this.camera.position, 30));
+    const all = this.items.scannables(this.camera.position, 22).concat(this.enemies.scannables(this.camera.position, 30), this.dungeon.scannables(this.camera.position, 30));
+    this.scanTargets = all.filter(s => this.canSee(s.pos()));
+  }
+
+  /** the scanner only tags what the camera can actually see: inside the view and with nothing solid in between */
+  canSee(p) {
+    const cam = this.camera;
+    const v = p.clone().project(cam);
+    if (v.z > 1 || Math.abs(v.x) > 1.05 || Math.abs(v.y) > 1.05) return false;   // off screen or behind the camera
+    const dir = p.clone().sub(cam.position); const dist = dir.length(); if (dist < 0.05) return true; dir.divideScalar(dist);
+    const far = dist - 0.35;   // stop just short of the target so its own bulk never counts as a wall
+    for (const c of this.activeColliders()) if (c && c.raycast(cam.position, dir, far)) return false;
+    return true;
   }
 
   openTerminal() { this._suppressSettings = true; this.terminal.show(); }
