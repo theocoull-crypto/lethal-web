@@ -24,7 +24,7 @@ export class Player {
     // Google Apps Script serves pages inside a sandbox that does not grant Pointer Lock.
     // The hosted game adds ?embed=1 there, so keep controls usable with ordinary mouse
     // movement and the arrow keys while leaving normal browser play unchanged.
-    this.embedded = new URLSearchParams(location.search).get('embed') === '1';
+    this.embedded = window.LETHAL_WEB_EMBEDDED === true || new URLSearchParams(location.search).get('embed') === '1';
     this.bob = 0; this.bobAmp = 0;
     this.stepTimer = 0;
     this.locked = false;
