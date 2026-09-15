@@ -144,12 +144,7 @@ diffuseColor.rgb *= blend / wsum;`);
         mat.normalScale.set(ns, ns);
       }
       const smooth = d.smoothness == null ? 0.5 : d.smoothness;
-      if (!d.map && d.maskMap && /rock|stone|cliff|cave|boulder|gravel/i.test(name)) {
-        // rock materials with no base map (the game's RockTextureGrey): HDRP shows their detail through the mask and normal
-        // maps alone, which reads as flat grey here - reuse the mask texture as albedo detail and let the normal map bite
-        mat.map = this.texture(d.maskMap.id, 'color', d.maskMap.scale, d.maskMap.offset);
-        if (mat.normalMap) mat.normalScale.set(1.2, 1.2);
-      }
+      if (!d.map && d.maskMap && mat.normalMap && /rock|stone|cliff|cave|boulder|gravel/i.test(name)) mat.normalScale.set(1.1, 1.1);   // untextured rocks: the game shows their detail through the normal map alone
       if (d.maskMap) {
         // HDRP: smoothness = lerp(remapMin, remapMax, mask.A); metallic = mask.R; AO = lerp(aoMin, aoMax, mask.G)
         const rm = d.smoothnessRemap || [0, 1];
@@ -165,7 +160,7 @@ diffuseColor.rgb *= blend / wsum;`);
       const emax = Math.max(e[0], e[1], e[2]);
       // Shader Graph materials carry a default white _EmissiveColor that means nothing; only trust it with an emissive map,
       // an HDR value, an explicit intensity switch, or the stock HDRP shaders
-      const emissiveReal = emax > 0.001 && (d.emissiveMap || emax > 1.01 || d.useEmissiveIntensity || /^HDRP\//.test(shader));
+      const emissiveReal = emax > 0.001 && (d.emissiveMap || emax > 1.01 || d.useEmissiveIntensity || /^HDRP\//.test(shader) || /^b\d/.test(id));   // the game's own materials are trusted as-is
       if (emissiveReal) {
         // HDRP emissive colors are HDR (linear). Normalise to a sane range for a non-physical renderer.
         const scale = emax > 1 ? 1 / emax : 1;
